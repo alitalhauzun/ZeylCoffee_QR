@@ -1,0 +1,947 @@
+{
+  "admin": {
+    "username": "admin",
+    "password": "$2a$10$2wXpY9KLu1RJjPt7d8wKDOORLKLN7w2JDKpGiZgv7473PIo2bBbzq"
+  },
+  "statistics": {
+    "categoryClicks": {
+      "14": {
+        "name": "Börekler",
+        "totalClicks": 13,
+        "lastClicked": "2025-11-14T11:03:41.527Z"
+      }
+    },
+    "dailyClicks": {
+      "2025-11-14": {
+        "14": {
+          "name": "Börekler",
+          "clicks": 13
+        }
+      }
+    }
+  },
+  "categories": [
+    {
+      "id": 14,
+      "name": "Börekler",
+      "display_order": 0
+    },
+    {
+      "id": 1,
+      "name": "Sıcak İçecekler",
+      "display_order": 1
+    },
+    {
+      "id": 2,
+      "name": "Soğuk İçecekler",
+      "display_order": 2
+    },
+    {
+      "id": 3,
+      "name": "Yaz Serinliği",
+      "display_order": 3
+    },
+    {
+      "id": 4,
+      "name": "Çay Yanı Lezzetler",
+      "display_order": 4
+    },
+    {
+      "id": 5,
+      "name": "Kış Vazgeçilmezi",
+      "display_order": 5
+    },
+    {
+      "id": 6,
+      "name": "Tatlı Çeşitleri",
+      "display_order": 6
+    },
+    {
+      "id": 7,
+      "name": "Kahvaltılar",
+      "display_order": 7
+    },
+    {
+      "id": 8,
+      "name": "Special Lezzetler",
+      "display_order": 8
+    },
+    {
+      "id": 9,
+      "name": "Omletler",
+      "display_order": 9
+    },
+    {
+      "id": 10,
+      "name": "Tostlar",
+      "display_order": 10
+    },
+    {
+      "id": 11,
+      "name": "Aperatifler",
+      "display_order": 11
+    },
+    {
+      "id": 12,
+      "name": "Gözlemeler",
+      "display_order": 12
+    },
+    {
+      "id": 13,
+      "name": "Doyurucu Lezzetler",
+      "display_order": 13
+    }
+  ],
+  "menuItems": [
+    {
+      "id": 14,
+      "category_id": 2,
+      "name": "Enerji İçeceği",
+      "price": 86,
+      "description": "",
+      "is_available": 1,
+      "display_order": 0
+    },
+    {
+      "id": 15,
+      "category_id": 2,
+      "name": "Coca Cola",
+      "price": 40,
+      "description": "",
+      "is_available": 1,
+      "display_order": 1
+    },
+    {
+      "id": 16,
+      "category_id": 2,
+      "name": "Coca Cola Zero",
+      "price": null,
+      "description": "",
+      "is_available": 1,
+      "display_order": 2
+    },
+    {
+      "id": 17,
+      "category_id": 2,
+      "name": "Ice Tea",
+      "price": null,
+      "description": "",
+      "is_available": 1,
+      "display_order": 3
+    },
+    {
+      "id": 18,
+      "category_id": 2,
+      "name": "Meyve Suyu",
+      "price": null,
+      "description": "",
+      "is_available": 1,
+      "display_order": 4
+    },
+    {
+      "id": 19,
+      "category_id": 2,
+      "name": "Sprite",
+      "price": null,
+      "description": "",
+      "is_available": 1,
+      "display_order": 5
+    },
+    {
+      "id": 20,
+      "category_id": 2,
+      "name": "Fanta",
+      "price": 95,
+      "description": "",
+      "is_available": 1,
+      "display_order": 6
+    },
+    {
+      "id": 21,
+      "category_id": 2,
+      "name": "Soda",
+      "price": 45,
+      "description": "",
+      "is_available": 1,
+      "display_order": 7
+    },
+    {
+      "id": 22,
+      "category_id": 2,
+      "name": "Meyveli Soda",
+      "price": 70,
+      "description": "",
+      "is_available": 1,
+      "display_order": 8
+    },
+    {
+      "id": 23,
+      "category_id": 2,
+      "name": "Ayran",
+      "price": 35,
+      "description": "",
+      "is_available": 1,
+      "display_order": 9
+    },
+    {
+      "id": 24,
+      "category_id": 2,
+      "name": "Churchill",
+      "price": 13,
+      "description": "",
+      "is_available": 1,
+      "display_order": 10
+    },
+    {
+      "id": 25,
+      "category_id": 2,
+      "name": "Su",
+      "price": 15,
+      "description": "",
+      "is_available": 1,
+      "display_order": 11
+    },
+    {
+      "id": 26,
+      "category_id": 3,
+      "name": "Çilekli Milkshake",
+      "price": 15,
+      "description": "",
+      "is_available": 1,
+      "display_order": 0
+    },
+    {
+      "id": 27,
+      "category_id": 3,
+      "name": "Çikolatalı Milkshake",
+      "price": null,
+      "description": "",
+      "is_available": 1,
+      "display_order": 1
+    },
+    {
+      "id": 28,
+      "category_id": 3,
+      "name": "Orman Meyveleri Smoothie",
+      "price": null,
+      "description": "",
+      "is_available": 1,
+      "display_order": 2
+    },
+    {
+      "id": 29,
+      "category_id": 3,
+      "name": "Çilek Smoothie",
+      "price": null,
+      "description": "",
+      "is_available": 1,
+      "display_order": 3
+    },
+    {
+      "id": 30,
+      "category_id": 3,
+      "name": "Frozen Çeşitleri",
+      "price": null,
+      "description": "",
+      "is_available": 1,
+      "display_order": 4
+    },
+    {
+      "id": 31,
+      "category_id": 3,
+      "name": "Orman Meyveleri - Çilek",
+      "price": null,
+      "description": "",
+      "is_available": 1,
+      "display_order": 5
+    },
+    {
+      "id": 32,
+      "category_id": 3,
+      "name": "Ice Americano",
+      "price": null,
+      "description": "",
+      "is_available": 1,
+      "display_order": 6
+    },
+    {
+      "id": 33,
+      "category_id": 3,
+      "name": "Ice Caramel Latte",
+      "price": null,
+      "description": "",
+      "is_available": 1,
+      "display_order": 7
+    },
+    {
+      "id": 34,
+      "category_id": 3,
+      "name": "Ice Coffe Latte",
+      "price": null,
+      "description": "",
+      "is_available": 1,
+      "display_order": 8
+    },
+    {
+      "id": 35,
+      "category_id": 3,
+      "name": "Frappe Caramel - Vanilya",
+      "price": null,
+      "description": "",
+      "is_available": 1,
+      "display_order": 9
+    },
+    {
+      "id": 36,
+      "category_id": 3,
+      "name": "Majito",
+      "price": null,
+      "description": "",
+      "is_available": 1,
+      "display_order": 10
+    },
+    {
+      "id": 37,
+      "category_id": 3,
+      "name": "Limonata",
+      "price": 55,
+      "description": "",
+      "is_available": 1,
+      "display_order": 11
+    },
+    {
+      "id": 38,
+      "category_id": 3,
+      "name": "Dondurma Balbadem - Caramel",
+      "price": null,
+      "description": "",
+      "is_available": 1,
+      "display_order": 12
+    },
+    {
+      "id": 39,
+      "category_id": 3,
+      "name": "Vanilya",
+      "price": null,
+      "description": "",
+      "is_available": 1,
+      "display_order": 13
+    },
+    {
+      "id": 40,
+      "category_id": 4,
+      "name": "Kurabiye Tabağı",
+      "price": 150,
+      "description": "",
+      "is_available": 1,
+      "display_order": 0
+    },
+    {
+      "id": 41,
+      "category_id": 4,
+      "name": "Dilim Kek",
+      "price": null,
+      "description": "",
+      "is_available": 1,
+      "display_order": 1
+    },
+    {
+      "id": 42,
+      "category_id": 4,
+      "name": "Günün Tatlısı",
+      "price": null,
+      "description": "",
+      "is_available": 1,
+      "display_order": 2
+    },
+    {
+      "id": 43,
+      "category_id": 5,
+      "name": "Bici Çayları",
+      "price": null,
+      "description": "",
+      "is_available": 1,
+      "display_order": 0
+    },
+    {
+      "id": 44,
+      "category_id": 5,
+      "name": "Kış Çayı",
+      "price": null,
+      "description": "",
+      "is_available": 1,
+      "display_order": 1
+    },
+    {
+      "id": 45,
+      "category_id": 5,
+      "name": "Ihlamur",
+      "price": null,
+      "description": "",
+      "is_available": 1,
+      "display_order": 2
+    },
+    {
+      "id": 46,
+      "category_id": 5,
+      "name": "Adaçayı",
+      "price": null,
+      "description": "",
+      "is_available": 1,
+      "display_order": 3
+    },
+    {
+      "id": 47,
+      "category_id": 5,
+      "name": "Salep",
+      "price": null,
+      "description": "",
+      "is_available": 1,
+      "display_order": 4
+    },
+    {
+      "id": 48,
+      "category_id": 5,
+      "name": "Sıcak Çikolata",
+      "price": null,
+      "description": "",
+      "is_available": 1,
+      "display_order": 5
+    },
+    {
+      "id": 49,
+      "category_id": 5,
+      "name": "Taze Sıkılmış Portakal Suyu",
+      "price": null,
+      "description": "",
+      "is_available": 1,
+      "display_order": 6
+    },
+    {
+      "id": 50,
+      "category_id": 6,
+      "name": "Sütlü",
+      "price": 150,
+      "description": "",
+      "is_available": 1,
+      "display_order": 0
+    },
+    {
+      "id": 51,
+      "category_id": 6,
+      "name": "Limonlu Cheescake",
+      "price": null,
+      "description": "",
+      "is_available": 1,
+      "display_order": 1
+    },
+    {
+      "id": 52,
+      "category_id": 6,
+      "name": "Frambuazlı Cheescake",
+      "price": null,
+      "description": "",
+      "is_available": 1,
+      "display_order": 2
+    },
+    {
+      "id": 53,
+      "category_id": 6,
+      "name": "Waffle Mevsim Meyveleri ile",
+      "price": null,
+      "description": "",
+      "is_available": 1,
+      "display_order": 3
+    },
+    {
+      "id": 54,
+      "category_id": 6,
+      "name": "Künner Tatlısı",
+      "price": null,
+      "description": "",
+      "is_available": 1,
+      "display_order": 4
+    },
+    {
+      "id": 55,
+      "category_id": 6,
+      "name": "Günün Tatlısı",
+      "price": null,
+      "description": "",
+      "is_available": 1,
+      "display_order": 5
+    },
+    {
+      "id": 56,
+      "category_id": 7,
+      "name": "Hızlı Kahvaltı",
+      "price": 15,
+      "description": "",
+      "is_available": 1,
+      "display_order": 0
+    },
+    {
+      "id": 57,
+      "category_id": 7,
+      "name": "Serpme Kahvaltı",
+      "price": 96.5,
+      "description": "",
+      "is_available": 1,
+      "display_order": 1
+    },
+    {
+      "id": 58,
+      "category_id": 8,
+      "name": "Mac 8 Chese",
+      "price": 42,
+      "description": "",
+      "is_available": 1,
+      "display_order": 0
+    },
+    {
+      "id": 59,
+      "category_id": 8,
+      "name": "İsveç Köfte",
+      "price": 47,
+      "description": "",
+      "is_available": 1,
+      "display_order": 1
+    },
+    {
+      "id": 60,
+      "category_id": 8,
+      "name": "Pesto Soslu Penne",
+      "price": 140,
+      "description": "",
+      "is_available": 1,
+      "display_order": 2
+    },
+    {
+      "id": 61,
+      "category_id": 8,
+      "name": "Körü Soslu Tavuk",
+      "price": 97,
+      "description": "",
+      "is_available": 1,
+      "display_order": 3
+    },
+    {
+      "id": 62,
+      "category_id": 8,
+      "name": "Kremalı Mantar Soslu Tavuklu Penne",
+      "price": 215,
+      "description": "",
+      "is_available": 1,
+      "display_order": 4
+    },
+    {
+      "id": 63,
+      "category_id": 8,
+      "name": "Paso Soslu Penne",
+      "price": null,
+      "description": "",
+      "is_available": 1,
+      "display_order": 5
+    },
+    {
+      "id": 64,
+      "category_id": 9,
+      "name": "Sade Yumurta",
+      "price": 45,
+      "description": "",
+      "is_available": 1,
+      "display_order": 0
+    },
+    {
+      "id": 65,
+      "category_id": 9,
+      "name": "Peynirli Yumurta",
+      "price": 150,
+      "description": "",
+      "is_available": 1,
+      "display_order": 1
+    },
+    {
+      "id": 66,
+      "category_id": 9,
+      "name": "Patatesli Yumurta",
+      "price": 150,
+      "description": "",
+      "is_available": 1,
+      "display_order": 2
+    },
+    {
+      "id": 67,
+      "category_id": 9,
+      "name": "Sucuklu Yumurta",
+      "price": 190,
+      "description": "",
+      "is_available": 1,
+      "display_order": 3
+    },
+    {
+      "id": 68,
+      "category_id": 9,
+      "name": "Menemen",
+      "price": 145,
+      "description": "",
+      "is_available": 1,
+      "display_order": 4
+    },
+    {
+      "id": 69,
+      "category_id": 9,
+      "name": "Kaşarlı Menemen",
+      "price": 190,
+      "description": "",
+      "is_available": 1,
+      "display_order": 5
+    },
+    {
+      "id": 70,
+      "category_id": 9,
+      "name": "Kaşarlı Omlet",
+      "price": 145,
+      "description": "",
+      "is_available": 1,
+      "display_order": 6
+    },
+    {
+      "id": 71,
+      "category_id": 10,
+      "name": "Bazlama Kaşarlı",
+      "price": 120,
+      "description": "",
+      "is_available": 1,
+      "display_order": 0
+    },
+    {
+      "id": 72,
+      "category_id": 10,
+      "name": "Bazlama Sucuklu",
+      "price": 180,
+      "description": "",
+      "is_available": 1,
+      "display_order": 1
+    },
+    {
+      "id": 73,
+      "category_id": 10,
+      "name": "Bazlama Karışık",
+      "price": 200,
+      "description": "",
+      "is_available": 1,
+      "display_order": 2
+    },
+    {
+      "id": 74,
+      "category_id": 10,
+      "name": "Sebzeli Beyaz, Peynirli Tost",
+      "price": 150,
+      "description": "",
+      "is_available": 1,
+      "display_order": 3
+    },
+    {
+      "id": 75,
+      "category_id": 10,
+      "name": "(Beyaz Peynir, Biber, Domates)",
+      "price": null,
+      "description": "",
+      "is_available": 1,
+      "display_order": 4
+    },
+    {
+      "id": 76,
+      "category_id": 11,
+      "name": "Patates Kızartması",
+      "price": 100,
+      "description": "",
+      "is_available": 1,
+      "display_order": 0
+    },
+    {
+      "id": 77,
+      "category_id": 11,
+      "name": "Karışık Sıcak Sepet",
+      "price": 250,
+      "description": "",
+      "is_available": 1,
+      "display_order": 1
+    },
+    {
+      "id": 78,
+      "category_id": 11,
+      "name": "Paçanga Böreği",
+      "price": 225,
+      "description": "",
+      "is_available": 1,
+      "display_order": 2
+    },
+    {
+      "id": 79,
+      "category_id": 11,
+      "name": "Sucuk Tava",
+      "price": 45,
+      "description": "",
+      "is_available": 1,
+      "display_order": 3
+    },
+    {
+      "id": 80,
+      "category_id": 11,
+      "name": "Soslu Sosis Tava",
+      "price": 150,
+      "description": "",
+      "is_available": 1,
+      "display_order": 4
+    },
+    {
+      "id": 81,
+      "category_id": 12,
+      "name": "Peynirli Gözleme",
+      "price": 155,
+      "description": "",
+      "is_available": 1,
+      "display_order": 0
+    },
+    {
+      "id": 82,
+      "category_id": 12,
+      "name": "Kıymalı Gözleme",
+      "price": 190,
+      "description": "",
+      "is_available": 1,
+      "display_order": 1
+    },
+    {
+      "id": 83,
+      "category_id": 12,
+      "name": "Ispanaklı Gözleme",
+      "price": 145,
+      "description": "",
+      "is_available": 1,
+      "display_order": 2
+    },
+    {
+      "id": 84,
+      "category_id": 12,
+      "name": "Patatesli Gözleme",
+      "price": 145,
+      "description": "",
+      "is_available": 1,
+      "display_order": 3
+    },
+    {
+      "id": 85,
+      "category_id": 12,
+      "name": "Kaşarlı Gözleme",
+      "price": null,
+      "description": "",
+      "is_available": 1,
+      "display_order": 4
+    },
+    {
+      "id": 86,
+      "category_id": 13,
+      "name": "Islak Hamburger",
+      "price": 55,
+      "description": "",
+      "is_available": 1,
+      "display_order": 0
+    },
+    {
+      "id": 87,
+      "category_id": 13,
+      "name": "Hamburger",
+      "price": 95,
+      "description": "",
+      "is_available": 1,
+      "display_order": 1
+    },
+    {
+      "id": 88,
+      "category_id": 13,
+      "name": "Double Hamburger",
+      "price": 195,
+      "description": "",
+      "is_available": 1,
+      "display_order": 2
+    },
+    {
+      "id": 89,
+      "category_id": 13,
+      "name": "Pizza",
+      "price": 200,
+      "description": "",
+      "is_available": 1,
+      "display_order": 3
+    },
+    {
+      "id": 90,
+      "category_id": 13,
+      "name": "Maru",
+      "price": 145,
+      "description": "",
+      "is_available": 1,
+      "display_order": 4
+    },
+    {
+      "id": 91,
+      "category_id": 13,
+      "name": "Ekmek Arası Sucuk",
+      "price": null,
+      "description": "",
+      "is_available": 1,
+      "display_order": 5
+    },
+    {
+      "id": 92,
+      "category_id": 13,
+      "name": "Ekmek Arası Köfte",
+      "price": null,
+      "description": "",
+      "is_available": 1,
+      "display_order": 6
+    },
+    {
+      "id": 93,
+      "category_id": 13,
+      "name": "Yoğurtlu Salçalı Makarna",
+      "price": null,
+      "description": "",
+      "is_available": 1,
+      "display_order": 7
+    },
+    {
+      "id": 94,
+      "category_id": 13,
+      "name": "Günün Çorbası",
+      "price": 75,
+      "description": "",
+      "is_available": 1,
+      "display_order": 8
+    },
+    {
+      "id": 95,
+      "category_id": 13,
+      "name": "Izgara Köfte Tabağı",
+      "price": null,
+      "description": "",
+      "is_available": 1,
+      "display_order": 9
+    },
+    {
+      "id": 96,
+      "category_id": 1,
+      "name": "Kahve",
+      "price": "100",
+      "description": "Türk kahvesi\n",
+      "is_available": 1,
+      "display_order": 0
+    },
+    {
+      "id": 97,
+      "category_id": 1,
+      "name": "Fındıklı Kahve",
+      "price": "150",
+      "description": "Fındık esanslı",
+      "is_available": 1,
+      "display_order": 1
+    },
+    {
+      "id": 98,
+      "category_id": 1,
+      "name": "Çay",
+      "price": "25",
+      "description": "Çay bisküvi ile servis edilir",
+      "is_available": 1,
+      "display_order": 2
+    },
+    {
+      "id": 99,
+      "category_id": 14,
+      "name": "Kıymalı Börek",
+      "price": "800",
+      "description": "Kıymalı börek 1 porsiyonda 4 adet servis edilir",
+      "is_available": 1,
+      "display_order": 0,
+      "image": "uploads/item-1763021747285-40275512.png"
+    },
+    {
+      "id": 100,
+      "category_id": 14,
+      "price": "500",
+      "description": "",
+      "is_available": 0,
+      "display_order": 1,
+      "image": "uploads/item-1763021783166-49264201.png"
+    },
+    {
+      "id": 101,
+      "category_id": 14,
+      "price": "1000",
+      "description": "",
+      "is_available": 0,
+      "display_order": 2,
+      "image": "uploads/item-1763021816759-570429871.png"
+    }
+  ],
+  "weeklySpecials": [
+    {
+      "id": 1,
+      "name": "Cheesecake",
+      "price": "800",
+      "description": "Bu haftanın yıldızı",
+      "display_order": 0,
+      "image": "uploads/item-1763037664012-149790421.jpg"
+    },
+    {
+      "id": 2,
+      "name": "Börek",
+      "price": "900",
+      "description": "Bu haftanın süperstarı",
+      "image": "uploads/item-1763037705977-942861709.png",
+      "display_order": 1
+    }
+  ],
+  "campaigns": [],
+  "instagramPosts": [
+    {
+      "id": 1,
+      "caption": "Zengin kahvaltı tabağımızla gününüze güzel bir başlangıç yapın.",
+      "image": "uploads/instagram-1763101164627-1.png",
+      "display_order": 0
+    },
+    {
+      "id": 2,
+      "caption": "El açması böreklerimizle sıcacık bir mola.",
+      "image": "uploads/instagram-1763101164627-2.png",
+      "display_order": 1
+    },
+    {
+      "id": 3,
+      "caption": "Lezzetli tostlarımız bahçemizde daha keyifli.",
+      "image": "uploads/instagram-1763101164627-3.png",
+      "display_order": 2
+    },
+    {
+      "id": 4,
+      "caption": "Fırından yeni çıkmış kurabiyelerimiz sizi bekliyor.",
+      "image": "uploads/instagram-1763101164627-4.png",
+      "display_order": 3
+    },
+    {
+      "id": 5,
+      "caption": "Kremalı makarnamızla günün yorgunluğunu atın.",
+      "image": "uploads/instagram-1763101164627-5.png",
+      "display_order": 4
+    },
+    {
+      "id": 6,
+      "caption": "Ev yapımı köfte ve püreyle anne eli değmiş gibi.",
+      "image": "uploads/instagram-1763101164627-6.png",
+      "display_order": 5
+    }
+  ]
+}

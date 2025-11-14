@@ -1,0 +1,1427 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zeyl Coffee & Levent Börek - Dijital Menü</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #FF8C00;
+      --primary-dark: #E67E00;
+      --bg-dark: #ffffff;
+      --bg-light: #f8f9fa;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg-dark);
+      color: #2c3e50;
+      min-height: 100vh;
+    }
+
+    .header {
+      text-align: center;
+      padding: 40px 20px 30px 20px;
+      background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+      box-shadow: 0 6px 30px rgba(0, 0, 0, 0.4);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .header::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,140,0,0.1) 0%, transparent 70%);
+      animation: rotate 20s linear infinite;
+    }
+
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .logo-levent-banner {
+      width: 100%;
+      max-width: 400px;
+      height: auto;
+      margin: 0 auto 25px auto;
+      display: block;
+      animation: fadeIn 1s ease;
+      position: relative;
+      z-index: 1;
+      filter: drop-shadow(0 4px 15px rgba(255, 140, 0, 0.3));
+    }
+
+    .logos-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 30px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      position: relative;
+      z-index: 1;
+    }
+
+    .logo-zeyl {
+      width: 220px;
+      height: auto;
+      animation: fadeIn 1s ease 0.3s backwards;
+      filter: drop-shadow(0 4px 15px rgba(255, 140, 0, 0.3));
+    }
+
+    .logo-levent {
+      display: none;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .header h1 {
+      font-size: 32px;
+      font-weight: 900;
+      background: linear-gradient(90deg, var(--primary), #FFA500, #FFD700);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 12px;
+      position: relative;
+      z-index: 1;
+      text-shadow: 0 0 30px rgba(255, 140, 0, 0.5);
+    }
+
+    .header p {
+      font-size: 16px;
+      color: #e0e0e0;
+      font-weight: 500;
+      position: relative;
+      z-index: 1;
+      letter-spacing: 0.5px;
+    }
+
+    .instagram-section {
+      padding: 35px 20px;
+      text-align: center;
+      background: linear-gradient(135deg, #fef9f5 0%, #fff5eb 50%, #fef9f5 100%);
+      border-bottom: 4px solid var(--primary);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .instagram-section::before {
+      content: '📸';
+      position: absolute;
+      font-size: 120px;
+      opacity: 0.05;
+      top: 50%;
+      left: 10%;
+      transform: translateY(-50%) rotate(-15deg);
+      animation: float 6s ease-in-out infinite;
+    }
+
+    .instagram-section::after {
+      content: '📸';
+      position: absolute;
+      font-size: 120px;
+      opacity: 0.05;
+      top: 50%;
+      right: 10%;
+      transform: translateY(-50%) rotate(15deg);
+      animation: float 6s ease-in-out infinite reverse;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(-50%) rotate(-15deg); }
+      50% { transform: translateY(-45%) rotate(-12deg); }
+    }
+
+    .instagram-title {
+      font-size: 24px;
+      font-weight: 900;
+      margin-bottom: 25px;
+      color: #2c3e50;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      position: relative;
+      z-index: 1;
+      animation: colorShift 3s ease-in-out infinite;
+    }
+
+    @keyframes colorShift {
+      0%, 100% { color: #2c3e50; }
+      50% { color: var(--primary); }
+    }
+
+    .instagram-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: nowrap;
+      position: relative;
+      z-index: 1;
+    }
+
+    .instagram-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 18px 36px;
+      background: linear-gradient(135deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+      color: white;
+      text-decoration: none;
+      border-radius: 50px;
+      font-weight: 800;
+      font-size: 17px;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 10px 30px rgba(188, 24, 136, 0.5);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .instagram-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+      transition: left 0.6s;
+    }
+
+    .instagram-btn:hover::before {
+      left: 100%;
+    }
+
+    .instagram-btn:hover {
+      transform: translateY(-10px) scale(1.1) rotate(-2deg);
+      box-shadow: 0 20px 50px rgba(188, 24, 136, 0.7);
+    }
+
+    .instagram-btn:active {
+      transform: translateY(-3px) scale(1.05);
+    }
+
+    .instagram-icon {
+      width: 22px;
+      height: 22px;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+      animation: spin 3s linear infinite;
+    }
+
+    @keyframes spin {
+      0%, 90% { transform: rotate(0deg); }
+      95% { transform: rotate(15deg); }
+      100% { transform: rotate(0deg); }
+    }
+
+    /* Instagram Feed Slider Styles */
+    .instagram-feed-container {
+      margin: 30px 0;
+      padding: 0 20px;
+      max-width: 1200px;
+      margin-left: auto;
+      margin-right: auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .instagram-feed-slider {
+      display: flex;
+      gap: 15px;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      padding: 10px 0 20px 0;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+      scrollbar-color: var(--primary) #f0f0f0;
+    }
+
+    .instagram-feed-slider::-webkit-scrollbar {
+      height: 8px;
+    }
+
+    .instagram-feed-slider::-webkit-scrollbar-track {
+      background: #f0f0f0;
+      border-radius: 10px;
+    }
+
+    .instagram-feed-slider::-webkit-scrollbar-thumb {
+      background: var(--primary);
+      border-radius: 10px;
+    }
+
+    .instagram-post {
+      width: 220px;
+      height: 220px;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      cursor: pointer;
+      position: relative;
+      background: #f0f0f0;
+      flex-shrink: 0;
+    }
+
+
+    .instagram-post:hover {
+      transform: translateY(-5px) scale(1.05);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .instagram-post img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s;
+    }
+
+    .instagram-post:hover img {
+      transform: scale(1.1);
+    }
+
+    .instagram-post-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.7) 100%);
+      opacity: 0;
+      transition: opacity 0.3s;
+      display: flex;
+      align-items: flex-end;
+      padding: 15px;
+    }
+
+    .instagram-post:hover .instagram-post-overlay {
+      opacity: 1;
+    }
+
+    .instagram-post-caption {
+      display: none;
+      color: white;
+      font-size: 13px;
+      line-height: 1.4;
+      max-height: 60px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+    }
+
+    @media (max-width: 768px) {
+
+  /* Haftanın Özelleri - Mobil Küçültme (KESİN UYGULANSIN) */
+  .weekly-section {
+    padding: 20px 0 !important;
+  }
+
+  .weekly-title {
+    font-size: 18px !important;    /* başlık küçülsün */
+    margin-bottom: 10px !important;
+  }
+
+  .weekly-grid {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)) !important;
+    gap: 10px !important;          /* kartlar arası boşluk küçülsün */
+  }
+
+  .weekly-item {
+    padding: 12px !important;      /* kart içi boşluk azalsın */
+    border-radius: 18px !important;
+  }
+
+  .weekly-item-name {
+    font-size: 16px !important;    /* ürün adı küçülsün */
+    margin: 6px 0 !important;
+  }
+
+  .weekly-item-price {
+    font-size: 18px !important;    /* fiyat küçülsün */
+  }
+}
+
+
+
+
+
+
+    .weekly-section {
+      padding: 45px 20px;
+      background: linear-gradient(135deg, #fff8f0 0%, #ffffff 50%, #fff8f0 100%);
+      margin: 0;
+      border-bottom: 4px solid var(--primary);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .weekly-section::before {
+      content: '⭐';
+      position: absolute;
+      font-size: 180px;
+      opacity: 0.03;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(15deg);
+      pointer-events: none;
+      animation: rotate 20s linear infinite;
+    }
+
+    .weekly-title {
+      text-align: center;
+      font-size: 36px;
+      font-weight: 900;
+      margin-bottom: 40px;
+      background: linear-gradient(90deg, var(--primary), #FFA500, #FFD700, var(--primary));
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      position: relative;
+      animation: shimmer 3s ease-in-out infinite;
+    }
+
+    @keyframes shimmer {
+      0% { background-position: 0% center; }
+      50% { background-position: 100% center; }
+      100% { background-position: 0% center; }
+    }
+
+    .weekly-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 25px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .weekly-item {
+      background: linear-gradient(135deg, #ffffff 0%, #fff8f0 100%);
+      border: 3px solid var(--primary);
+      border-radius: 20px;
+      padding: 18px;
+      text-align: center;
+      transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 6px 20px rgba(255, 140, 0, 0.25);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .weekly-item::before {
+      content: '⭐';
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      font-size: 40px;
+      opacity: 0.15;
+      transform: rotate(15deg);
+      animation: twinkle 2s ease-in-out infinite;
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.15; transform: rotate(15deg) scale(1); }
+      50% { opacity: 0.3; transform: rotate(15deg) scale(1.2); }
+    }
+
+    .weekly-item:hover {
+      transform: translateY(-15px) scale(1.05) rotate(-1deg);
+      box-shadow: 0 20px 50px rgba(255, 140, 0, 0.5);
+      border-color: var(--primary-dark);
+    }
+
+    .weekly-item-name {
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 12px;
+      color: #2c3e50;
+    }
+
+    .weekly-item-price {
+      font-size: 26px;
+      font-weight: 900;
+      color: var(--primary);
+      margin-bottom: 12px;
+      text-shadow: 2px 2px 5px rgba(255, 140, 0, 0.3);
+    }
+
+    .weekly-item-desc {
+      font-size: 14px;
+      color: #7f8c8d;
+      line-height: 1.6;
+    }
+
+    /* Kampanyalar Section */
+    .campaigns-section {
+      padding: 45px 20px;
+      background: linear-gradient(135deg, #fff0f5 0%, #ffffff 50%, #fff0f5 100%);
+      margin: 0;
+      border-bottom: 4px solid #e74c3c;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .campaigns-section::before {
+      content: '🔥';
+      position: absolute;
+      font-size: 180px;
+      opacity: 0.03;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(15deg);
+      pointer-events: none;
+      animation: rotate 20s linear infinite;
+    }
+
+    .campaigns-title {
+      text-align: center;
+      font-size: 36px;
+      font-weight: 900;
+      margin-bottom: 40px;
+      background: linear-gradient(90deg, #e74c3c, #c0392b, #e74c3c);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      position: relative;
+      animation: shimmer 3s ease-in-out infinite;
+    }
+
+    .campaigns-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 25px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .campaign-item {
+      background: linear-gradient(135deg, #ffffff 0%, #fff0f5 100%);
+      border: 3px solid #e74c3c;
+      border-radius: 20px;
+      padding: 18px;
+      text-align: center;
+      transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 6px 20px rgba(231, 76, 60, 0.25);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .campaign-item::before {
+      content: '🔥';
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      font-size: 40px;
+      opacity: 0.15;
+      transform: rotate(15deg);
+      animation: twinkle 2s ease-in-out infinite;
+    }
+
+    .campaign-item:hover {
+      transform: translateY(-15px) scale(1.05) rotate(-1deg);
+      box-shadow: 0 20px 50px rgba(231, 76, 60, 0.5);
+      border-color: #c0392b;
+    }
+
+    .campaign-item-name {
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 12px;
+      color: #2c3e50;
+    }
+
+    .campaign-prices {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .campaign-old-price {
+      font-size: 20px;
+      font-weight: 700;
+      color: #95a5a6;
+      text-decoration: line-through;
+      text-decoration-color: #e74c3c;
+      text-decoration-thickness: 2.5px;
+    }
+
+    .campaign-new-price {
+      font-size: 26px;
+      font-weight: 900;
+      color: #e74c3c;
+      text-shadow: 2px 2px 5px rgba(231, 76, 60, 0.3);
+    }
+
+    .campaign-item-desc {
+      font-size: 14px;
+      color: #7f8c8d;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 768px) {
+      .campaigns-section {
+        padding: 20px 0 !important;
+      }
+
+      .campaigns-title {
+        font-size: 18px !important;
+        margin-bottom: 10px !important;
+      }
+
+      .campaigns-grid {
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)) !important;
+        gap: 10px !important;
+      }
+
+      .campaign-item {
+        padding: 12px !important;
+        border-radius: 18px !important;
+      }
+
+      .campaign-item-name {
+        font-size: 16px !important;
+        margin: 6px 0 !important;
+      }
+
+      .campaign-old-price {
+        font-size: 16px !important;
+      }
+
+      .campaign-new-price {
+        font-size: 22px !important;
+      }
+    }
+
+    .categories-nav {
+      background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+      padding: 35px 25px;
+      z-index: 100;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+      border-bottom: 4px solid var(--primary);
+    }
+
+    .categories-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .category-btn {
+      padding: 25px 40px;
+      background: linear-gradient(135deg, #FF8C00 0%, #FFA500 100%);
+      border: none;
+      border-radius: 25px;
+      color: white;
+      font-weight: 900;
+      font-size: 20px;
+      cursor: pointer;
+      transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      text-align: center;
+      box-shadow: 0 8px 25px rgba(255, 140, 0, 0.5);
+      position: relative;
+      overflow: hidden;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .category-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+      transition: left 0.6s;
+    }
+
+    .category-btn:hover::before {
+      left: 100%;
+    }
+
+    .category-btn::after {
+      content: '✨';
+      position: absolute;
+      right: 30px;
+      font-size: 24px;
+      opacity: 0;
+      transition: all 0.3s;
+    }
+
+    .category-btn:hover::after {
+      opacity: 1;
+      right: 20px;
+    }
+
+    .category-btn:nth-child(1) {
+      background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+      box-shadow: 0 8px 25px rgba(255, 107, 107, 0.5);
+    }
+
+    .category-btn:nth-child(2) {
+      background: linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%);
+      box-shadow: 0 8px 25px rgba(78, 205, 196, 0.5);
+    }
+
+    .category-btn:nth-child(3) {
+      background: linear-gradient(135deg, #A8E6CF 0%, #56AB2F 100%);
+      box-shadow: 0 8px 25px rgba(168, 230, 207, 0.5);
+    }
+
+    .category-btn:nth-child(4) {
+      background: linear-gradient(135deg, #FFD93D 0%, #FF8C00 100%);
+      box-shadow: 0 8px 25px rgba(255, 217, 61, 0.5);
+    }
+
+    .category-btn:nth-child(5) {
+      background: linear-gradient(135deg, #A18CD1 0%, #FBC2EB 100%);
+      box-shadow: 0 8px 25px rgba(161, 140, 209, 0.5);
+    }
+
+    .category-btn:nth-child(6) {
+      background: linear-gradient(135deg, #FD79A8 0%, #E056FD 100%);
+      box-shadow: 0 8px 25px rgba(253, 121, 168, 0.5);
+    }
+
+    .category-btn:nth-child(7) {
+      background: linear-gradient(135deg, #FAD961 0%, #F76B1C 100%);
+      box-shadow: 0 8px 25px rgba(250, 217, 97, 0.5);
+    }
+
+    .category-btn:nth-child(8) {
+      background: linear-gradient(135deg, #6A11CB 0%, #2575FC 100%);
+      box-shadow: 0 8px 25px rgba(106, 17, 203, 0.5);
+    }
+
+    .category-btn:nth-child(9) {
+      background: linear-gradient(135deg, #FF5F6D 0%, #FFC371 100%);
+      box-shadow: 0 8px 25px rgba(255, 95, 109, 0.5);
+    }
+
+    .category-btn:nth-child(10) {
+      background: linear-gradient(135deg, #2AF598 0%, #009EFD 100%);
+      box-shadow: 0 8px 25px rgba(42, 245, 152, 0.5);
+    }
+
+    .category-btn:nth-child(n+11) {
+      background: linear-gradient(135deg, #FA709A 0%, #FEE140 100%);
+      box-shadow: 0 8px 25px rgba(250, 112, 154, 0.5);
+    }
+
+    .category-btn:hover {
+      transform: scale(1.08) translateY(-5px);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    .category-btn.active {
+      transform: scale(1.08) translateY(-5px);
+      box-shadow: 0 0 40px rgba(255, 140, 0, 0.9);
+      animation: pulse-glow 1.5s infinite;
+    }
+
+    .category-btn.active::after {
+      opacity: 1;
+      right: 20px;
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 30px rgba(255, 140, 0, 0.8); }
+      50% { box-shadow: 0 0 50px rgba(255, 140, 0, 1); }
+    }
+
+    .menu-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 35px 20px;
+      background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    }
+
+    .category-section {
+      margin-bottom: 50px;
+      animation: slideIn 0.5s ease;
+      background: white;
+      padding: 35px;
+      border-radius: 25px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+      border: 3px solid #e9ecef;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .category-title {
+      font-size: 32px;
+      font-weight: 900;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 5px solid var(--primary);
+      background: linear-gradient(90deg, var(--primary), #FFA500);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .items-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 18px;
+    }
+
+    .menu-item {
+      background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
+      padding: 16px;
+      border-radius: 18px;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      border: 3px solid #e9ecef;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .menu-item::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), #FFA500, #FFD700);
+      transform: scaleX(0);
+      transition: transform 0.4s;
+    }
+
+    .menu-item:hover::before {
+      transform: scaleX(1);
+    }
+
+    .menu-item:hover {
+      border-color: var(--primary);
+      transform: translateY(-8px) scale(1.03);
+      box-shadow: 0 15px 40px rgba(255, 140, 0, 0.3);
+    }
+
+    .item-image {
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 12px;
+      margin-bottom: 12px;
+      transition: transform 0.3s;
+    }
+
+    .menu-item:hover .item-image {
+      transform: scale(1.05);
+    }
+
+    .item-name {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: #2c3e50;
+      line-height: 1.3;
+    }
+
+    .item-description {
+      font-size: 12px;
+      color: #7f8c8d;
+      margin-bottom: 8px;
+      line-height: 1.4;
+      min-height: 32px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .item-price {
+      font-size: 19px;
+      font-weight: 900;
+      color: var(--primary);
+      text-shadow: 1px 1px 2px rgba(255, 140, 0, 0.2);
+    }
+
+    .back-to-menu {
+      position: fixed;
+      right: 25px;
+      bottom: 25px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 18px 30px;
+      font-size: 17px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 8px 30px rgba(255, 140, 0, 0.6);
+      transition: all 0.3s ease;
+      z-index: 1000;
+      display: none;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .back-to-menu:hover {
+      transform: scale(1.15) rotate(-5deg);
+      box-shadow: 0 12px 40px rgba(255, 140, 0, 0.8);
+    }
+
+    .back-to-menu.show {
+      display: block;
+      animation: bounceIn 0.5s;
+    }
+
+    @keyframes bounceIn {
+      0% { transform: scale(0); }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .footer {
+      background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+      color: #e0e0e0;
+      padding: 45px 20px 35px 20px;
+      text-align: center;
+      border-top: 4px solid var(--primary);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .footer::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,140,0,0.08) 0%, transparent 70%);
+      animation: rotate 20s linear infinite;
+    }
+
+    .footer-logos {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 40px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+      position: relative;
+      z-index: 1;
+    }
+
+    .footer-logo.zeyl {
+      width: 220px;
+      height: auto;
+      filter: brightness(0.9) drop-shadow(0 4px 15px rgba(255, 140, 0, 0.3));
+      transition: all 0.4s ease;
+    }
+
+    .footer-logo.levent {
+      width: 180px;
+      height: auto;
+      filter: brightness(0.9) drop-shadow(0 4px 15px rgba(255, 140, 0, 0.3));
+      transition: all 0.4s ease;
+    }
+
+    .footer-logo:hover {
+      transform: scale(1.15) rotate(5deg);
+      filter: brightness(1.2) drop-shadow(0 8px 20px rgba(255, 140, 0, 0.5));
+    }
+
+    @media (max-width: 768px) {
+      .footer-logos {
+        gap: 20px;
+      }
+
+      .footer-logo.zeyl {
+        width: 180px;
+      }
+
+      .footer-logo.levent {
+        width: 160px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .footer-logos {
+        gap: 15px;
+      }
+
+      .footer-logo.zeyl {
+        width: 140px;
+      }
+
+      .footer-logo.levent {
+        width: 130px;
+      }
+    }
+
+    .footer-address {
+      font-size: 17px;
+      line-height: 2;
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 1;
+      color: #d0d0d0;
+    }
+
+    .footer-address strong {
+      color: var(--primary);
+      font-size: 20px;
+      display: block;
+      margin-bottom: 15px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .footer-divider {
+      width: 80px;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), #FFA500, var(--primary));
+      margin: 25px auto;
+      border-radius: 5px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .footer-copyright {
+      font-size: 14px;
+      color: #999;
+      margin-top: 25px;
+      position: relative;
+      z-index: 1;
+    }
+
+    @media (max-width: 768px) {
+      .header h1 {
+        font-size: 26px;
+      }
+
+      .logo-zeyl {
+        width: 180px;
+      }
+
+      .logo-levent-banner {
+        max-width: 320px;
+      }
+
+      .category-btn {
+        font-size: 17px;
+        padding: 20px 30px;
+      }
+
+      .items-grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 14px;
+      }
+
+      .weekly-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .instagram-btn {
+        padding: 15px 28px;
+        font-size: 15px;
+      }
+
+      .footer-logo {
+        width: 100px;
+      }
+
+      .weekly-title {
+        font-size: 28px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logos-container">
+      <img src="/zeyl_cafe_logo.png" alt="Zeyl Coffee" class="logo-zeyl">
+    </div>
+    <img src="/levent-logo-banner.png" alt="Levent Börek" class="logo-levent-banner">
+    <h1>Dijital Menümüz</h1>
+    <p>Lezzetin Adresi - 1968'den Beri Kalite</p>
+  </div>
+
+  <div class="instagram-section">
+    <div class="instagram-title">📸 Bizi Instagram'dan Takip Edin 📸</div>
+    
+    <!-- Instagram Feed Slider -->
+    <div class="instagram-feed-container">
+      <div class="instagram-feed-slider" id="instagramSlider">
+        <!-- Instagram görselleri buraya dinamik olarak yüklenecek -->
+      </div>
+    </div>
+    
+    <div class="instagram-buttons">
+      <a href="https://www.instagram.com/leventborekafyon/" target="_blank" class="instagram-btn">
+        <svg class="instagram-icon" viewBox="0 0 24 24" fill="white">
+          <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+        </svg>
+        Levent Börek
+      </a>
+      <a href="https://www.instagram.com/zeylcafe/" target="_blank" class="instagram-btn">
+        <svg class="instagram-icon" viewBox="0 0 24 24" fill="white">
+          <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+        </svg>
+        Zeyl Coffee
+      </a>
+    </div>
+  </div>
+
+  <div class="categories-nav" id="categoriesNav">
+    <div class="categories-grid">
+      <% menuData.forEach(data => { %>
+        <button class="category-btn" 
+                data-category-id="<%= data.category.id %>" 
+                onclick="scrollToCategory(<%= data.category.id %>)">
+          <%= data.category.name %>
+        </button>
+      <% }); %>
+    </div>
+  </div>
+
+  <% if (weeklySpecials && weeklySpecials.length > 0) { %>
+  <div class="weekly-section" id="weeklySection">
+    <div class="weekly-title">⭐ HAFTANIN ÖZELLERİ ⭐</div>
+    <div class="weekly-grid">
+      <% weeklySpecials.forEach(special => { %>
+        <div class="weekly-item">
+          <% if (special.image) { %>
+            <div style="text-align: center; margin-bottom: 10px;">
+              <img src="/<%= special.image %>" alt="<%= special.name %>" style="width: 100%; max-width: 220px; height: auto; border-radius: 10px; box-shadow: 0 3px 12px rgba(0,0,0,0.18);">
+            </div>
+          <% } %>
+          <div class="weekly-item-name"><%= special.name %></div>
+          <% if (special.price) { %>
+            <div class="weekly-item-price"><%= special.price %>₺</div>
+          <% } %>
+          <% if (special.description) { %>
+            <div class="weekly-item-desc"><%= special.description %></div>
+          <% } %>
+        </div>
+      <% }); %>
+    </div>
+  </div>
+  <% } %>
+
+  <% if (campaigns && campaigns.length > 0) { %>
+  <div class="campaigns-section" id="campaignsSection">
+    <div class="campaigns-title">🔥 KAMPANYALAR 🔥</div>
+    <div class="campaigns-grid">
+      <% campaigns.forEach(campaign => { %>
+        <div class="campaign-item">
+          <% if (campaign.image) { %>
+            <div style="text-align: center; margin-bottom: 10px;">
+              <img src="/<%= campaign.image %>" alt="<%= campaign.name %>" style="width: 100%; max-width: 220px; height: auto; border-radius: 10px; box-shadow: 0 3px 12px rgba(0,0,0,0.18);">
+            </div>
+          <% } %>
+          <div class="campaign-item-name"><%= campaign.name %></div>
+          <div class="campaign-prices">
+            <% if (campaign.old_price) { %>
+              <span class="campaign-old-price"><%= campaign.old_price %>₺</span>
+            <% } %>
+            <% if (campaign.new_price) { %>
+              <span class="campaign-new-price"><%= campaign.new_price %>₺</span>
+            <% } %>
+          </div>
+          <% if (campaign.description) { %>
+            <div class="campaign-item-desc"><%= campaign.description %></div>
+          <% } %>
+        </div>
+      <% }); %>
+    </div>
+  </div>
+  <% } %>
+
+  <div class="menu-container" id="menuContainer">
+    <% menuData.forEach(data => { %>
+      <% if (data.items.length > 0) { %>
+        <div class="category-section hidden" id="category-<%= data.category.id %>" data-category="<%= data.category.id %>">
+          <h2 class="category-title"><%= data.category.name %></h2>
+          <div class="items-grid">
+            <% data.items.forEach(item => { %>
+              <div class="menu-item">
+                <% if (item.image) { %>
+                  <img src="/<%= item.image %>" alt="<%= item.name %>" class="item-image">
+                <% } %>
+                <div class="item-name"><%= item.name %></div>
+                <% if (item.description) { %>
+                  <div class="item-description"><%= item.description %></div>
+                <% } else { %>
+                  <div class="item-description"></div>
+                <% } %>
+                <% if (item.price) { %>
+                  <div class="item-price"><%= item.price %>₺</div>
+                <% } %>
+              </div>
+            <% }); %>
+          </div>
+        </div>
+      <% } %>
+    <% }); %>
+  </div>
+
+  <button class="back-to-menu" id="backToMenu" onclick="backToMenu()">
+    ↑ Ana Menü
+  </button>
+
+  <footer class="footer">
+    <div class="footer-logos">
+      <img src="/zeyl_cafe_logo.png" alt="Zeyl Coffee" class="footer-logo zeyl">
+      <img src="/levent-logo-banner.png" alt="Levent Börek" class="footer-logo levent">
+    </div>
+    <div class="footer-divider"></div>
+    <div class="footer-address">
+      <strong>📍 Adresimiz</strong>
+      Selçuklu Mahallesi / 1430. Sokak<br>
+      A Blok / No: 2/A<br>
+      03032 Afyonkarahisar
+    </div>
+    <div class="footer-divider"></div>
+    <div class="footer-copyright">
+      © 2025 Zeyl Coffee & Levent Börek - Tüm Hakları Saklıdır
+    </div>
+  </footer>
+
+  <script>
+    let currentCategory = null;
+    const categorySections = document.querySelectorAll('.category-section');
+    const backBtn = document.getElementById('backToMenu');
+    const weeklySection = document.getElementById('weeklySection');
+    const campaignsSection = document.getElementById('campaignsSection');
+    const categoriesNav = document.getElementById('categoriesNav');
+    const menuContainer = document.getElementById('menuContainer');
+
+    function scrollToCategory(categoryId) {
+      currentCategory = categoryId;
+      
+      // İstatistik kaydet
+      const categoryElement = document.querySelector(`[data-category-id="${categoryId}"]`);
+      const categoryName = categoryElement ? categoryElement.textContent.trim() : 'Bilinmeyen';
+      
+      fetch('/api/track-click', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          categoryId: categoryId,
+          categoryName: categoryName
+        })
+      }).catch(err => console.error('İstatistik kaydedilemedi:', err));
+      
+      // Tüm kategorileri gizle
+      categorySections.forEach(section => {
+        section.classList.add('hidden');
+      });
+
+      // Sadece seçili kategoriyi göster
+      const targetSection = document.getElementById('category-' + categoryId);
+      if (targetSection) {
+        targetSection.classList.remove('hidden');
+      }
+
+      // Weekly section'ı gizle
+      if (weeklySection) {
+        weeklySection.classList.add('hidden');
+      }
+
+      // Campaigns section'ı gizle
+      if (campaignsSection) {
+        campaignsSection.classList.add('hidden');
+      }
+
+      // Ana menüye dön butonunu göster
+      backBtn.classList.add('show');
+
+      // Menü container'a scroll
+      setTimeout(() => {
+        menuContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    }
+
+    function backToMenu() {
+      currentCategory = null;
+      
+      // Tüm kategori bölümlerini gizle
+      categorySections.forEach(section => {
+        section.classList.add('hidden');
+      });
+
+      // Weekly section'ı göster
+      if (weeklySection) {
+        weeklySection.classList.remove('hidden');
+      }
+
+      // Campaigns section'ı göster
+      if (campaignsSection) {
+        campaignsSection.classList.remove('hidden');
+      }
+
+      // Ana menüye dön butonunu gizle
+      backBtn.classList.remove('show');
+
+      // Kategori butonlarına scroll
+      categoriesNav.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // Aktif kategori vurgusu
+    const categoryButtons = document.querySelectorAll('.category-btn');
+    categoryButtons.forEach(btn => {
+      btn.addEventListener('click', function() {
+        categoryButtons.forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+  
+    // Sayfa yüklenince tüm kategorileri gizle, sadece weekly ve campaigns göster
+    window.addEventListener('DOMContentLoaded', function() {
+      categorySections.forEach(section => {
+        section.classList.add('hidden');
+      });
+      
+      if (weeklySection) {
+        weeklySection.classList.remove('hidden');
+      }
+      
+      if (campaignsSection) {
+        campaignsSection.classList.remove('hidden');
+      }
+      
+      if (backBtn) {
+        backBtn.classList.remove('show');
+      }
+      
+      categoryButtons.forEach(btn => {
+        btn.classList.remove('active');
+      });
+    });
+
+    // Instagram Feed - Zeyl Coffee
+    const instagramPosts = (<%- JSON.stringify(instagramPosts || []) %>).map(post => ({
+      image: '/' + (post.image || ''),
+      caption: post.caption || '',
+      link: 'https://www.instagram.com/zeylcafe/'
+    }));
+
+    // Instagram slider'ı oluştur
+    function createInstagramSlider() {
+      const sliderContainer = document.getElementById('instagramSlider');
+      if (!sliderContainer) return;
+
+      // Postları karıştır ve slider'a ekle
+      const shuffledPosts = instagramPosts.sort(() => 0.5 - Math.random());
+      
+      shuffledPosts.forEach((post, index) => {
+        const postElement = document.createElement('div');
+        postElement.className = 'instagram-post';
+        postElement.innerHTML = `
+          <img src="${post.image}" alt="Instagram Post ${index + 1}" loading="lazy">
+        `;
+        
+        postElement.addEventListener('click', () => {
+          window.open(post.link, '_blank');
+        });
+        
+        sliderContainer.appendChild(postElement);
+      });
+
+      // Otomatik kaydırma
+      let scrollInterval;
+      let scrollDirection = 1;
+      
+      
+      function startAutoScroll() {
+        // Mobilde otomatik kaydırma olmasın
+        if (window.innerWidth <= 768) {
+          if (scrollInterval) {
+            clearInterval(scrollInterval);
+            scrollInterval = null;
+          }
+          return;
+        }
+
+        // Masaüstünde otomatik kaydırmayı yeniden başlat
+        if (scrollInterval) {
+          clearInterval(scrollInterval);
+        }
+
+        const maxScroll = sliderContainer.scrollWidth - sliderContainer.clientWidth;
+        if (maxScroll <= 0) return;
+
+        scrollInterval = setInterval(() => {
+          const currentScroll = sliderContainer.scrollLeft;
+
+          if (currentScroll >= maxScroll - 1) {
+            scrollDirection = -1;
+          } else if (currentScroll <= 0) {
+            scrollDirection = 1;
+          }
+
+          sliderContainer.scrollLeft += scrollDirection * 2;
+        }, 50);
+      }
+
+function stopAutoScroll() {
+        clearInterval(scrollInterval);
+      }
+      
+      // Mouse üzerine gelince dur, ayrılınca devam et
+      sliderContainer.addEventListener('mouseenter', stopAutoScroll);
+      sliderContainer.addEventListener('mouseleave', startAutoScroll);
+      
+      // Sayfa yüklenince otomatik kaydırmayı başlat
+      setTimeout(startAutoScroll, 2000);
+    }
+
+    // Instagram slider'ı başlat
+    createInstagramSlider();
+  </script>
+</body>
+</html>

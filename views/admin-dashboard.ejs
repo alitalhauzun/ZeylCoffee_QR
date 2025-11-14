@@ -1,0 +1,1598 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel - Zeyl Coffee</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f6fa;
+      min-height: 100vh;
+    }
+
+    .navbar {
+      background: linear-gradient(135deg, #2c3e50, #34495e);
+      color: white;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .navbar-title {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .navbar-actions {
+      display: flex;
+      gap: 15px;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+
+    .btn-primary {
+      background: #3498db;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #2980b9;
+    }
+
+    .btn-success {
+      background: #2ecc71;
+      color: white;
+    }
+
+    .btn-success:hover {
+      background: #27ae60;
+    }
+
+    .btn-danger {
+      background: #e74c3c;
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background: #c0392b;
+    }
+
+    .btn-warning {
+      background: #f39c12;
+      color: white;
+    }
+
+    .btn-warning:hover {
+      background: #e67e22;
+    }
+
+    .btn-small {
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+
+    .section {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      margin-bottom: 30px;
+    }
+
+    .section-title {
+      font-size: 22px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      color: #2c3e50;
+      border-bottom: 3px solid #3498db;
+      padding-bottom: 10px;
+    }
+
+    .weekly-specials {
+      display: grid;
+      gap: 15px;
+    }
+
+    .weekly-item {
+      display: grid;
+      grid-template-columns: 2fr 1fr 3fr auto auto;
+      gap: 15px;
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      align-items: center;
+    }
+
+    .category-section {
+      margin-bottom: 40px;
+    }
+
+    .category-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 20px;
+      background: linear-gradient(135deg, #3498db, #2980b9);
+      color: white;
+      border-radius: 10px;
+      margin-bottom: 15px;
+    }
+
+    .category-name {
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .menu-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .menu-table th {
+      background: #34495e;
+      color: white;
+      padding: 12px;
+      text-align: left;
+      font-weight: 600;
+    }
+
+    .menu-table td {
+      padding: 12px;
+      border-bottom: 1px solid #ecf0f1;
+    }
+
+    .menu-table tr:hover {
+      background: #f8f9fa;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    textarea {
+      width: 100%;
+      padding: 8px 12px;
+      border: 2px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: all 0.3s;
+    }
+
+    input[type="text"]:focus,
+    input[type="number"]:focus,
+    textarea:focus {
+      border-color: #3498db;
+      outline: none;
+    }
+
+    textarea {
+      min-height: 60px;
+      resize: vertical;
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 24px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 24px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: #2ecc71;
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(26px);
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+    }
+
+    .modal-content {
+      background-color: white;
+      margin: 5% auto;
+      padding: 30px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 500px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+
+    .modal-header {
+      font-size: 22px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      color: #2c3e50;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #34495e;
+    }
+
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .close:hover {
+      color: #000;
+    }
+
+    @media (max-width: 768px) {
+      .weekly-item {
+        grid-template-columns: 1fr;
+      }
+
+      .menu-table {
+        font-size: 12px;
+      }
+
+      .btn {
+        padding: 8px 15px;
+        font-size: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="navbar">
+    <div class="navbar-title">🎉 Zeyl Coffee Admin Panel</div>
+    <div class="navbar-actions">
+      <button class="btn btn-warning" onclick="openPasswordModal()">🔑 Şifre Değiştir</button>
+      <button class="btn btn-danger" onclick="location.href='/admin/logout'">🚪 Çıkış</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- İstatistikler Section -->
+    <div class="section">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+        <div class="section-title" style="margin: 0;">📊 Kategori Tıklama İstatistikleri</div>
+        <div style="display: flex; gap: 10px;">
+          <button class="btn btn-success" onclick="exportStatistics()">📥 Excel'e Aktar</button>
+          <button class="btn btn-danger" onclick="resetStatistics()">🔄 İstatistikleri Sıfırla</button>
+        </div>
+      </div>
+
+      <div id="statisticsContainer" style="margin-top: 20px;">
+        <p style="text-align: center; color: #7f8c8d;">Yükleniyor...</p>
+      </div>
+    </div>
+
+    <!-- Haftanın Ürünleri Section -->
+    <div class="section">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <div class="section-title" style="margin: 0;">⭐ Haftanın Ürünleri</div>
+        <button class="btn btn-success" onclick="openWeeklyModal()">➕ Yeni Ürün Ekle</button>
+      </div>
+
+      <% if (weeklySpecials.length === 0) { %>
+        <p style="color: #7f8c8d; text-align: center; padding: 20px;">Henüz haftanın ürünü eklenmemiş.</p>
+      <% } else { %>
+        <div class="weekly-specials">
+          <% weeklySpecials.forEach(special => { %>
+            <div class="weekly-item">
+              <% if (special.image) { %>
+                <div style="text-align: center; margin-bottom: 10px;">
+                  <img src="/<%= special.image %>" alt="<%= special.name %>" style="max-width: 150px; max-height: 150px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                </div>
+              <% } %>
+              <input type="text" value="<%= special.name %>" onchange="updateWeeklySpecial(<%= special.id %>, 'name', this.value)">
+              <input type="number" step="0.01" placeholder="Fiyat (₺)" value="<%= special.price || '' %>" onchange="updateWeeklySpecial(<%= special.id %>, 'price', this.value)">
+              <textarea placeholder="Açıklama" onchange="updateWeeklySpecial(<%= special.id %>, 'description', this.value)"><%= special.description || '' %></textarea>
+              <div style="display: flex; gap: 5px; flex-wrap: wrap;">
+                <button class="btn btn-primary btn-small" onclick="openWeeklyImageUpload(<%= special.id %>)">📷 Resim</button>
+                <% if (special.image) { %>
+                  <button class="btn btn-warning btn-small" onclick="deleteWeeklyImage(<%= special.id %>)">🗑️ Resim Sil</button>
+                <% } %>
+                <button class="btn btn-success btn-small" onclick="updateWeeklySpecial(<%= special.id %>)">💾 Kaydet</button>
+                <button class="btn btn-danger btn-small" onclick="deleteWeeklySpecial(<%= special.id %>)">🗑️ Ürünü Sil</button>
+              </div>
+            </div>
+          <% }); %>
+        </div>
+      <% } %>
+    </div>
+
+
+    <!-- Kampanyalar Section -->
+    <div class="section">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <div class="section-title" style="margin: 0;">🔥 Kampanyalar</div>
+        <button class="btn btn-success" onclick="openCampaignModal()">➕ Yeni Kampanya Ekle</button>
+      </div>
+
+      <% if (campaigns.length === 0) { %>
+        <p style="color: #7f8c8d; text-align: center; padding: 20px;">Henüz kampanya eklenmemiş.</p>
+      <% } else { %>
+        <div class="weekly-specials">
+          <% campaigns.forEach(campaign => { %>
+            <div class="weekly-item">
+              <% if (campaign.image) { %>
+                <div style="text-align: center; margin-bottom: 10px;">
+                  <img src="/<%= campaign.image %>" alt="<%= campaign.name %>" style="max-width: 150px; max-height: 150px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                </div>
+              <% } %>
+              <input type="text" value="<%= campaign.name %>" onchange="updateCampaign(<%= campaign.id %>, 'name', this.value)">
+              <input type="number" step="0.01" placeholder="Eski Fiyat (₺)" value="<%= campaign.old_price || '' %>" onchange="updateCampaign(<%= campaign.id %>, 'old_price', this.value)">
+              <input type="number" step="0.01" placeholder="Yeni Fiyat (₺)" value="<%= campaign.new_price || '' %>" onchange="updateCampaign(<%= campaign.id %>, 'new_price', this.value)">
+              <textarea placeholder="Açıklama" onchange="updateCampaign(<%= campaign.id %>, 'description', this.value)"><%= campaign.description || '' %></textarea>
+              <div style="display: flex; gap: 5px; flex-wrap: wrap;">
+                <button class="btn btn-primary btn-small" onclick="openCampaignImageUpload(<%= campaign.id %>)">📷 Resim</button>
+                <% if (campaign.image) { %>
+                  <button class="btn btn-warning btn-small" onclick="deleteCampaignImage(<%= campaign.id %>)">🗑️ Resim Sil</button>
+                <% } %>
+                <button class="btn btn-success btn-small" onclick="updateCampaign(<%= campaign.id %>)">💾 Kaydet</button>
+                <button class="btn btn-danger btn-small" onclick="deleteCampaign(<%= campaign.id %>)">🗑️ Kampanyayı Sil</button>
+              </div>
+            </div>
+          <% }); %>
+        </div>
+      <% } %>
+    </div>
+
+
+    <!-- Instagram Fotoğrafları Section -->
+    <div class="section">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <div class="section-title" style="margin: 0;">📸 Instagram Fotoğrafları</div>
+        <button class="btn btn-success" onclick="openInstagramModal()">➕ Yeni Fotoğraf Kartı</button>
+      </div>
+
+      <% if (!instagramPosts || instagramPosts.length === 0) { %>
+        <p style="color: #7f8c8d; text-align: center; padding: 20px;">Henüz Instagram fotoğrafı eklenmemiş.</p>
+      <% } else { %>
+        <div class="weekly-specials">
+          <% instagramPosts.forEach(post => { %>
+            <div class="weekly-item">
+              <% if (post.image) { %>
+                <div style="text-align: center; margin-bottom: 10px;">
+                  <img src="/<%= post.image %>" alt="Instagram Fotoğrafı" style="max-width: 100%; max-height: 180px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                </div>
+              <% } %>
+              <textarea placeholder="Açıklama" onchange="updateInstagramPost(<%= post.id %>, this.value)"><%= post.caption || '' %></textarea>
+              <div style="display: flex; gap: 5px; flex-wrap: wrap; margin-top: 8px;">
+                <button class="btn btn-primary btn-small" onclick="openInstagramImageUpload(<%= post.id %>)">📷 Resim</button>
+                <% if (post.image) { %>
+                  <button class="btn btn-warning btn-small" onclick="deleteInstagramImage(<%= post.id %>)">🗑️ Resim Sil</button>
+                <% } %>
+                <button class="btn btn-danger btn-small" onclick="deleteInstagramPost(<%= post.id %>)">🗑️ Kartı Sil</button>
+              </div>
+            </div>
+          <% }); %>
+        </div>
+      <% } %>
+    </div>
+
+<!-- Kategoriler ve Menü Section -->
+    <div class="section">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <div class="section-title" style="margin: 0;">📋 Menü Kategorileri</div>
+        <button class="btn btn-success" onclick="openCategoryModal()">➕ Yeni Kategori</button>
+      </div>
+
+      <% menuData.forEach((data, index) => { %>
+        <div class="category-section">
+          <div class="category-header">
+            <span class="category-name"><%= data.category.name %></span>
+            <div style="display: flex; gap: 10px;">
+              <% if (index > 0) { %>
+              <button class="btn btn-primary btn-small" onclick="reorderCategory(<%= data.category.id %>, 'up')">↑</button>
+              <% } %>
+              <% if (index < menuData.length - 1) { %>
+              <button class="btn btn-primary btn-small" onclick="reorderCategory(<%= data.category.id %>, 'down')">↓</button>
+              <% } %>
+              <button class="btn btn-warning btn-small" onclick="openAddItemModal(<%= data.category.id %>)">➕ Yeni Ürün Ekle</button>
+              <button class="btn btn-danger btn-small" onclick="deleteCategory(<%= data.category.id %>)">🗑️ Kategoriyi Sil</button>
+            </div>
+          </div>
+
+          <table class="menu-table">
+            <thead>
+              <tr>
+                <th style="width: 8%;">Resim</th>
+                <th style="width: 25%;">Ürün Adı</th>
+                <th style="width: 12%;">Fiyat (₺)</th>
+                <th style="width: 25%;">Açıklama</th>
+                <th style="width: 8%;">Durum</th>
+                <th style="width: 22%;">İşlemler</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (data.items.length === 0) { %>
+                <tr>
+                  <td colspan="6" style="text-align: center; color: #7f8c8d;">Bu kategoride ürün bulunmuyor.</td>
+                </tr>
+              <% } else { %>
+                <% data.items.forEach(item => { %>
+                  <tr id="item-<%= item.id %>">
+                    <td style="text-align: center;">
+                      <% if (item.image) { %>
+                        <img src="/<%= item.image %>" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px; display: block; margin: 0 auto;">
+                      <% } else { %>
+                        <div style="width: 60px; height: 60px; background: #f0f0f0; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin: 0 auto; color: #999; font-size: 20px;">📷</div>
+                      <% } %>
+                    </td>
+                    <td>
+                      <input type="text" value="<%= item.name %>" 
+                             onblur="updateItem(<%= item.id %>, 'name', this.value)">
+                    </td>
+                    <td>
+                      <input type="number" step="0.01" value="<%= item.price || '' %>" 
+                             id="price-<%= item.id %>" 
+                             placeholder="Fiyat">
+                    </td>
+                    <td>
+                      <textarea onblur="updateItem(<%= item.id %>, 'description', this.value)" 
+                                placeholder="Ürün açıklaması"><%= item.description || '' %></textarea>
+                    </td>
+                    <td>
+                      <label class="switch">
+                        <input type="checkbox" <%= item.is_available ? 'checked' : '' %>
+                               onchange="updateItem(<%= item.id %>, 'is_available', this.checked)">
+                        <span class="slider"></span>
+                      </label>
+                    </td>
+                    <td>
+                      <div style="display: flex; gap: 5px; flex-wrap: wrap;">
+                        <button class="btn btn-primary btn-small" onclick="openImageUpload(<%= item.id %>)">📷 Resim</button>
+                        <% if (item.image) { %>
+                          <button class="btn btn-warning btn-small" onclick="deleteItemImage(<%= item.id %>)">🗑️ Resim Sil</button>
+                        <% } %>
+                        <button class="btn btn-success btn-small" onclick="saveItemPrice(<%= item.id %>)">💾 Fiyat Kaydet</button>
+                        <button class="btn btn-danger btn-small" onclick="deleteItem(<%= item.id %>)">🗑️ Sil</button>
+                      </div>
+                    </td>
+                  </tr>
+                <% }); %>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      <% }); %>
+    </div>
+  </div>
+
+  <!-- Yeni Kategori Modal -->
+  <div id="categoryModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeCategoryModal()">&times;</span>
+      <div class="modal-header">➕ Yeni Kategori Ekle</div>
+      <div class="form-group">
+        <label>Kategori Adı</label>
+        <input type="text" id="categoryName" placeholder="Örn: Tatlılar">
+      </div>
+      <button class="btn btn-success" style="width: 100%;" onclick="addCategory()">Kategori Ekle</button>
+    </div>
+  </div>
+
+  <!-- Yeni Ürün Modal -->
+  <div id="itemModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeItemModal()">&times;</span>
+      <div class="modal-header">➕ Yeni Ürün Ekle</div>
+      <input type="hidden" id="itemCategoryId">
+      <div class="form-group">
+        <label>Ürün Adı</label>
+        <input type="text" id="itemName" placeholder="Örn: Türk Kahvesi">
+      </div>
+      <div class="form-group">
+        <label>Fiyat (₺) - İsteğe Bağlı</label>
+        <input type="number" step="0.01" id="itemPrice" placeholder="Örn: 65">
+      </div>
+      <div class="form-group">
+        <label>Açıklama - İsteğe Bağlı</label>
+        <textarea id="itemDescription" placeholder="Ürün hakkında kısa açıklama"></textarea>
+      </div>
+      <button class="btn btn-success" style="width: 100%;" onclick="addItem()">Ürün Ekle</button>
+    </div>
+  </div>
+
+
+  <!-- Instagram Fotoğraf Kartı Modal -->
+  <div id="instagramModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeInstagramModal()">&times;</span>
+      <div class="modal-header">📸 Yeni Instagram Fotoğraf Kartı</div>
+      <div class="form-group">
+        <label>Açıklama (İsteğe Bağlı)</label>
+        <textarea id="instagramCaption" placeholder="Örn: Zengin kahvaltımızla güne başlayın."></textarea>
+      </div>
+      <button class="btn btn-success" style="width: 100%;" onclick="addInstagramPost()">Kart Ekle</button>
+    </div>
+  </div>
+
+  <!-- Instagram Fotoğrafı Resim Yükleme Modal -->
+  <div id="instagramImageModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeInstagramImageModal()">&times;</span>
+      <div class="modal-header">📷 Instagram Fotoğrafı Yükle</div>
+      <input type="hidden" id="instagramImagePostId">
+      <div class="form-group">
+        <label>Resim Seç (Max 5MB - jpg, jpeg, png, gif, webp)</label>
+        <input type="file" id="instagramImageFile" accept="image/*" style="padding: 10px; border: 2px dashed #3498db; border-radius: 8px; background: #f8f9fa;">
+      </div>
+      <div id="instagramImagePreview" style="margin: 15px 0; text-align: center; display: none;">
+        <img id="instagramPreviewImg" style="max-width: 100%; max-height: 300px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+      </div>
+      <button class="btn btn-success" style="width: 100%;" onclick="uploadInstagramImage()">📤 Resmi Yükle</button>
+    </div>
+  </div>
+
+<!-- Haftanın Ürünü Modal -->
+  <div id="weeklyModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeWeeklyModal()">&times;</span>
+      <div class="modal-header">⭐ Haftanın Ürünü Ekle</div>
+      <div class="form-group">
+        <label>Ürün Adı</label>
+        <input type="text" id="weeklyName" placeholder="Örn: Özel Cheesecake">
+      </div>
+      <div class="form-group">
+        <label>Fiyat (₺) - İsteğe Bağlı</label>
+        <input type="number" step="0.01" id="weeklyPrice" placeholder="Örn: 85">
+      </div>
+      <div class="form-group">
+        <label>Açıklama - İsteğe Bağlı</label>
+        <textarea id="weeklyDescription" placeholder="Bu haftaya özel..."></textarea>
+      </div>
+      <button class="btn btn-success" style="width: 100%;" onclick="addWeeklySpecial()">Ürün Ekle</button>
+    </div>
+  </div>
+
+  <!-- Kampanya Ekle Modal -->
+  <div id="campaignModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeCampaignModal()">&times;</span>
+      <div class="modal-header">🔥 Kampanya Ekle</div>
+      <div class="form-group">
+        <label>Kampanya Adı</label>
+        <input type="text" id="campaignName" placeholder="Örn: Öğrenci Menüsü">
+      </div>
+      <div class="form-group">
+        <label>Eski Fiyat (₺) - İsteğe Bağlı</label>
+        <input type="number" step="0.01" id="campaignOldPrice" placeholder="Örn: 100">
+      </div>
+      <div class="form-group">
+        <label>Yeni Fiyat (₺) - İsteğe Bağlı</label>
+        <input type="number" step="0.01" id="campaignNewPrice" placeholder="Örn: 75">
+      </div>
+      <div class="form-group">
+        <label>Açıklama - İsteğe Bağlı</label>
+        <textarea id="campaignDescription" placeholder="Kampanya detayları..."></textarea>
+      </div>
+      <button class="btn btn-success" style="width: 100%;" onclick="addCampaign()">Kampanya Ekle</button>
+    </div>
+  </div>
+
+  <!-- Kampanya Resim Yükleme Modal -->
+  <div id="campaignImageModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeCampaignImageModal()">&times;</span>
+      <div class="modal-header">📷 Kampanya Resmi Yükle</div>
+      <input type="hidden" id="campaignImageCampaignId">
+      <div class="form-group">
+        <label>Resim Seç</label>
+        <input type="file" id="campaignImageFile" accept="image/*">
+      </div>
+      <div id="campaignImagePreview" style="display: none; text-align: center; margin: 15px 0;">
+        <img id="campaignPreviewImg" style="max-width: 100%; max-height: 300px; border-radius: 8px;">
+      </div>
+      <button class="btn btn-success" style="width: 100%;" onclick="uploadCampaignImage()">Resmi Yükle</button>
+    </div>
+  </div>
+
+  <!-- Şifre Değiştir Modal -->
+  <div id="passwordModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closePasswordModal()">&times;</span>
+      <div class="modal-header">🔑 Şifre Değiştir</div>
+      <div class="form-group">
+        <label>Mevcut Şifre</label>
+        <input type="password" id="currentPassword">
+      </div>
+      <div class="form-group">
+        <label>Yeni Şifre</label>
+        <input type="password" id="newPassword">
+      </div>
+      <button class="btn btn-success" style="width: 100%;" onclick="changePassword()">Şifreyi Değiştir</button>
+    </div>
+  </div>
+
+  <!-- Resim Yükleme Modal -->
+  <div id="imageModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeImageModal()">&times;</span>
+      <div class="modal-header">📷 Ürün Resmi Yükle</div>
+      <input type="hidden" id="imageItemId">
+      <div class="form-group">
+        <label>Resim Seç (Max 5MB - jpg, jpeg, png, gif, webp)</label>
+        <input type="file" id="imageFile" accept="image/*" style="width: 100%; padding: 10px; border: 2px dashed #3498db; border-radius: 8px; background: #f8f9fa;">
+      </div>
+      <div id="imagePreview" style="margin: 15px 0; text-align: center; display: none;">
+        <img id="previewImg" style="max-width: 100%; max-height: 200px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+      </div>
+      <button class="btn btn-success" style="width: 100%;" onclick="uploadImage()">📤 Resmi Yükle</button>
+    </div>
+  </div>
+
+  <!-- Haftanın Ürünü Resim Yükleme Modal -->
+  <div id="weeklyImageModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeWeeklyImageModal()">&times;</span>
+      <div class="modal-header">📷 Haftanın Ürünü Resmi Yükle</div>
+      <input type="hidden" id="weeklyImageSpecialId">
+      <div class="form-group">
+        <label>Resim Seç (Max 5MB - jpg, jpeg, png, gif, webp)</label>
+        <input type="file" id="weeklyImageFile" accept="image/*" style="width: 100%; padding: 10px; border: 2px dashed #3498db; border-radius: 8px; background: #f8f9fa;">
+      </div>
+      <div id="weeklyImagePreview" style="margin: 15px 0; text-align: center; display: none;">
+        <img id="weeklyPreviewImg" style="max-width: 100%; max-height: 200px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+      </div>
+      <button class="btn btn-success" style="width: 100%;" onclick="uploadWeeklyImage()">📤 Resmi Yükle</button>
+    </div>
+  </div>
+
+  <script>
+    function updateItem(itemId, field, value) {
+      const data = { id: itemId };
+      data[field] = value;
+
+      fetch('/admin/update-item', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          console.log('Güncellendi');
+        }
+      });
+    }
+
+
+    function saveItemPrice(itemId) {
+      const input = document.getElementById('price-' + itemId);
+      if (!input) return;
+
+      const value = input.value;
+
+      if (value === '' || value === null) {
+        alert('Lütfen geçerli bir fiyat girin.');
+        return;
+      }
+
+      updateItem(itemId, 'price', value);
+    }
+
+    function deleteItem(itemId) {
+      if (!confirm('Bu ürünü silmek istediğinizden emin misiniz?')) return;
+
+      fetch('/admin/delete-item', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: itemId })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          location.reload();
+        }
+      });
+    }
+
+    function openAddItemModal(categoryId) {
+      document.getElementById('itemCategoryId').value = categoryId;
+      document.getElementById('itemModal').style.display = 'block';
+    }
+
+    function closeItemModal() {
+      document.getElementById('itemModal').style.display = 'none';
+      document.getElementById('itemName').value = '';
+      document.getElementById('itemPrice').value = '';
+      document.getElementById('itemDescription').value = '';
+    }
+
+    function addItem() {
+      const categoryId = document.getElementById('itemCategoryId').value;
+      const name = document.getElementById('itemName').value;
+      const price = document.getElementById('itemPrice').value;
+      const description = document.getElementById('itemDescription').value;
+
+      if (!name) {
+        alert('Ürün adı gerekli!');
+        return;
+      }
+
+      fetch('/admin/add-item', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ category_id: categoryId, name, price, description })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          closeItemModal();
+          location.reload();
+        }
+      });
+    }
+
+    function openCategoryModal() {
+      document.getElementById('categoryModal').style.display = 'block';
+    }
+
+    function closeCategoryModal() {
+      document.getElementById('categoryModal').style.display = 'none';
+      document.getElementById('categoryName').value = '';
+    }
+
+    function addCategory() {
+      const name = document.getElementById('categoryName').value.trim();
+
+      if (!name) {
+        alert('Kategori adı gerekli!');
+        return;
+      }
+
+      fetch('/admin/add-category', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          alert('Kategori başarıyla eklendi!');
+          closeCategoryModal();
+          location.reload();
+        } else {
+          alert('Kategori eklenemedi: ' + (data.error || 'Bilinmeyen hata'));
+        }
+      })
+      .catch(err => {
+        console.error('Hata:', err);
+        alert('Bir hata oluştu: ' + err.message);
+      });
+    }
+
+    function deleteCategory(categoryId) {
+      if (!confirm('Bu kategoriyi ve içindeki TÜM ürünleri silmek istediğinizden emin misiniz?')) return;
+
+      fetch('/admin/delete-category', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: categoryId })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          location.reload();
+        }
+      });
+    }
+
+    function openWeeklyModal() {
+      document.getElementById('weeklyModal').style.display = 'block';
+    }
+
+    function closeWeeklyModal() {
+      document.getElementById('weeklyModal').style.display = 'none';
+      document.getElementById('weeklyName').value = '';
+      document.getElementById('weeklyPrice').value = '';
+      document.getElementById('weeklyDescription').value = '';
+    }
+
+    function addWeeklySpecial() {
+      const name = document.getElementById('weeklyName').value;
+      const price = document.getElementById('weeklyPrice').value;
+      const description = document.getElementById('weeklyDescription').value;
+
+      if (!name) {
+        alert('Ürün adı gerekli!');
+        return;
+      }
+
+      fetch('/admin/add-weekly-special', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, price, description })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          closeWeeklyModal();
+          location.reload();
+        }
+      });
+    }
+
+    function updateWeeklySpecial(specialId, field, value) {
+      const data = { id: specialId };
+      if (field) {
+        data[field] = value;
+      }
+
+      fetch('/admin/update-weekly-special', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          console.log('Güncellendi');
+        }
+      });
+    }
+
+    function deleteWeeklySpecial(specialId) {
+      if (!confirm('Bu ürünü silmek istediğinizden emin misiniz?')) return;
+
+      fetch('/admin/delete-weekly-special', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: specialId })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          location.reload();
+        }
+      });
+    }
+
+    // ============= KAMPANYA FONKSİYONLARI =============
+
+    function openCampaignModal() {
+      document.getElementById('campaignModal').style.display = 'block';
+    }
+
+    function closeCampaignModal() {
+      document.getElementById('campaignModal').style.display = 'none';
+      document.getElementById('campaignName').value = '';
+      document.getElementById('campaignOldPrice').value = '';
+      document.getElementById('campaignNewPrice').value = '';
+      document.getElementById('campaignDescription').value = '';
+    }
+
+    function addCampaign() {
+      const name = document.getElementById('campaignName').value;
+      const old_price = document.getElementById('campaignOldPrice').value;
+      const new_price = document.getElementById('campaignNewPrice').value;
+      const description = document.getElementById('campaignDescription').value;
+
+      if (!name) {
+        alert('Kampanya adı gerekli!');
+        return;
+      }
+
+      fetch('/admin/add-campaign', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, old_price, new_price, description })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          closeCampaignModal();
+          location.reload();
+        }
+      });
+    }
+
+    function updateCampaign(campaignId, field, value) {
+      const data = { id: campaignId };
+      if (field) {
+        data[field] = value;
+      }
+
+      fetch('/admin/update-campaign', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && !field) {
+          location.reload();
+        }
+      });
+    }
+
+    function deleteCampaign(campaignId) {
+      if (!confirm('Bu kampanyayı silmek istediğinizden emin misiniz?')) return;
+
+      fetch('/admin/delete-campaign', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: campaignId })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          location.reload();
+        }
+      });
+    }
+
+    function openCampaignImageUpload(campaignId) {
+      document.getElementById('campaignImageCampaignId').value = campaignId;
+      document.getElementById('campaignImageFile').value = '';
+      document.getElementById('campaignImagePreview').style.display = 'none';
+      document.getElementById('campaignImageModal').style.display = 'block';
+    }
+
+    function closeCampaignImageModal() {
+      document.getElementById('campaignImageModal').style.display = 'none';
+    }
+
+    // Kampanya resim önizleme
+    document.addEventListener('DOMContentLoaded', function() {
+      const campaignImageFile = document.getElementById('campaignImageFile');
+      if (campaignImageFile) {
+        campaignImageFile.addEventListener('change', function(e) {
+          const file = e.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+              document.getElementById('campaignPreviewImg').src = e.target.result;
+              document.getElementById('campaignImagePreview').style.display = 'block';
+            }
+            reader.readAsDataURL(file);
+          }
+        });
+      }
+    });
+
+    function uploadCampaignImage() {
+      const campaignId = document.getElementById('campaignImageCampaignId').value;
+      const fileInput = document.getElementById('campaignImageFile');
+      const file = fileInput.files[0];
+
+      if (!file) {
+        alert('Lütfen bir resim seçin!');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('image', file);
+      formData.append('campaignId', campaignId);
+
+      fetch('/admin/upload-campaign-image', {
+        method: 'POST',
+        body: formData
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          alert('✅ Resim başarıyla yüklendi!');
+          closeCampaignImageModal();
+          location.reload();
+        } else {
+          alert(data.error || 'Resim yüklenemedi!');
+        }
+      })
+      .catch(err => {
+        console.error('Hata:', err);
+        alert('Bir hata oluştu!');
+      });
+    }
+
+    function deleteCampaignImage(campaignId) {
+      if (!confirm('Kampanya resmini silmek istediğinizden emin misiniz?')) return;
+
+      fetch('/admin/delete-campaign-image', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ campaignId })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          alert('✅ Resim silindi!');
+          location.reload();
+        } else {
+          alert(data.error || 'Resim silinemedi!');
+        }
+      })
+      .catch(err => {
+        console.error('Hata:', err);
+        alert('Bir hata oluştu!');
+      });
+    }
+
+    function openPasswordModal() {
+      document.getElementById('passwordModal').style.display = 'block';
+    }
+
+    function closePasswordModal() {
+      document.getElementById('passwordModal').style.display = 'none';
+      document.getElementById('currentPassword').value = '';
+      document.getElementById('newPassword').value = '';
+    }
+
+    function changePassword() {
+      const currentPassword = document.getElementById('currentPassword').value;
+      const newPassword = document.getElementById('newPassword').value;
+
+      if (!currentPassword || !newPassword) {
+        alert('Tüm alanları doldurun!');
+        return;
+      }
+
+      fetch('/admin/change-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ currentPassword, newPassword })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          alert('Şifre başarıyla değiştirildi!');
+          closePasswordModal();
+        } else {
+          alert(data.error || 'Şifre değiştirilemedi!');
+        }
+      });
+    }
+
+    function reorderCategory(categoryId, direction) {
+      fetch('/admin/reorder-categories', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ categoryId, direction })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          location.reload();
+        } else {
+          alert(data.error || 'Sıralama güncellenemedi!');
+        }
+      })
+      .catch(err => {
+        console.error('Hata:', err);
+        alert('Bir hata oluştu!');
+      });
+    }
+
+    function openImageUpload(itemId) {
+      document.getElementById('imageItemId').value = itemId;
+      document.getElementById('imageFile').value = '';
+      document.getElementById('imagePreview').style.display = 'none';
+      document.getElementById('imageModal').style.display = 'block';
+    }
+
+    function closeImageModal() {
+      document.getElementById('imageModal').style.display = 'none';
+    }
+
+    // Resim önizleme
+    document.getElementById('imageFile').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          document.getElementById('previewImg').src = e.target.result;
+          document.getElementById('imagePreview').style.display = 'block';
+        }
+        reader.readAsDataURL(file);
+      }
+    });
+
+    function uploadImage() {
+      const itemId = document.getElementById('imageItemId').value;
+      const fileInput = document.getElementById('imageFile');
+      const file = fileInput.files[0];
+
+      if (!file) {
+        alert('Lütfen bir resim seçin!');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('image', file);
+      formData.append('itemId', itemId);
+
+      fetch('/admin/upload-image', {
+        method: 'POST',
+        body: formData
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          alert('Resim başarıyla yüklendi!');
+          closeImageModal();
+          location.reload();
+        } else {
+          alert(data.error || 'Resim yüklenemedi!');
+        }
+      })
+      .catch(err => {
+        console.error('Hata:', err);
+        alert('Bir hata oluştu!');
+      });
+    }
+
+    function deleteItemImage(itemId) {
+      if (!confirm('Ürün resmini silmek istediğinizden emin misiniz?')) return;
+
+      fetch('/admin/delete-image', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ itemId })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          location.reload();
+        } else {
+          alert(data.error || 'Resim silinemedi!');
+        }
+      })
+      .catch(err => {
+        console.error('Hata:', err);
+        alert('Bir hata oluştu!');
+      });
+    }
+
+    // Haftanın ürünü için resim yükleme modal'ı aç
+    function openWeeklyImageUpload(specialId) {
+      document.getElementById('weeklyImageSpecialId').value = specialId;
+      document.getElementById('weeklyImageFile').value = '';
+      document.getElementById('weeklyImagePreview').style.display = 'none';
+      document.getElementById('weeklyImageModal').style.display = 'block';
+    }
+
+    function closeWeeklyImageModal() {
+      document.getElementById('weeklyImageModal').style.display = 'none';
+    }
+
+    // Haftanın ürünü resim önizleme
+    document.addEventListener('DOMContentLoaded', function() {
+      const weeklyImageFile = document.getElementById('weeklyImageFile');
+      if (weeklyImageFile) {
+        weeklyImageFile.addEventListener('change', function(e) {
+          const file = e.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+              document.getElementById('weeklyPreviewImg').src = e.target.result;
+              document.getElementById('weeklyImagePreview').style.display = 'block';
+            }
+            reader.readAsDataURL(file);
+          }
+        });
+      }
+    });
+
+    function uploadWeeklyImage() {
+      const specialId = document.getElementById('weeklyImageSpecialId').value;
+      const fileInput = document.getElementById('weeklyImageFile');
+      const file = fileInput.files[0];
+
+      if (!file) {
+        alert('Lütfen bir resim seçin!');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('image', file);
+      formData.append('specialId', specialId);
+
+      fetch('/admin/upload-weekly-image', {
+        method: 'POST',
+        body: formData
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          alert('✅ Resim başarıyla yüklendi!');
+          closeWeeklyImageModal();
+          location.reload();
+        } else {
+          alert(data.error || 'Resim yüklenemedi!');
+        }
+      })
+      .catch(err => {
+        console.error('Hata:', err);
+        alert('Bir hata oluştu!');
+      });
+    }
+
+    function deleteWeeklyImage(specialId) {
+      if (!confirm('Ürün resmini silmek istediğinizden emin misiniz?')) return;
+
+      fetch('/admin/delete-weekly-image', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ specialId })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          alert('✅ Resim silindi!');
+          location.reload();
+        } else {
+          alert(data.error || 'Resim silinemedi!');
+        }
+      })
+      .catch(err => {
+        console.error('Hata:', err);
+        alert('Bir hata oluştu!');
+      });
+    }
+
+    // Modal dışına tıklanınca kapat
+    window.onclick = function(event) {
+      if (event.target.classList.contains('modal')) {
+        event.target.style.display = 'none';
+      }
+    }
+
+    // İstatistikleri yükle
+    function loadStatistics() {
+      fetch('/admin/statistics')
+        .then(res => {
+          if (!res.ok) {
+            throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+          }
+          return res.json();
+        })
+        .then(stats => {
+          const container = document.getElementById('statisticsContainer');
+
+          if (!stats || !stats.categoryClicks || Object.keys(stats.categoryClicks).length === 0) {
+            container.innerHTML = '<p style="text-align: center; color: #7f8c8d;">Henüz istatistik bulunmuyor. Menüde bir kategoriye tıklandığında burada görünecek.</p>';
+            return;
+          }
+
+          // Toplam tıklamalar
+          const totalClicks = Object.values(stats.categoryClicks).reduce((sum, cat) => sum + cat.totalClicks, 0);
+
+          // Kategorileri tıklama sayısına göre sırala
+          const sortedCategories = Object.entries(stats.categoryClicks)
+            .sort((a, b) => b[1].totalClicks - a[1].totalClicks);
+
+          let html = `
+            <div style="background: #ecf0f1; padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: center;">
+              <h3 style="margin: 0; color: #2c3e50;">Toplam Tıklama: <span style="color: #3498db;">${totalClicks}</span></h3>
+            </div>
+            <table class="menu-table">
+              <thead>
+                <tr>
+                  <th>Sıra</th>
+                  <th>Kategori Adı</th>
+                  <th>Toplam Tıklama</th>
+                  <th>Son Tıklama</th>
+                </tr>
+              </thead>
+              <tbody>
+          `;
+
+          sortedCategories.forEach(([categoryId, data], index) => {
+            const lastClicked = data.lastClicked 
+              ? new Date(data.lastClicked).toLocaleString('tr-TR')
+              : 'Hiç tıklanmadı';
+
+            html += `
+              <tr>
+                <td style="text-align: center; font-weight: bold;">${index + 1}</td>
+                <td>${data.name}</td>
+                <td style="text-align: center; color: #3498db; font-weight: bold;">${data.totalClicks}</td>
+                <td style="font-size: 12px; color: #7f8c8d;">${lastClicked}</td>
+              </tr>
+            `;
+          });
+
+          html += '</tbody></table>';
+
+          // Bugünün istatistikleri
+          const today = new Date().toISOString().split('T')[0];
+          if (stats.dailyClicks && stats.dailyClicks[today]) {
+            const todayClicks = Object.values(stats.dailyClicks[today]).reduce((sum, cat) => sum + cat.clicks, 0);
+            html += `
+              <div style="background: #e8f5e9; padding: 15px; border-radius: 8px; margin-top: 20px; text-align: center;">
+                <h3 style="margin: 0; color: #2c3e50;">Bugün: <span style="color: #27ae60;">${todayClicks} tıklama</span></h3>
+              </div>
+            `;
+          }
+
+          container.innerHTML = html;
+        })
+        .catch(err => {
+          console.error('İstatistik yüklenemedi:', err);
+          document.getElementById('statisticsContainer').innerHTML = 
+            `<p style="text-align: center; color: #e74c3c;">
+              İstatistikler yüklenirken hata oluştu: ${err.message}<br>
+              <small>Console'u (F12) kontrol edin veya sayfayı yenileyin.</small>
+            </p>`;
+        });
+    }
+
+    // İstatistikleri sıfırla
+    function resetStatistics() {
+      if (!confirm('Tüm istatistikleri sıfırlamak istediğinizden emin misiniz?\n\nBu işlem geri alınamaz!')) {
+        return;
+      }
+
+      fetch('/admin/reset-statistics', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          alert('✅ İstatistikler başarıyla sıfırlandı!');
+          loadStatistics(); // İstatistikleri yeniden yükle
+        } else {
+          alert('❌ İstatistikler sıfırlanırken hata oluştu!');
+        }
+      })
+      .catch(err => {
+        console.error('Hata:', err);
+        alert('❌ Bir hata oluştu: ' + err.message);
+      });
+    }
+
+
+    // Instagram fotoğraf kartları
+    function openInstagramModal() {
+      const modal = document.getElementById('instagramModal');
+      if (modal) {
+        modal.style.display = 'block';
+      }
+    }
+
+    function closeInstagramModal() {
+      const modal = document.getElementById('instagramModal');
+      if (modal) {
+        modal.style.display = 'none';
+      }
+      const captionEl = document.getElementById('instagramCaption');
+      if (captionEl) {
+        captionEl.value = '';
+      }
+    }
+
+    function addInstagramPost() {
+      const captionEl = document.getElementById('instagramCaption');
+      const caption = captionEl ? captionEl.value.trim() : '';
+
+      fetch('/admin/add-instagram-post', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ caption })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          closeInstagramModal();
+          location.reload();
+        } else {
+          alert(data.error || 'Instagram kartı eklenemedi!');
+        }
+      })
+      .catch(err => {
+        console.error('Hata:', err);
+        alert('Bir hata oluştu!');
+      });
+    }
+
+    function updateInstagramPost(postId, caption) {
+      fetch('/admin/update-instagram-post', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: postId, caption: caption })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (!data.success) {
+          alert(data.error || 'Instagram kartı güncellenemedi!');
+        }
+      })
+      .catch(err => {
+        console.error('Hata:', err);
+        alert('Bir hata oluştu!');
+      });
+    }
+
+    function deleteInstagramPost(postId) {
+      if (!confirm('Bu Instagram kartını silmek istediğinizden emin misiniz?')) return;
+
+      fetch('/admin/delete-instagram-post', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: postId })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          location.reload();
+        } else {
+          alert(data.error || 'Kart silinemedi!');
+        }
+      })
+      .catch(err => {
+        console.error('Hata:', err);
+        alert('Bir hata oluştu!');
+      });
+    }
+
+    function openInstagramImageUpload(postId) {
+      const modal = document.getElementById('instagramImageModal');
+      const idInput = document.getElementById('instagramImagePostId');
+      const fileInput = document.getElementById('instagramImageFile');
+      const preview = document.getElementById('instagramImagePreview');
+      const img = document.getElementById('instagramPreviewImg');
+
+      if (idInput) idInput.value = postId;
+      if (fileInput) fileInput.value = '';
+      if (preview) preview.style.display = 'none';
+      if (img) img.src = '';
+
+      if (modal) {
+        modal.style.display = 'block';
+      }
+    }
+
+    function closeInstagramImageModal() {
+      const modal = document.getElementById('instagramImageModal');
+      const fileInput = document.getElementById('instagramImageFile');
+      const preview = document.getElementById('instagramImagePreview');
+      const img = document.getElementById('instagramPreviewImg');
+
+      if (fileInput) fileInput.value = '';
+      if (preview) preview.style.display = 'none';
+      if (img) img.src = '';
+      if (modal) {
+        modal.style.display = 'none';
+      }
+    }
+
+    function uploadInstagramImage() {
+      const postIdEl = document.getElementById('instagramImagePostId');
+      const fileInput = document.getElementById('instagramImageFile');
+
+      if (!postIdEl) {
+        alert('Geçersiz Instagram kartı.');
+        return;
+      }
+      if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+        alert('Lütfen yüklenecek bir resim seçin.');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('postId', postIdEl.value);
+      formData.append('image', fileInput.files[0]);
+
+      fetch('/admin/upload-instagram-image', {
+        method: 'POST',
+        body: formData
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          closeInstagramImageModal();
+          location.reload();
+        } else {
+          alert(data.error || 'Resim yüklenemedi!');
+        }
+      })
+      .catch(err => {
+        console.error('Hata:', err);
+        alert('Bir hata oluştu!');
+      });
+    }
+
+    function deleteInstagramImage(postId) {
+      if (!confirm('Bu fotoğrafın resmini silmek istediğinizden emin misiniz?')) return;
+
+      fetch('/admin/delete-instagram-image', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: postId })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          location.reload();
+        } else {
+          alert(data.error || 'Resim silinemedi!');
+        }
+      })
+      .catch(err => {
+        console.error('Hata:', err);
+        alert('Bir hata oluştu!');
+      });
+    }
+
+// Excel'e aktar
+    function exportStatistics() {
+      // Yeni sekmede Excel dosyasını indir
+      window.open('/admin/export-statistics', '_blank');
+    }
+
+    // Sayfa yüklendiğinde istatistikleri yükle
+    document.addEventListener('DOMContentLoaded', function() {
+      loadStatistics();
+    });
+  </script>
+</body>
+</html>
