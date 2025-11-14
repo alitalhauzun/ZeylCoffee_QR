@@ -249,8 +249,9 @@ app.use(session({
   saveUninitialized: false,
   cookie: { 
     maxAge: 24 * 60 * 60 * 1000,
-    secure: process.env.NODE_ENV === 'production',
-    httpOnly: true
+    secure: false, // Render.com için false yapıldı
+    httpOnly: true,
+    sameSite: 'lax'
   }
 }));
 
