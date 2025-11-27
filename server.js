@@ -139,20 +139,31 @@ app.get('/admin/logout', (req, res) => {
 });
 
 // Admin panel - Dashboard
-app.get('/admin/dashboard', isAdmin, (req, res) => {
-  db = loadDatabase();
-  const menuData = db.categories.map(cat => {
-    const items = db.menuItems.filter(item => item.category_id === cat.id)
-      .sort((a, b) => a.display_order - b.display_order);
-    return { category: cat, items: items };
-  });
-  res.render('admin-dashboard', { 
-    menuData, 
-    categories: db.categories, 
-    weeklySpecials: db.weeklySpecials || [], 
-    campaigns: db.campaigns || [],
-    instagramPosts: db.instagramPosts || [] 
-  });
+app.get('/admin/dashboard', isAdmin, async (req, res) => {
+  try {
+    const categories = await models.Category.find().sort('display_order');
+    const allItems = await models.MenuItem.find().sort('display_order');
+    
+    const menuData = categories.map(cat => {
+      const items = allItems.filter(item => item.category_id === cat.id);
+      return { category: cat, items: items };
+    });
+    
+    const weeklySpecials = await models.WeeklySpecial.find();
+    const campaigns = await models.Campaign.find();
+    const instagramPosts = await models.InstagramPost.find().sort('display_order');
+    
+    res.render('admin-dashboard', { 
+      menuData, 
+      categories, 
+      weeklySpecials,
+      campaigns,
+      instagramPosts 
+    });
+  } catch (error) {
+    console.error('Dashboard yükleme hatası:', error);
+    res.status(500).send('Bir hata oluştu');
+  }
 });
 
 // Ürün güncelle
