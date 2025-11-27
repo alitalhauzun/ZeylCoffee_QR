@@ -6,6 +6,9 @@ const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
 const xlsx = require('xlsx');
+require('dotenv').config();
+const mongoose = require('mongoose');
+const models = require('./models');
 
 const app = express();
 
@@ -24,6 +27,18 @@ const storage = multer.diskStorage({
   }
 });
 
+// MongoDB Bağlantısı
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/zeyl-menu';
+
+mongoose.connect(MONGODB_URI)
+  .then(() => {
+    console.log('✅ MongoDB bağlantısı başarılı!');
+  })
+  .catch((err) => {
+    console.error('❌ MongoDB bağlantı hatası:', err.message);
+    process.exit(1);
+  });
+
 const upload = multer({
   storage: storage,
   limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
@@ -40,202 +55,6 @@ const upload = multer({
   }
 });
 
-// Veritabanı dosyası
-const DB_FILE = path.join(__dirname, 'database.json');
-
-// Veritabanını yükle veya oluştur
-function loadDatabase() {
-  if (!fs.existsSync(DB_FILE)) {
-    const initialData = {
-      admin: {
-        username: 'admin',
-        password: bcrypt.hashSync('zeyl2025', 10)
-      },
-      categories: [],
-      menuItems: [],
-      weeklySpecials: [],
-      instagramPosts: []
-    };
-    fs.writeFileSync(DB_FILE, JSON.stringify(initialData, null, 2));
-    console.log('✅ Yeni veritabanı oluşturuldu');
-    return initialData;
-  }
-  const data = JSON.parse(fs.readFileSync(DB_FILE, 'utf8'));
-  // weeklySpecials yoksa ekle
-  if (!data.weeklySpecials) {
-    data.weeklySpecials = [];
-  }
-  // campaigns yoksa ekle
-  if (!data.campaigns) {
-    data.campaigns = [];
-  }
-  // instagramPosts yoksa ekle
-  if (!data.instagramPosts) {
-    data.instagramPosts = [];
-  }
-  return data;
-}
-
-function saveDatabase(data) {
-  fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2));
-}
-
-let db = loadDatabase();
-
-// Menüyü başlat
-function initializeMenu() {
-  if (db.categories.length > 0) return;
-
-  const categories = [
-    { id: 1, name: 'Sıcak İçecekler', display_order: 0 },
-    { id: 2, name: 'Soğuk İçecekler', display_order: 1 },
-    { id: 3, name: 'Yaz Serinliği', display_order: 2 },
-    { id: 4, name: 'Çay Yanı Lezzetler', display_order: 3 },
-    { id: 5, name: 'Kış Vazgeçilmezi', display_order: 4 },
-    { id: 6, name: 'Tatlı Çeşitleri', display_order: 5 },
-    { id: 7, name: 'Kahvaltılar', display_order: 6 },
-    { id: 8, name: 'Special Lezzetler', display_order: 7 },
-    { id: 9, name: 'Omletler', display_order: 8 },
-    { id: 10, name: 'Tostlar', display_order: 9 },
-    { id: 11, name: 'Aperatifler', display_order: 10 },
-    { id: 12, name: 'Gözlemeler', display_order: 11 },
-    { id: 13, name: 'Doyurucu Lezzetler', display_order: 12 }
-  ];
-
-  db.categories = categories;
-
-  let itemId = 1;
-  const menuItems = [];
-
-  // Sıcak İçecekler
-  const sicakItems = [
-    ['Çay', 5], ['Fincan Çay', 7], ['Türk Kahvesi', 65], ['Double Kahve', 130],
-    ['Menengiç Kahvesi', 100], ['Dibek Kahvesi', 100], ['Damla Sakızlı', 65],
-    ['Sütlü Türk Kahvesi', 116], ['Latte', 100], ['Americano', 132],
-    ['Filtre Kahve', 125], ['Cappucino', 95], ['Oralet', null]
-  ];
-  sicakItems.forEach((item, idx) => {
-    menuItems.push({ id: itemId++, category_id: 1, name: item[0], price: item[1], description: '', is_available: 1, display_order: idx });
-  });
-
-  // Soğuk İçecekler
-  const sogukItems = [
-    ['Enerji İçeceği', 86], ['Coca Cola', 40], ['Coca Cola Zero', null], ['Ice Tea', null],
-    ['Meyve Suyu', null], ['Sprite', null], ['Fanta', 95], ['Soda', 45],
-    ['Meyveli Soda', 70], ['Ayran', 35], ['Churchill', 13], ['Su', 15]
-  ];
-  sogukItems.forEach((item, idx) => {
-    menuItems.push({ id: itemId++, category_id: 2, name: item[0], price: item[1], description: '', is_available: 1, display_order: idx });
-  });
-
-  // Yaz Serinliği
-  const yazItems = [
-    ['Çilekli Milkshake', 15], ['Çikolatalı Milkshake', null], ['Orman Meyveleri Smoothie', null],
-    ['Çilek Smoothie', null], ['Frozen Çeşitleri', null], ['Orman Meyveleri - Çilek', null],
-    ['Ice Americano', null], ['Ice Caramel Latte', null], ['Ice Coffe Latte', null],
-    ['Frappe Caramel - Vanilya', null], ['Majito', null], ['Limonata', 55],
-    ['Dondurma Balbadem - Caramel', null], ['Vanilya', null]
-  ];
-  yazItems.forEach((item, idx) => {
-    menuItems.push({ id: itemId++, category_id: 3, name: item[0], price: item[1], description: '', is_available: 1, display_order: idx });
-  });
-
-  // Çay Yanı Lezzetler
-  const cayYaniItems = [
-    ['Kurabiye Tabağı', 150], ['Dilim Kek', null], ['Günün Tatlısı', null]
-  ];
-  cayYaniItems.forEach((item, idx) => {
-    menuItems.push({ id: itemId++, category_id: 4, name: item[0], price: item[1], description: '', is_available: 1, display_order: idx });
-  });
-
-  // Kış Vazgeçilmezi
-  const kisItems = [
-    ['Bici Çayları', null], ['Kış Çayı', null], ['Ihlamur', null], ['Adaçayı', null],
-    ['Salep', null], ['Sıcak Çikolata', null], ['Taze Sıkılmış Portakal Suyu', null]
-  ];
-  kisItems.forEach((item, idx) => {
-    menuItems.push({ id: itemId++, category_id: 5, name: item[0], price: item[1], description: '', is_available: 1, display_order: idx });
-  });
-
-  // Tatlı Çeşitleri
-  const tatliItems = [
-    ['Sütlü', 150], ['Limonlu Cheescake', null], ['Frambuazlı Cheescake', null],
-    ['Waffle Mevsim Meyveleri ile', null], ['Künner Tatlısı', null], ['Günün Tatlısı', null]
-  ];
-  tatliItems.forEach((item, idx) => {
-    menuItems.push({ id: itemId++, category_id: 6, name: item[0], price: item[1], description: '', is_available: 1, display_order: idx });
-  });
-
-  // Kahvaltılar
-  const kahvaltiItems = [
-    ['Hızlı Kahvaltı', 15], ['Serpme Kahvaltı', 96.5]
-  ];
-  kahvaltiItems.forEach((item, idx) => {
-    menuItems.push({ id: itemId++, category_id: 7, name: item[0], price: item[1], description: '', is_available: 1, display_order: idx });
-  });
-
-  // Special Lezzetler
-  const specialItems = [
-    ['Mac 8 Chese', 42], ['İsveç Köfte', 47], ['Pesto Soslu Penne', 140],
-    ['Körü Soslu Tavuk', 97], ['Kremalı Mantar Soslu Tavuklu Penne', 215], ['Paso Soslu Penne', null]
-  ];
-  specialItems.forEach((item, idx) => {
-    menuItems.push({ id: itemId++, category_id: 8, name: item[0], price: item[1], description: '', is_available: 1, display_order: idx });
-  });
-
-  // Omletler
-  const omletItems = [
-    ['Sade Yumurta', 45], ['Peynirli Yumurta', 150], ['Patatesli Yumurta', 150],
-    ['Sucuklu Yumurta', 190], ['Menemen', 145], ['Kaşarlı Menemen', 190], ['Kaşarlı Omlet', 145]
-  ];
-  omletItems.forEach((item, idx) => {
-    menuItems.push({ id: itemId++, category_id: 9, name: item[0], price: item[1], description: '', is_available: 1, display_order: idx });
-  });
-
-  // Tostlar
-  const tostItems = [
-    ['Bazlama Kaşarlı', 120], ['Bazlama Sucuklu', 180], ['Bazlama Karışık', 200],
-    ['Sebzeli Beyaz, Peynirli Tost', 150], ['(Beyaz Peynir, Biber, Domates)', null]
-  ];
-  tostItems.forEach((item, idx) => {
-    menuItems.push({ id: itemId++, category_id: 10, name: item[0], price: item[1], description: '', is_available: 1, display_order: idx });
-  });
-
-  // Aperatifler
-  const aperatifItems = [
-    ['Patates Kızartması', 100], ['Karışık Sıcak Sepet', 250], ['Paçanga Böreği', 225],
-    ['Sucuk Tava', 45], ['Soslu Sosis Tava', 150]
-  ];
-  aperatifItems.forEach((item, idx) => {
-    menuItems.push({ id: itemId++, category_id: 11, name: item[0], price: item[1], description: '', is_available: 1, display_order: idx });
-  });
-
-  // Gözlemeler
-  const gozlemeItems = [
-    ['Peynirli Gözleme', 155], ['Kıymalı Gözleme', 190], ['Ispanaklı Gözleme', 145],
-    ['Patatesli Gözleme', 145], ['Kaşarlı Gözleme', null]
-  ];
-  gozlemeItems.forEach((item, idx) => {
-    menuItems.push({ id: itemId++, category_id: 12, name: item[0], price: item[1], description: '', is_available: 1, display_order: idx });
-  });
-
-  // Doyurucu Lezzetler
-  const doyurucuItems = [
-    ['Islak Hamburger', 55], ['Hamburger', 95], ['Double Hamburger', 195], ['Pizza', 200],
-    ['Maru', 145], ['Ekmek Arası Sucuk', null], ['Ekmek Arası Köfte', null],
-    ['Yoğurtlu Salçalı Makarna', null], ['Günün Çorbası', 75], ['Izgara Köfte Tabağı', null]
-  ];
-  doyurucuItems.forEach((item, idx) => {
-    menuItems.push({ id: itemId++, category_id: 13, name: item[0], price: item[1], description: '', is_available: 1, display_order: idx });
-  });
-
-  db.menuItems = menuItems;
-  saveDatabase(db);
-  console.log('✅ Menü başarıyla yüklendi!');
-}
-
-// İlk başlatmada menüyü kontrol et
-initializeMenu();
 
 // Middleware
 app.set('view engine', 'ejs');
@@ -267,19 +86,25 @@ function isAdmin(req, res, next) {
 // ROUTES
 
 // Ana sayfa - Müşteri Menüsü (Premium)
-app.get('/', (req, res) => {
-  db = loadDatabase();
-  const menuData = db.categories.map(cat => {
-    const items = db.menuItems.filter(item => item.category_id === cat.id && item.is_available === 1)
-      .sort((a, b) => a.display_order - b.display_order);
-    return { category: cat, items: items };
-  });
-  res.render('menu-premium', { 
-    menuData, 
-    weeklySpecials: db.weeklySpecials || [], 
-    campaigns: db.campaigns || [],
-    instagramPosts: db.instagramPosts || [] 
-  });
+app.get('/', async (req, res) => {
+  try {
+    const categories = await models.Category.find().sort('display_order');
+    const allItems = await models.MenuItem.find({ is_available: true }).sort('display_order');
+    
+    const menuData = categories.map(cat => {
+      const items = allItems.filter(item => item.category_id === cat.id);
+      return { category: cat, items: items };
+    });
+    
+    const weeklySpecials = await models.WeeklySpecial.find({ is_active: true });
+    const campaigns = await models.Campaign.find({ is_active: true });
+    const instagramPosts = await models.InstagramPost.find().sort('display_order');
+    
+    res.render('menu-premium', { menuData, weeklySpecials, campaigns, instagramPosts });
+  } catch (error) {
+    console.error('Hata:', error);
+    res.status(500).send('Bir hata oluştu');
+  }
 });
 
 // Admin giriş sayfası
@@ -291,18 +116,22 @@ app.get('/admin/login', (req, res) => {
 });
 
 // Admin giriş işlemi
-app.post('/admin/login', (req, res) => {
-  const { username, password } = req.body;
-  db = loadDatabase();
-  
-  if (username === db.admin.username && bcrypt.compareSync(password, db.admin.password)) {
-    req.session.isAdmin = true;
-    res.redirect('/admin/dashboard');
-  } else {
-    res.render('admin-login', { error: 'Kullanıcı adı veya şifre hatalı!' });
+app.post('/admin/login', async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    const admin = await models.Admin.findOne({ username });
+    
+    if (admin && bcrypt.compareSync(password, admin.password)) {
+      req.session.isAdmin = true;
+      res.redirect('/admin/dashboard');
+    } else {
+      res.render('admin-login', { error: 'Kullanıcı adı veya şifre hatalı!' });
+    }
+  } catch (error) {
+    console.error('Login hatası:', error);
+    res.render('admin-login', { error: 'Bir hata oluştu' });
   }
 });
-
 // Admin çıkış
 app.get('/admin/logout', (req, res) => {
   req.session.destroy();
