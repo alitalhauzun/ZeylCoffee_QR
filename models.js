@@ -55,6 +55,20 @@ const instagramPostSchema = new mongoose.Schema({
   display_order: { type: Number, default: 0 }
 }, { timestamps: true });
 
+// Statistics Schema
+const statisticsSchema = new mongoose.Schema({
+  date: { type: String, required: true, unique: true }, // YYYY-MM-DD formatında
+  categoryClicks: { type: Map, of: Number, default: {} }, // { "1": 5, "2": 10 }
+  totalClicks: { type: Number, default: 0 }
+}, { timestamps: true });
+
+const categoryStatsSchema = new mongoose.Schema({
+  categoryId: { type: Number, required: true, unique: true },
+  categoryName: { type: String, required: true },
+  totalClicks: { type: Number, default: 0 },
+  lastClicked: { type: Date }
+}, { timestamps: true });
+
 // Export Models
 module.exports = {
   Admin: mongoose.model('Admin', adminSchema),
@@ -62,5 +76,7 @@ module.exports = {
   MenuItem: mongoose.model('MenuItem', menuItemSchema),
   WeeklySpecial: mongoose.model('WeeklySpecial', weeklySpecialSchema),
   Campaign: mongoose.model('Campaign', campaignSchema),
-  InstagramPost: mongoose.model('InstagramPost', instagramPostSchema)
+  InstagramPost: mongoose.model('InstagramPost', instagramPostSchema),
+  Statistics: mongoose.model('Statistics', statisticsSchema),
+  CategoryStats: mongoose.model('CategoryStats', categoryStatsSchema)
 };

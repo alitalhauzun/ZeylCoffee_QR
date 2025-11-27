@@ -535,6 +535,65 @@ app.post('/admin/update-campaign', isAdmin, async (req, res) => {
   }
 });
 
+// ← BURAYA EKLEYIN ↓
+
+app.post('/admin/upload-campaign-image', isAdmin, upload.single('image'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ success: false, error: 'Resim yüklenemedi' });
+    }
+    
+    const { campaignId } = req.body;
+    const campaign = await models.Campaign.findOne({ id: parseInt(campaignId) });
+    
+    if (campaign) {
+      // Eski resmi sil
+      if (campaign.image && campaign.image.startsWith('uploads/')) {
+        const oldImagePath = path.join(__dirname, 'public', campaign.image);
+        if (fs.existsSync(oldImagePath)) {
+          fs.unlinkSync(oldImagePath);
+        }
+      }
+      
+      // Yeni resmi kaydet
+      campaign.image = 'uploads/' + req.file.filename;
+      await campaign.save();
+      
+      res.json({ success: true, image: 'uploads/' + req.file.filename });
+    } else {
+      res.status(404).json({ success: false, error: 'Kampanya bulunamadı' });
+    }
+  } catch (error) {
+    console.error('Kampanya resim yükleme hatası:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+app.post('/admin/delete-campaign-image', isAdmin, async (req, res) => {
+  try {
+    const { campaignId } = req.body;
+    const campaign = await models.Campaign.findOne({ id: parseInt(campaignId) });
+    
+    if (campaign) {
+      if (campaign.image && campaign.image.startsWith('uploads/')) {
+        const imagePath = path.join(__dirname, 'public', campaign.image);
+        if (fs.existsSync(imagePath)) {
+          fs.unlinkSync(imagePath);
+        }
+      }
+      
+      campaign.image = null;
+      await campaign.save();
+      res.json({ success: true });
+    } else {
+      res.status(404).json({ success: false, error: 'Kampanya bulunamadı' });
+    }
+  } catch (error) {
+    console.error('Kampanya resim silme hatası:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 // ==================== INSTAGRAM POSTS ROUTES ====================
 
 app.post('/admin/add-instagram-post', isAdmin, async (req, res) => {
@@ -660,47 +719,144 @@ app.post('/admin/change-password', isAdmin, async (req, res) => {
 // ==================== STATISTICS & EXPORT ====================
 
 app.post('/api/track-click', async (req, res) => {
-  res.json({ success: true });
+  try {
+    const { categoryId, categoryName } = req.body;
+    
+    // Kategori istatistiğini güncelle
+    const categoryStats = await models.CategoryStats.findOne({ categoryId: parseInt(categoryId) });
+    
+    if (categoryStats) {
+      categoryStats.totalClicks += 1;
+      categoryStats.lastClicked = new Date();
+      await categoryStats.save();
+    } else {
+      await models.CategoryStats.create({
+        categoryId: parseInt(categoryId),
+        categoryName: categoryName,
+        totalClicks: 1,
+        lastClicked: new Date()
+      });
+    }
+    
+    // Günlük istatistik
+    const today = new Date().toISOString().split('T')[0];
+    let dailyStats = await models.Statistics.findOne({ date: today });
+    
+    if (dailyStats) {
+      const clicks = dailyStats.categoryClicks.get(categoryId.toString()) || 0;
+      dailyStats.categoryClicks.set(categoryId.toString(), clicks + 1);
+      dailyStats.totalClicks += 1;
+      await dailyStats.save();
+    } else {
+      const clicksMap = new Map();
+      clicksMap.set(categoryId.toString(), 1);
+      await models.Statistics.create({
+        date: today,
+        categoryClicks: clicksMap,
+        totalClicks: 1
+      });
+    }
+    
+    res.json({ success: true });
+  } catch (error) {
+    console.error('İstatistik kaydetme hatası:', error);
+    res.json({ success: false, error: error.message });
+  }
 });
 
 app.get('/admin/statistics', isAdmin, async (req, res) => {
   try {
-    const categoryCount = await models.Category.countDocuments();
-    const itemCount = await models.MenuItem.countDocuments();
+    const categoryStats = await models.CategoryStats.find();
+    const dailyStats = await models.Statistics.find().sort('-date').limit(30);
     
-    res.json({
-      categoryClicks: {},
-      dailyClicks: {},
-      summary: { categories: categoryCount, items: itemCount }
+    // Kategori istatistiklerini formatla
+    const categoryClicks = {};
+    categoryStats.forEach(stat => {
+      categoryClicks[stat.categoryId] = {
+        name: stat.categoryName,
+        totalClicks: stat.totalClicks,
+        lastClicked: stat.lastClicked ? stat.lastClicked.toISOString() : null
+      };
     });
+    
+    // Günlük istatistikleri formatla
+    const dailyClicks = {};
+    dailyStats.forEach(stat => {
+      dailyClicks[stat.date] = {};
+      stat.categoryClicks.forEach((clicks, categoryId) => {
+        const catStat = categoryStats.find(cs => cs.categoryId === parseInt(categoryId));
+        dailyClicks[stat.date][categoryId] = {
+          name: catStat ? catStat.categoryName : 'Bilinmiyor',
+          clicks: clicks
+        };
+      });
+    });
+    
+    res.json({ categoryClicks, dailyClicks });
   } catch (error) {
-    console.error('İstatistik hatası:', error);
+    console.error('İstatistik getirme hatası:', error);
     res.json({ categoryClicks: {}, dailyClicks: {} });
   }
 });
 
-app.post('/admin/reset-statistics', isAdmin, (req, res) => {
-  res.json({ success: true, message: 'İstatistikler sıfırlandı' });
+app.post('/admin/reset-statistics', isAdmin, async (req, res) => {
+  try {
+    await models.CategoryStats.deleteMany({});
+    await models.Statistics.deleteMany({});
+    res.json({ success: true, message: 'İstatistikler sıfırlandı' });
+  } catch (error) {
+    console.error('İstatistik sıfırlama hatası:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
 });
 
 app.get('/admin/export-statistics', isAdmin, async (req, res) => {
   try {
     const categories = await models.Category.find().sort('display_order');
     const items = await models.MenuItem.find().sort('display_order');
+    const categoryStats = await models.CategoryStats.find();
+    const dailyStats = await models.Statistics.find().sort('-date');
     
     const workbook = xlsx.utils.book_new();
     
-    const categoriesData = [
-      ['Kategori Adı', 'Ürün Sayısı'],
+    // Sheet 1: Kategori İstatistikleri
+    const statsData = [
+      ['Kategori Adı', 'Toplam Tıklama', 'Son Tıklama', 'Ürün Sayısı'],
       ...categories.map(cat => {
         const itemCount = items.filter(item => item.category_id === cat.id).length;
-        return [cat.name, itemCount];
+        const stat = categoryStats.find(s => s.categoryId === cat.id);
+        return [
+          cat.name,
+          stat ? stat.totalClicks : 0,
+          stat && stat.lastClicked ? new Date(stat.lastClicked).toLocaleString('tr-TR') : '-',
+          itemCount
+        ];
       })
     ];
     
-    const worksheet1 = xlsx.utils.aoa_to_sheet(categoriesData);
-    xlsx.utils.book_append_sheet(workbook, worksheet1, 'Kategoriler');
+    const worksheet1 = xlsx.utils.aoa_to_sheet(statsData);
+    worksheet1['!cols'] = [{ wch: 25 }, { wch: 15 }, { wch: 20 }, { wch: 12 }];
+    xlsx.utils.book_append_sheet(workbook, worksheet1, 'Kategori İstatistikleri');
     
+    // Sheet 2: Günlük Detaylar
+    const dailyData = [['Tarih', 'Kategori', 'Tıklama Sayısı']];
+    
+    dailyStats.forEach(dayStat => {
+      dayStat.categoryClicks.forEach((clicks, categoryId) => {
+        const category = categories.find(c => c.id === parseInt(categoryId));
+        dailyData.push([
+          dayStat.date,
+          category ? category.name : 'Bilinmiyor',
+          clicks
+        ]);
+      });
+    });
+    
+    const worksheet2 = xlsx.utils.aoa_to_sheet(dailyData);
+    worksheet2['!cols'] = [{ wch: 15 }, { wch: 25 }, { wch: 15 }];
+    xlsx.utils.book_append_sheet(workbook, worksheet2, 'Günlük Detaylar');
+    
+    // Sheet 3: Ürünler
     const itemsData = [
       ['Kategori', 'Ürün Adı', 'Fiyat', 'Durum'],
       ...items.map(item => {
@@ -714,8 +870,8 @@ app.get('/admin/export-statistics', isAdmin, async (req, res) => {
       })
     ];
     
-    const worksheet2 = xlsx.utils.aoa_to_sheet(itemsData);
-    xlsx.utils.book_append_sheet(workbook, worksheet2, 'Ürünler');
+    const worksheet3 = xlsx.utils.aoa_to_sheet(itemsData);
+    xlsx.utils.book_append_sheet(workbook, worksheet3, 'Ürünler');
     
     const today = new Date().toISOString().split('T')[0];
     const filename = `menu-rapor-${today}.xlsx`;
