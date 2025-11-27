@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const session = require('express-session');
 const bodyParser = require('body-parser');
@@ -6,7 +7,6 @@ const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
 const xlsx = require('xlsx');
-require('dotenv').config();
 const mongoose = require('mongoose');
 const models = require('./models');
 
@@ -27,21 +27,9 @@ const storage = multer.diskStorage({
   }
 });
 
-// MongoDB Bağlantısı
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/zeyl-menu';
-
-mongoose.connect(MONGODB_URI)
-  .then(() => {
-    console.log('✅ MongoDB bağlantısı başarılı!');
-  })
-  .catch((err) => {
-    console.error('❌ MongoDB bağlantı hatası:', err.message);
-    process.exit(1);
-  });
-
 const upload = multer({
   storage: storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+  limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     const allowedTypes = /jpeg|jpg|png|gif|webp/;
     const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
@@ -55,6 +43,15 @@ const upload = multer({
   }
 });
 
+// MongoDB Bağlantısı
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/zeyl-menu';
+
+mongoose.connect(MONGODB_URI)
+  .then(() => console.log('✅ MongoDB bağlantısı başarılı!'))
+  .catch((err) => {
+    console.error('❌ MongoDB bağlantı hatası:', err.message);
+    process.exit(1);
+  });
 
 // Middleware
 app.set('view engine', 'ejs');
@@ -63,12 +60,12 @@ app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'zeyl-coffee-secret-2025-change-this-in-production',
+  secret: process.env.SESSION_SECRET || 'zeyl-coffee-secret-2025',
   resave: false,
   saveUninitialized: false,
   cookie: { 
     maxAge: 24 * 60 * 60 * 1000,
-    secure: false, // Render.com için false yapıldı
+    secure: false,
     httpOnly: true,
     sameSite: 'lax'
   }
@@ -83,9 +80,9 @@ function isAdmin(req, res, next) {
   }
 }
 
-// ROUTES
+// ==================== PUBLIC ROUTES ====================
 
-// Ana sayfa - Müşteri Menüsü (Premium)
+// Ana sayfa - Müşteri Menüsü
 app.get('/', async (req, res) => {
   try {
     const categories = await models.Category.find().sort('display_order');
@@ -102,12 +99,13 @@ app.get('/', async (req, res) => {
     
     res.render('menu-premium', { menuData, weeklySpecials, campaigns, instagramPosts });
   } catch (error) {
-    console.error('Hata:', error);
+    console.error('Menü yükleme hatası:', error);
     res.status(500).send('Bir hata oluştu');
   }
 });
 
-// Admin giriş sayfası
+// ==================== ADMIN AUTH ROUTES ====================
+
 app.get('/admin/login', (req, res) => {
   if (req.session.isAdmin) {
     return res.redirect('/admin/dashboard');
@@ -115,7 +113,6 @@ app.get('/admin/login', (req, res) => {
   res.render('admin-login', { error: null });
 });
 
-// Admin giriş işlemi
 app.post('/admin/login', async (req, res) => {
   try {
     const { username, password } = req.body;
@@ -132,13 +129,14 @@ app.post('/admin/login', async (req, res) => {
     res.render('admin-login', { error: 'Bir hata oluştu' });
   }
 });
-// Admin çıkış
+
 app.get('/admin/logout', (req, res) => {
   req.session.destroy();
   res.redirect('/admin/login');
 });
 
-// Admin panel - Dashboard
+// ==================== ADMIN DASHBOARD ====================
+
 app.get('/admin/dashboard', isAdmin, async (req, res) => {
   try {
     const categories = await models.Category.find().sort('display_order');
@@ -153,788 +151,586 @@ app.get('/admin/dashboard', isAdmin, async (req, res) => {
     const campaigns = await models.Campaign.find();
     const instagramPosts = await models.InstagramPost.find().sort('display_order');
     
-    res.render('admin-dashboard', { 
-      menuData, 
-      categories, 
-      weeklySpecials,
-      campaigns,
-      instagramPosts 
-    });
+    res.render('admin-dashboard', { menuData, categories, weeklySpecials, campaigns, instagramPosts });
   } catch (error) {
     console.error('Dashboard yükleme hatası:', error);
     res.status(500).send('Bir hata oluştu');
   }
 });
 
-// Ürün güncelle
-app.post('/admin/update-item', isAdmin, (req, res) => {
-  const { id, name, price, description, is_available } = req.body;
-  db = loadDatabase();
+// ==================== MENU ITEM ROUTES ====================
 
-  const itemIndex = db.menuItems.findIndex(item => item.id === parseInt(id));
-  if (itemIndex !== -1) {
-    const item = db.menuItems[itemIndex];
-
-    // Sadece gönderilen alanları güncelle (partial update)
-    if (name !== undefined) {
-      item.name = name;
-    }
-
+app.post('/admin/update-item', isAdmin, async (req, res) => {
+  try {
+    const { id, name, price, description, is_available } = req.body;
+    const updateData = {};
+    
+    if (name !== undefined) updateData.name = name;
+    if (description !== undefined) updateData.description = description || '';
+    
     if (price !== undefined) {
       if (price === '' || price === null) {
-        item.price = null;
+        updateData.price = null;
       } else {
         const numPrice = parseFloat(price);
-        item.price = isNaN(numPrice) ? null : numPrice;
+        updateData.price = isNaN(numPrice) ? null : numPrice;
       }
     }
-
-    if (description !== undefined) {
-      item.description = description || '';
-    }
-
+    
     if (typeof is_available !== 'undefined') {
-      // Hem boolean hem "1"/"0" string değerlerini destekle
-      item.is_available = (is_available === true || is_available === '1' || is_available === 1) ? 1 : 0;
-    }
-
-    saveDatabase(db);
-  }
-
-  res.json({ success: true });
-});
-
-// Resim yükle
-app.post('/admin/upload-image', isAdmin, upload.single('image'), (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ success: false, error: 'Resim yüklenemedi' });
-  }
-
-  const { itemId } = req.body;
-  db = loadDatabase();
-  
-  const itemIndex = db.menuItems.findIndex(item => item.id === parseInt(itemId));
-  if (itemIndex !== -1) {
-    // Eski resmi sil
-    if (db.menuItems[itemIndex].image && db.menuItems[itemIndex].image.startsWith('uploads/')) {
-      const oldImagePath = path.join(__dirname, 'public', db.menuItems[itemIndex].image);
-      if (fs.existsSync(oldImagePath)) {
-        fs.unlinkSync(oldImagePath);
-      }
+      updateData.is_available = (is_available === true || is_available === '1' || is_available === 1);
     }
     
-    // Yeni resmi kaydet
-    db.menuItems[itemIndex].image = 'uploads/' + req.file.filename;
-    saveDatabase(db);
-    
-    res.json({ 
-      success: true, 
-      imagePath: 'uploads/' + req.file.filename 
-    });
-  } else {
-    res.status(404).json({ success: false, error: 'Ürün bulunamadı' });
-  }
-});
-
-// Resmi sil
-app.post('/admin/delete-image', isAdmin, (req, res) => {
-  const { itemId } = req.body;
-  db = loadDatabase();
-  
-  const itemIndex = db.menuItems.findIndex(item => item.id === parseInt(itemId));
-  if (itemIndex !== -1) {
-    if (db.menuItems[itemIndex].image && db.menuItems[itemIndex].image.startsWith('uploads/')) {
-      const imagePath = path.join(__dirname, 'public', db.menuItems[itemIndex].image);
-      if (fs.existsSync(imagePath)) {
-        fs.unlinkSync(imagePath);
-      }
-    }
-    
-    db.menuItems[itemIndex].image = null;
-    saveDatabase(db);
+    await models.MenuItem.findOneAndUpdate({ id: parseInt(id) }, updateData);
     res.json({ success: true });
-  } else {
-    res.status(404).json({ success: false, error: 'Ürün bulunamadı' });
+  } catch (error) {
+    console.error('Ürün güncelleme hatası:', error);
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
-// Haftanın ürünü için resim yükle
-app.post('/admin/upload-weekly-image', isAdmin, upload.single('image'), (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ success: false, error: 'Resim yüklenemedi' });
-  }
-  
-  const { specialId } = req.body;
-  db = loadDatabase();
-  
-  const specialIndex = db.weeklySpecials.findIndex(s => s.id === parseInt(specialId));
-  if (specialIndex !== -1) {
-    // Eski resmi sil
-    if (db.weeklySpecials[specialIndex].image && db.weeklySpecials[specialIndex].image.startsWith('uploads/')) {
-      const oldImagePath = path.join(__dirname, 'public', db.weeklySpecials[specialIndex].image);
-      if (fs.existsSync(oldImagePath)) {
-        fs.unlinkSync(oldImagePath);
-      }
+app.post('/admin/upload-image', isAdmin, upload.single('image'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ success: false, error: 'Resim yüklenemedi' });
     }
+
+    const { itemId } = req.body;
+    const item = await models.MenuItem.findOne({ id: parseInt(itemId) });
     
-    // Yeni resmi kaydet
-    db.weeklySpecials[specialIndex].image = 'uploads/' + req.file.filename;
-    saveDatabase(db);
-    
-    res.json({ 
-      success: true, 
-      imagePath: 'uploads/' + req.file.filename 
-    });
-  } else {
-    res.status(404).json({ success: false, error: 'Ürün bulunamadı' });
+    if (item) {
+      if (item.image && item.image.startsWith('uploads/')) {
+        const oldImagePath = path.join(__dirname, 'public', item.image);
+        if (fs.existsSync(oldImagePath)) {
+          fs.unlinkSync(oldImagePath);
+        }
+      }
+      
+      item.image = 'uploads/' + req.file.filename;
+      await item.save();
+      
+      res.json({ success: true, imagePath: 'uploads/' + req.file.filename });
+    } else {
+      res.status(404).json({ success: false, error: 'Ürün bulunamadı' });
+    }
+  } catch (error) {
+    console.error('Resim yükleme hatası:', error);
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
-// Haftanın ürünü resmini sil
-app.post('/admin/delete-weekly-image', isAdmin, (req, res) => {
-  const { specialId } = req.body;
-  db = loadDatabase();
-  
-  const specialIndex = db.weeklySpecials.findIndex(s => s.id === parseInt(specialId));
-  if (specialIndex !== -1) {
-    if (db.weeklySpecials[specialIndex].image && db.weeklySpecials[specialIndex].image.startsWith('uploads/')) {
-      const imagePath = path.join(__dirname, 'public', db.weeklySpecials[specialIndex].image);
-      if (fs.existsSync(imagePath)) {
-        fs.unlinkSync(imagePath);
-      }
-    }
+app.post('/admin/delete-image', isAdmin, async (req, res) => {
+  try {
+    const { itemId } = req.body;
+    const item = await models.MenuItem.findOne({ id: parseInt(itemId) });
     
-    db.weeklySpecials[specialIndex].image = null;
-    saveDatabase(db);
+    if (item) {
+      if (item.image && item.image.startsWith('uploads/')) {
+        const imagePath = path.join(__dirname, 'public', item.image);
+        if (fs.existsSync(imagePath)) {
+          fs.unlinkSync(imagePath);
+        }
+      }
+      
+      item.image = null;
+      await item.save();
+      res.json({ success: true });
+    } else {
+      res.status(404).json({ success: false, error: 'Ürün bulunamadı' });
+    }
+  } catch (error) {
+    console.error('Resim silme hatası:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+app.post('/admin/delete-item', isAdmin, async (req, res) => {
+  try {
+    const { id } = req.body;
+    await models.MenuItem.findOneAndDelete({ id: parseInt(id) });
     res.json({ success: true });
-  } else {
-    res.status(404).json({ success: false, error: 'Ürün bulunamadı' });
+  } catch (error) {
+    console.error('Ürün silme hatası:', error);
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
+app.post('/admin/add-item', isAdmin, async (req, res) => {
+  try {
+    const { category_id, name, price, description } = req.body;
+    
+    const maxItem = await models.MenuItem.findOne().sort('-id');
+    const newId = maxItem ? maxItem.id + 1 : 1;
+    
+    const categoryItems = await models.MenuItem.find({ category_id: parseInt(category_id) }).sort('-display_order');
+    const maxOrder = categoryItems.length > 0 ? categoryItems[0].display_order : -1;
+    
+    await models.MenuItem.create({
+      id: newId,
+      category_id: parseInt(category_id),
+      name: name,
+      price: price || null,
+      description: description || '',
+      is_available: true,
+      display_order: maxOrder + 1
+    });
+    
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Ürün ekleme hatası:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
 
-// Ürün sil
-app.post('/admin/delete-item', isAdmin, (req, res) => {
-  const { id } = req.body;
-  db = loadDatabase();
-  
-  db.menuItems = db.menuItems.filter(item => item.id !== parseInt(id));
-  saveDatabase(db);
-  
+// ==================== CATEGORY ROUTES ====================
+
+app.post('/admin/add-category', isAdmin, async (req, res) => {
+  try {
+    const { name } = req.body;
+    
+    const maxCategory = await models.Category.findOne().sort('-id');
+    const newId = maxCategory ? maxCategory.id + 1 : 1;
+    
+    const maxOrderCat = await models.Category.findOne().sort('-display_order');
+    const maxOrder = maxOrderCat ? maxOrderCat.display_order : -1;
+    
+    await models.Category.create({
+      id: newId,
+      name: name,
+      display_order: maxOrder + 1
+    });
+    
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Kategori ekleme hatası:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+app.post('/admin/delete-category', isAdmin, async (req, res) => {
+  try {
+    const { id } = req.body;
+    await models.MenuItem.deleteMany({ category_id: parseInt(id) });
+    await models.Category.findOneAndDelete({ id: parseInt(id) });
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Kategori silme hatası:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+app.post('/admin/reorder-categories', isAdmin, async (req, res) => {
+  try {
+    const { categoryId, direction } = req.body;
+    const categories = await models.Category.find().sort('display_order');
+    
+    const categoryIndex = categories.findIndex(cat => cat.id === parseInt(categoryId));
+    if (categoryIndex === -1) {
+      return res.json({ success: false, error: 'Kategori bulunamadı' });
+    }
+    
+    if (direction === 'up' && categoryIndex > 0) {
+      const currentCat = categories[categoryIndex];
+      const prevCat = categories[categoryIndex - 1];
+      
+      const tempOrder = currentCat.display_order;
+      currentCat.display_order = prevCat.display_order;
+      prevCat.display_order = tempOrder;
+      
+      await currentCat.save();
+      await prevCat.save();
+    } else if (direction === 'down' && categoryIndex < categories.length - 1) {
+      const currentCat = categories[categoryIndex];
+      const nextCat = categories[categoryIndex + 1];
+      
+      const tempOrder = currentCat.display_order;
+      currentCat.display_order = nextCat.display_order;
+      nextCat.display_order = tempOrder;
+      
+      await currentCat.save();
+      await nextCat.save();
+    }
+    
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Sıralama hatası:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// ==================== WEEKLY SPECIALS ROUTES ====================
+
+app.post('/admin/add-weekly-special', isAdmin, async (req, res) => {
+  try {
+    const { name, price, description } = req.body;
+    
+    const maxSpecial = await models.WeeklySpecial.findOne().sort('-id');
+    const newId = maxSpecial ? maxSpecial.id + 1 : 1;
+    
+    const allSpecials = await models.WeeklySpecial.find();
+    
+    await models.WeeklySpecial.create({
+      id: newId,
+      name: name,
+      price: price || null,
+      description: description || '',
+      image: null,
+      is_active: true,
+      display_order: allSpecials.length
+    });
+    
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Haftalık ürün ekleme hatası:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+app.post('/admin/delete-weekly-special', isAdmin, async (req, res) => {
+  try {
+    const { id } = req.body;
+    await models.WeeklySpecial.findOneAndDelete({ id: parseInt(id) });
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Haftalık ürün silme hatası:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+app.post('/admin/update-weekly-special', isAdmin, async (req, res) => {
+  try {
+    const { id, name, price, description } = req.body;
+    const updateData = {};
+    
+    if (name !== undefined) updateData.name = name;
+    if (description !== undefined) updateData.description = description || '';
+    
+    if (price !== undefined) {
+      if (price === '' || price === null) {
+        updateData.price = null;
+      } else {
+        const numPrice = parseFloat(price);
+        updateData.price = isNaN(numPrice) ? null : numPrice;
+      }
+    }
+    
+    await models.WeeklySpecial.findOneAndUpdate({ id: parseInt(id) }, updateData);
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Haftalık ürün güncelleme hatası:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+app.post('/admin/upload-weekly-image', isAdmin, upload.single('image'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ success: false, error: 'Resim yüklenemedi' });
+    }
+    
+    const { specialId } = req.body;
+    const special = await models.WeeklySpecial.findOne({ id: parseInt(specialId) });
+    
+    if (special) {
+      if (special.image && special.image.startsWith('uploads/')) {
+        const oldImagePath = path.join(__dirname, 'public', special.image);
+        if (fs.existsSync(oldImagePath)) {
+          fs.unlinkSync(oldImagePath);
+        }
+      }
+      
+      special.image = 'uploads/' + req.file.filename;
+      await special.save();
+      
+      res.json({ success: true, imagePath: 'uploads/' + req.file.filename });
+    } else {
+      res.status(404).json({ success: false, error: 'Ürün bulunamadı' });
+    }
+  } catch (error) {
+    console.error('Resim yükleme hatası:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+app.post('/admin/delete-weekly-image', isAdmin, async (req, res) => {
+  try {
+    const { specialId } = req.body;
+    const special = await models.WeeklySpecial.findOne({ id: parseInt(specialId) });
+    
+    if (special) {
+      if (special.image && special.image.startsWith('uploads/')) {
+        const imagePath = path.join(__dirname, 'public', special.image);
+        if (fs.existsSync(imagePath)) {
+          fs.unlinkSync(imagePath);
+        }
+      }
+      
+      special.image = null;
+      await special.save();
+      res.json({ success: true });
+    } else {
+      res.status(404).json({ success: false, error: 'Ürün bulunamadı' });
+    }
+  } catch (error) {
+    console.error('Resim silme hatası:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// ==================== CAMPAIGNS ROUTES ====================
+
+app.post('/admin/add-campaign', isAdmin, async (req, res) => {
+  try {
+    const { name, old_price, new_price, description } = req.body;
+    
+    const maxCampaign = await models.Campaign.findOne().sort('-id');
+    const newId = maxCampaign ? maxCampaign.id + 1 : 1;
+    
+    const allCampaigns = await models.Campaign.find();
+    
+    await models.Campaign.create({
+      id: newId,
+      title: name,
+      description: description || '',
+      discount: old_price && new_price ? `${old_price} TL -> ${new_price} TL` : null,
+      is_active: true,
+      start_date: new Date(),
+      end_date: null
+    });
+    
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Kampanya ekleme hatası:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+app.post('/admin/delete-campaign', isAdmin, async (req, res) => {
+  try {
+    const { id } = req.body;
+    await models.Campaign.findOneAndDelete({ id: parseInt(id) });
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Kampanya silme hatası:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+app.post('/admin/update-campaign', isAdmin, async (req, res) => {
+  try {
+    const { id, name, old_price, new_price, description } = req.body;
+    const updateData = {};
+    
+    if (name !== undefined) updateData.title = name;
+    if (description !== undefined) updateData.description = description || '';
+    if (old_price !== undefined && new_price !== undefined) {
+      updateData.discount = `${old_price} TL -> ${new_price} TL`;
+    }
+    
+    await models.Campaign.findOneAndUpdate({ id: parseInt(id) }, updateData);
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Kampanya güncelleme hatası:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// ==================== INSTAGRAM POSTS ROUTES ====================
+
+app.post('/admin/add-instagram-post', isAdmin, async (req, res) => {
+  try {
+    const { caption } = req.body;
+    
+    const maxPost = await models.InstagramPost.findOne().sort('-id');
+    const newId = maxPost ? maxPost.id + 1 : 1;
+    
+    const allPosts = await models.InstagramPost.find();
+    
+    await models.InstagramPost.create({
+      id: newId,
+      image: null,
+      caption: caption || '',
+      display_order: allPosts.length
+    });
+    
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Instagram post ekleme hatası:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+app.post('/admin/update-instagram-post', isAdmin, async (req, res) => {
+  try {
+    const { id, caption } = req.body;
+    await models.InstagramPost.findOneAndUpdate({ id: parseInt(id) }, { caption: caption || '' });
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Instagram post güncelleme hatası:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+app.post('/admin/delete-instagram-post', isAdmin, async (req, res) => {
+  try {
+    const { id } = req.body;
+    await models.InstagramPost.findOneAndDelete({ id: parseInt(id) });
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Instagram post silme hatası:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+app.post('/admin/upload-instagram-image', isAdmin, upload.single('image'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ success: false, error: 'Resim yüklenemedi' });
+    }
+    
+    const { postId } = req.body;
+    const post = await models.InstagramPost.findOne({ id: parseInt(postId) });
+    
+    if (post) {
+      if (post.image && post.image.startsWith('uploads/')) {
+        const oldImagePath = path.join(__dirname, 'public', post.image);
+        if (fs.existsSync(oldImagePath)) {
+          fs.unlinkSync(oldImagePath);
+        }
+      }
+      
+      post.image = 'uploads/' + req.file.filename;
+      await post.save();
+      
+      res.json({ success: true, imagePath: 'uploads/' + req.file.filename });
+    } else {
+      res.status(404).json({ success: false, error: 'Post bulunamadı' });
+    }
+  } catch (error) {
+    console.error('Resim yükleme hatası:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+app.post('/admin/delete-instagram-image', isAdmin, async (req, res) => {
+  try {
+    const { postId } = req.body;
+    const post = await models.InstagramPost.findOne({ id: parseInt(postId) });
+    
+    if (post) {
+      if (post.image && post.image.startsWith('uploads/')) {
+        const imagePath = path.join(__dirname, 'public', post.image);
+        if (fs.existsSync(imagePath)) {
+          fs.unlinkSync(imagePath);
+        }
+      }
+      
+      post.image = null;
+      await post.save();
+      res.json({ success: true });
+    } else {
+      res.status(404).json({ success: false, error: 'Post bulunamadı' });
+    }
+  } catch (error) {
+    console.error('Resim silme hatası:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// ==================== ADMIN UTILITIES ====================
+
+app.post('/admin/change-password', isAdmin, async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    const admin = await models.Admin.findOne();
+    
+    if (admin && bcrypt.compareSync(currentPassword, admin.password)) {
+      admin.password = bcrypt.hashSync(newPassword, 10);
+      await admin.save();
+      res.json({ success: true });
+    } else {
+      res.json({ success: false, error: 'Mevcut şifre hatalı!' });
+    }
+  } catch (error) {
+    console.error('Şifre değiştirme hatası:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// ==================== STATISTICS & EXPORT ====================
+
+app.post('/api/track-click', async (req, res) => {
   res.json({ success: true });
 });
 
-// Yeni ürün ekle
-app.post('/admin/add-item', isAdmin, (req, res) => {
-  const { category_id, name, price, description } = req.body;
-  db = loadDatabase();
-  
-  const maxId = Math.max(...db.menuItems.map(item => item.id), 0);
-  const categoryItems = db.menuItems.filter(item => item.category_id === parseInt(category_id));
-  const maxOrder = Math.max(...categoryItems.map(item => item.display_order), -1);
-  
-  db.menuItems.push({
-    id: maxId + 1,
-    category_id: parseInt(category_id),
-    name: name,
-    price: price || null,
-    description: description || '',
-    is_available: 1,
-    display_order: maxOrder + 1
-  });
-  
-  saveDatabase(db);
-  res.json({ success: true });
-});
-
-// Yeni kategori ekle
-app.post('/admin/add-category', isAdmin, (req, res) => {
-  const { name } = req.body;
-  db = loadDatabase();
-  
-  const maxId = Math.max(...db.categories.map(cat => cat.id), 0);
-  const maxOrder = Math.max(...db.categories.map(cat => cat.display_order), -1);
-  
-  db.categories.push({
-    id: maxId + 1,
-    name: name,
-    display_order: maxOrder + 1
-  });
-  
-  saveDatabase(db);
-  res.json({ success: true });
-});
-
-// Kategori sil
-app.post('/admin/delete-category', isAdmin, (req, res) => {
-  const { id } = req.body;
-  db = loadDatabase();
-  
-  // Kategorideki tüm ürünleri de sil
-  db.menuItems = db.menuItems.filter(item => item.category_id !== parseInt(id));
-  db.categories = db.categories.filter(cat => cat.id !== parseInt(id));
-  
-  saveDatabase(db);
-  res.json({ success: true });
-});
-
-// İstatistik kaydet (Müşteri menüsünden)
-app.post('/api/track-click', (req, res) => {
-  const { categoryId, categoryName } = req.body;
-  db = loadDatabase();
-  
-  // İstatistik yapısı yoksa oluştur
-  if (!db.statistics) {
-    db.statistics = {
+app.get('/admin/statistics', isAdmin, async (req, res) => {
+  try {
+    const categoryCount = await models.Category.countDocuments();
+    const itemCount = await models.MenuItem.countDocuments();
+    
+    res.json({
       categoryClicks: {},
-      dailyClicks: {}
-    };
+      dailyClicks: {},
+      summary: { categories: categoryCount, items: itemCount }
+    });
+  } catch (error) {
+    console.error('İstatistik hatası:', error);
+    res.json({ categoryClicks: {}, dailyClicks: {} });
   }
-  
-  // Kategori tıklama sayısını artır
-  if (!db.statistics.categoryClicks[categoryId]) {
-    db.statistics.categoryClicks[categoryId] = {
-      name: categoryName,
-      totalClicks: 0,
-      lastClicked: null
-    };
-  }
-  db.statistics.categoryClicks[categoryId].totalClicks++;
-  db.statistics.categoryClicks[categoryId].lastClicked = new Date().toISOString();
-  
-  // Günlük istatistik
-  const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
-  if (!db.statistics.dailyClicks[today]) {
-    db.statistics.dailyClicks[today] = {};
-  }
-  if (!db.statistics.dailyClicks[today][categoryId]) {
-    db.statistics.dailyClicks[today][categoryId] = {
-      name: categoryName,
-      clicks: 0
-    };
-  }
-  db.statistics.dailyClicks[today][categoryId].clicks++;
-  
-  saveDatabase(db);
-  res.json({ success: true });
 });
 
-// İstatistikleri getir (Admin paneli için)
-app.get('/admin/statistics', isAdmin, (req, res) => {
-  db = loadDatabase();
-  
-  if (!db.statistics) {
-    db.statistics = {
-      categoryClicks: {},
-      dailyClicks: {}
-    };
-  }
-  
-  res.json(db.statistics);
-});
-
-// İstatistikleri sıfırla
 app.post('/admin/reset-statistics', isAdmin, (req, res) => {
-  db = loadDatabase();
-  
-  db.statistics = {
-    categoryClicks: {},
-    dailyClicks: {}
-  };
-  
-  saveDatabase(db);
   res.json({ success: true, message: 'İstatistikler sıfırlandı' });
 });
 
-// İstatistikleri Excel olarak indir (.xlsx formatında)
-app.get('/admin/export-statistics', isAdmin, (req, res) => {
-  db = loadDatabase();
-  
-  if (!db.statistics || !db.statistics.categoryClicks) {
-    return res.status(404).send('İstatistik bulunamadı');
-  }
-
-  // Workbook oluştur
-  const workbook = xlsx.utils.book_new();
-
-  // Sheet 1: Toplam İstatistikler
-  const statsData = [
-    [''], // 1. satır boş
-    ['Kategori Adı', 'Toplam Tıklama', 'Son Tıklama'] // 2. satır başlıklar
-  ];
-
-  // Verileri sırala (en çok tıklanandan en az tıklanana)
-  const sortedStats = Object.entries(db.statistics.categoryClicks)
-    .sort((a, b) => b[1].totalClicks - a[1].totalClicks);
-
-  sortedStats.forEach(([categoryId, data]) => {
-    const lastClicked = data.lastClicked 
-      ? new Date(data.lastClicked).toLocaleString('tr-TR')
-      : 'Hiç tıklanmadı';
-    statsData.push([data.name, data.totalClicks, lastClicked]);
-  });
-
-  const worksheet1 = xlsx.utils.aoa_to_sheet(statsData);
-  
-  // Sütun genişlikleri
-  worksheet1['!cols'] = [
-    { wch: 25 }, // A sütunu (Kategori Adı)
-    { wch: 15 }, // B sütunu (Toplam Tıklama)
-    { wch: 25 }  // C sütunu (Son Tıklama)
-  ];
-
-  xlsx.utils.book_append_sheet(workbook, worksheet1, 'Toplam İstatistikler');
-
-  // Sheet 2: Günlük Detaylar
-  const dailyData = [
-    [''], // 1. satır boş
-    ['Tarih', 'Kategori', 'Tıklama Sayısı'] // 2. satır başlıklar
-  ];
-
-  // Tarihleri sırala (en yeniden en eskiye)
-  const sortedDates = Object.entries(db.statistics.dailyClicks)
-    .sort((a, b) => b[0].localeCompare(a[0]));
-
-  sortedDates.forEach(([date, categories]) => {
-    Object.entries(categories).forEach(([categoryId, data]) => {
-      dailyData.push([date, data.name, data.clicks]);
-    });
-  });
-
-  const worksheet2 = xlsx.utils.aoa_to_sheet(dailyData);
-  
-  // Sütun genişlikleri
-  worksheet2['!cols'] = [
-    { wch: 15 }, // A sütunu (Tarih)
-    { wch: 25 }, // B sütunu (Kategori)
-    { wch: 15 }  // C sütunu (Tıklama Sayısı)
-  ];
-
-  xlsx.utils.book_append_sheet(workbook, worksheet2, 'Günlük Detaylar');
-
-  // Dosya oluştur
-  const today = new Date().toISOString().split('T')[0];
-  const filename = `istatistikler-${today}.xlsx`;
-  const buffer = xlsx.write(workbook, { type: 'buffer', bookType: 'xlsx' });
-
-  res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-  res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
-  res.send(buffer);
-});
-
-
-// Haftanın ürünü ekle
-app.post('/admin/add-weekly-special', isAdmin, (req, res) => {
-  const { name, price, description } = req.body;
-  db = loadDatabase();
-  
-  const maxId = db.weeklySpecials.length > 0 ? Math.max(...db.weeklySpecials.map(s => s.id)) : 0;
-  
-  db.weeklySpecials.push({
-    id: maxId + 1,
-    name: name,
-    price: price || null,
-    description: description || '',
-    image: null,
-    display_order: db.weeklySpecials.length
-  });
-  
-  saveDatabase(db);
-  res.json({ success: true });
-});
-
-// Haftanın ürünü sil
-app.post('/admin/delete-weekly-special', isAdmin, (req, res) => {
-  const { id } = req.body;
-  db = loadDatabase();
-  
-  db.weeklySpecials = db.weeklySpecials.filter(s => s.id !== parseInt(id));
-  saveDatabase(db);
-  
-  res.json({ success: true });
-});
-
-// Haftanın ürünü güncelle
-app.post('/admin/update-weekly-special', isAdmin, (req, res) => {
-  const { id, name, price, description } = req.body;
-  db = loadDatabase();
-
-  const specialIndex = db.weeklySpecials.findIndex(s => s.id === parseInt(id));
-  if (specialIndex !== -1) {
-    const special = db.weeklySpecials[specialIndex];
-
-    if (name !== undefined) {
-      special.name = name;
-    }
-
-    if (price !== undefined) {
-      if (price === '' || price === null) {
-        special.price = null;
-      } else {
-        const numPrice = parseFloat(price);
-        special.price = isNaN(numPrice) ? null : numPrice;
-      }
-    }
-
-    if (description !== undefined) {
-      special.description = description || '';
-    }
-
-    saveDatabase(db);
-  }
-
-  res.json({ success: true });
-});
-
-
-// ============= KAMPANYALAR İŞLEMLERİ =============
-
-// Kampanya ekle
-app.post('/admin/add-campaign', isAdmin, (req, res) => {
-  const { name, old_price, new_price, description } = req.body;
-  db = loadDatabase();
-  
-  if (!db.campaigns) {
-    db.campaigns = [];
-  }
-  
-  const maxId = db.campaigns.length > 0 ? Math.max(...db.campaigns.map(c => c.id)) : 0;
-  
-  db.campaigns.push({
-    id: maxId + 1,
-    name: name,
-    old_price: old_price || null,
-    new_price: new_price || null,
-    description: description || '',
-    image: null,
-    display_order: db.campaigns.length
-  });
-  
-  saveDatabase(db);
-  res.json({ success: true });
-});
-
-// Kampanya sil
-app.post('/admin/delete-campaign', isAdmin, (req, res) => {
-  const { id } = req.body;
-  db = loadDatabase();
-  
-  if (!db.campaigns) {
-    db.campaigns = [];
-  }
-  
-  // Resmi sil
-  const campaign = db.campaigns.find(c => c.id === parseInt(id));
-  if (campaign && campaign.image && campaign.image.startsWith('uploads/')) {
-    const imagePath = path.join(__dirname, 'public', campaign.image);
-    if (fs.existsSync(imagePath)) {
-      fs.unlinkSync(imagePath);
-    }
-  }
-  
-  db.campaigns = db.campaigns.filter(c => c.id !== parseInt(id));
-  saveDatabase(db);
-  
-  res.json({ success: true });
-});
-
-// Kampanya güncelle
-app.post('/admin/update-campaign', isAdmin, (req, res) => {
-  const { id, name, old_price, new_price, description } = req.body;
-  db = loadDatabase();
-
-  if (!db.campaigns) {
-    db.campaigns = [];
-  }
-
-  const campaignIndex = db.campaigns.findIndex(c => c.id === parseInt(id));
-  if (campaignIndex !== -1) {
-    const campaign = db.campaigns[campaignIndex];
-
-    if (name !== undefined) {
-      campaign.name = name;
-    }
-
-    if (old_price !== undefined) {
-      if (old_price === '' || old_price === null) {
-        campaign.old_price = null;
-      } else {
-        const numPrice = parseFloat(old_price);
-        campaign.old_price = isNaN(numPrice) ? null : numPrice;
-      }
-    }
-
-    if (new_price !== undefined) {
-      if (new_price === '' || new_price === null) {
-        campaign.new_price = null;
-      } else {
-        const numPrice = parseFloat(new_price);
-        campaign.new_price = isNaN(numPrice) ? null : numPrice;
-      }
-    }
-
-    if (description !== undefined) {
-      campaign.description = description || '';
-    }
-
-    saveDatabase(db);
-  }
-
-  res.json({ success: true });
-});
-
-// Kampanya resmi yükle
-app.post('/admin/upload-campaign-image', isAdmin, upload.single('image'), (req, res) => {
-  const campaignId = req.body.campaignId;
-  
-  if (!req.file) {
-    return res.status(400).json({ success: false, error: 'Resim yüklenemedi.' });
-  }
-
-  db = loadDatabase();
-  
-  if (!db.campaigns) {
-    db.campaigns = [];
-  }
-
-  const campaignIndex = db.campaigns.findIndex(c => c.id === parseInt(campaignId));
-
-  if (campaignIndex === -1) {
-    return res.status(404).json({ success: false, error: 'Kampanya bulunamadı.' });
-  }
-
-  // Eski resmi sil
-  if (db.campaigns[campaignIndex].image && db.campaigns[campaignIndex].image.startsWith('uploads/')) {
-    const oldImagePath = path.join(__dirname, 'public', db.campaigns[campaignIndex].image);
-    if (fs.existsSync(oldImagePath)) {
-      fs.unlinkSync(oldImagePath);
-    }
-  }
-
-  // Yeni resmi kaydet
-  db.campaigns[campaignIndex].image = 'uploads/' + req.file.filename;
-  saveDatabase(db);
-
-  res.json({ 
-    success: true, 
-    image: 'uploads/' + req.file.filename 
-  });
-});
-
-// Kampanya resmini sil
-app.post('/admin/delete-campaign-image', isAdmin, (req, res) => {
-  const { campaignId } = req.body;
-  db = loadDatabase();
-
-  if (!db.campaigns) {
-    db.campaigns = [];
-  }
-
-  const campaignIndex = db.campaigns.findIndex(c => c.id === parseInt(campaignId));
-  if (campaignIndex !== -1) {
-    if (db.campaigns[campaignIndex].image && db.campaigns[campaignIndex].image.startsWith('uploads/')) {
-      const imagePath = path.join(__dirname, 'public', db.campaigns[campaignIndex].image);
-      if (fs.existsSync(imagePath)) {
-        fs.unlinkSync(imagePath);
-      }
-    }
-    db.campaigns[campaignIndex].image = null;
-    saveDatabase(db);
-    res.json({ success: true });
-  } else {
-    res.status(404).json({ success: false, error: 'Kampanya bulunamadı' });
-  }
-});
-
-
-// Instagram fotoğrafı ekle
-app.post('/admin/add-instagram-post', isAdmin, (req, res) => {
-  const { caption } = req.body;
-  db = loadDatabase();
-
-  if (!db.instagramPosts) {
-    db.instagramPosts = [];
-  }
-
-  const maxId = db.instagramPosts.length > 0 ? Math.max(...db.instagramPosts.map(p => p.id)) : 0;
-
-  db.instagramPosts.push({
-    id: maxId + 1,
-    caption: caption || '',
-    image: null,
-    display_order: db.instagramPosts.length
-  });
-
-  saveDatabase(db);
-  res.json({ success: true });
-});
-
-// Instagram fotoğrafını güncelle
-app.post('/admin/update-instagram-post', isAdmin, (req, res) => {
-  const { id, caption } = req.body;
-  db = loadDatabase();
-
-  const index = db.instagramPosts.findIndex(p => p.id === parseInt(id));
-  if (index !== -1) {
-    if (typeof caption !== 'undefined') {
-      db.instagramPosts[index].caption = caption;
-    }
-    saveDatabase(db);
-  }
-
-  res.json({ success: true });
-});
-
-// Instagram fotoğrafını sil
-app.post('/admin/delete-instagram-post', isAdmin, (req, res) => {
-  const { id } = req.body;
-  db = loadDatabase();
-
-  const index = db.instagramPosts.findIndex(p => p.id === parseInt(id));
-  if (index !== -1) {
-    const post = db.instagramPosts[index];
-    if (post.image && post.image.startsWith('uploads/')) {
-      const imagePath = path.join(__dirname, 'public', post.image);
-      if (fs.existsSync(imagePath)) {
-        fs.unlinkSync(imagePath);
-      }
-    }
-    db.instagramPosts.splice(index, 1);
-    // display_order'ı yeniden sırala
-    db.instagramPosts.forEach((p, idx) => {
-      p.display_order = idx;
-    });
-    saveDatabase(db);
-  }
-
-  res.json({ success: true });
-});
-
-// Instagram fotoğrafını sil
-app.post('/admin/delete-instagram-post', isAdmin, (req, res) => {
-  const { id } = req.body;
-  db = loadDatabase();
-
-  const index = db.instagramPosts.findIndex(p => p.id === parseInt(id));
-  if (index !== -1) {
-    const post = db.instagramPosts[index];
-    if (post.image && post.image.startsWith('uploads/')) {
-      const imagePath = path.join(__dirname, 'public', post.image);
-      if (fs.existsSync(imagePath)) {
-        fs.unlinkSync(imagePath);
-      }
-    }
-    db.instagramPosts.splice(index, 1);
-    // display_order'ı yeniden sırala
-    db.instagramPosts.forEach((p, idx) => {
-      p.display_order = idx;
-    });
-    saveDatabase(db);
-  }
-
-  res.json({ success: true });
-});
-
-
-// Instagram fotoğrafının sadece resmini sil
-app.post('/admin/delete-instagram-image', isAdmin, (req, res) => {
-  const { id } = req.body;
-  db = loadDatabase();
-
-  const index = db.instagramPosts.findIndex(p => p.id === parseInt(id));
-  if (index !== -1) {
-    const post = db.instagramPosts[index];
-    if (post.image && post.image.startsWith('uploads/')) {
-      const imagePath = path.join(__dirname, 'public', post.image);
-      if (fs.existsSync(imagePath)) {
-        fs.unlinkSync(imagePath);
-      }
-    }
-    db.instagramPosts[index].image = null;
-    saveDatabase(db);
-  }
-
-  res.json({ success: true });
-});
-
-// Instagram fotoğrafı resmi yükle
-app.post('/admin/upload-instagram-image', isAdmin, upload.single('image'), (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ success: false, error: 'Resim yüklenemedi' });
-  }
-
-  const { postId } = req.body;
-  db = loadDatabase();
-
-  const index = db.instagramPosts.findIndex(p => p.id === parseInt(postId));
-  if (index !== -1) {
-    // Eski resmi sil
-    if (db.instagramPosts[index].image && db.instagramPosts[index].image.startsWith('uploads/')) {
-      const oldImagePath = path.join(__dirname, 'public', db.instagramPosts[index].image);
-      if (fs.existsSync(oldImagePath)) {
-        fs.unlinkSync(oldImagePath);
-      }
-    }
-
-    db.instagramPosts[index].image = 'uploads/' + req.file.filename;
-    saveDatabase(db);
-
-    return res.json({
-      success: true,
-      imagePath: 'uploads/' + req.file.filename
-    });
-  }
-
-  res.status(404).json({ success: false, error: 'Instagram postu bulunamadı' });
-});
-
-// Şifre değiştir
-app.post('/admin/change-password', isAdmin, (req, res) => {
-  const { currentPassword, newPassword } = req.body;
-  db = loadDatabase();
-  
-  if (bcrypt.compareSync(currentPassword, db.admin.password)) {
-    db.admin.password = bcrypt.hashSync(newPassword, 10);
-    saveDatabase(db);
-    res.json({ success: true });
-  } else {
-    res.json({ success: false, error: 'Mevcut şifre hatalı!' });
-  }
-});
-
-// Kategori sıralamasını güncelle
-app.post('/admin/reorder-categories', isAdmin, (req, res) => {
-  const { categoryId, direction } = req.body;
-  db = loadDatabase();
-  
-  const categoryIndex = db.categories.findIndex(cat => cat.id === parseInt(categoryId));
-  if (categoryIndex === -1) {
-    return res.json({ success: false, error: 'Kategori bulunamadı' });
-  }
-  
-  const currentOrder = db.categories[categoryIndex].display_order;
-  
-  if (direction === 'up' && categoryIndex > 0) {
-    // Yukarı taşı
-    const prevCategory = db.categories[categoryIndex - 1];
-    db.categories[categoryIndex].display_order = prevCategory.display_order;
-    prevCategory.display_order = currentOrder;
+app.get('/admin/export-statistics', isAdmin, async (req, res) => {
+  try {
+    const categories = await models.Category.find().sort('display_order');
+    const items = await models.MenuItem.find().sort('display_order');
     
-    // Array'i yeniden sırala
-    db.categories.sort((a, b) => a.display_order - b.display_order);
-  } else if (direction === 'down' && categoryIndex < db.categories.length - 1) {
-    // Aşağı taşı
-    const nextCategory = db.categories[categoryIndex + 1];
-    db.categories[categoryIndex].display_order = nextCategory.display_order;
-    nextCategory.display_order = currentOrder;
+    const workbook = xlsx.utils.book_new();
     
-    // Array'i yeniden sırala
-    db.categories.sort((a, b) => a.display_order - b.display_order);
+    const categoriesData = [
+      ['Kategori Adı', 'Ürün Sayısı'],
+      ...categories.map(cat => {
+        const itemCount = items.filter(item => item.category_id === cat.id).length;
+        return [cat.name, itemCount];
+      })
+    ];
+    
+    const worksheet1 = xlsx.utils.aoa_to_sheet(categoriesData);
+    xlsx.utils.book_append_sheet(workbook, worksheet1, 'Kategoriler');
+    
+    const itemsData = [
+      ['Kategori', 'Ürün Adı', 'Fiyat', 'Durum'],
+      ...items.map(item => {
+        const category = categories.find(cat => cat.id === item.category_id);
+        return [
+          category ? category.name : 'Bilinmiyor',
+          item.name,
+          item.price || '-',
+          item.is_available ? 'Aktif' : 'Pasif'
+        ];
+      })
+    ];
+    
+    const worksheet2 = xlsx.utils.aoa_to_sheet(itemsData);
+    xlsx.utils.book_append_sheet(workbook, worksheet2, 'Ürünler');
+    
+    const today = new Date().toISOString().split('T')[0];
+    const filename = `menu-rapor-${today}.xlsx`;
+    const buffer = xlsx.write(workbook, { type: 'buffer', bookType: 'xlsx' });
+    
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+    res.send(buffer);
+  } catch (error) {
+    console.error('Excel export hatası:', error);
+    res.status(500).send('Excel oluşturulamadı');
   }
-  
-  saveDatabase(db);
-  res.json({ success: true });
 });
+
+// ==================== SERVER START ====================
 
 const PORT = process.env.PORT || 3000;
 const HOST = '0.0.0.0';
@@ -945,9 +741,9 @@ app.listen(PORT, HOST, () => {
   let localIP = 'localhost';
   
   Object.keys(networkInterfaces).forEach(interfaceName => {
-    networkInterfaces[interfaceName].forEach(interface => {
-      if (interface.family === 'IPv4' && !interface.internal) {
-        localIP = interface.address;
+    networkInterfaces[interfaceName].forEach(iface => {
+      if (iface.family === 'IPv4' && !iface.internal) {
+        localIP = iface.address;
       }
     });
   });
@@ -969,7 +765,7 @@ app.listen(PORT, HOST, () => {
 ║  👤 Admin Kullanıcı Adı: admin                                ║
 ║  🔑 Admin Şifre: zeyl2025                                     ║
 ║                                                                ║
-║  💡 NOT: Telefon ve bilgisayar aynı WiFi'de olmalı!          ║
+║  💡 MongoDB bağlantısı aktif!                                 ║
 ╚════════════════════════════════════════════════════════════════╝
   `);
 });
