@@ -42,6 +42,7 @@ const campaignSchema = new mongoose.Schema({
   title: { type: String, required: true },
   description: { type: String },
   discount: { type: String },
+  image: { type: String },  // ← BU SATIR YENİ EKLENDİ
   is_active: { type: Boolean, default: true },
   start_date: { type: Date },
   end_date: { type: Date }
@@ -50,7 +51,7 @@ const campaignSchema = new mongoose.Schema({
 // InstagramPost Schema
 const instagramPostSchema = new mongoose.Schema({
   id: { type: Number, required: true, unique: true },
-  image: { type: String, required: true },
+  image: { type: String, required: false, default: null },  // ← DÜZELTİLDİ
   caption: { type: String },
   display_order: { type: Number, default: 0 }
 }, { timestamps: true });

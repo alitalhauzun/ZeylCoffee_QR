@@ -573,89 +573,8 @@ app.post('/admin/delete-campaign-image', isAdmin, async (req, res) => {
   }
 });
 
-// ← BURAYA EKLEYIN ↓
-
-app.post('/admin/upload-campaign-image', isAdmin, upload.single('image'), async (req, res) => {
-  try {
-    if (!req.file) {
-      return res.status(400).json({ success: false, error: 'Resim yüklenemedi' });
-    }
     
-    const { campaignId } = req.body;
-    const campaign = await models.Campaign.findOne({ id: parseInt(campaignId) });
     
-    if (campaign) {
-      // Eski resmi sil
-      if (campaign.image && campaign.image.startsWith('uploads/')) {
-        const oldImagePath = path.join(__dirname, 'public', campaign.image);
-        if (fs.existsSync(oldImagePath)) {
-          fs.unlinkSync(oldImagePath);
-        }
-      }
-      
-      // Yeni resmi kaydet
-      campaign.image = 'uploads/' + req.file.filename;
-      await campaign.save();
-      
-      res.json({ success: true, image: 'uploads/' + req.file.filename });
-    } else {
-      res.status(404).json({ success: false, error: 'Kampanya bulunamadı' });
-    }
-  } catch (error) {
-    console.error('Kampanya resim yükleme hatası:', error);
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
-
-app.post('/admin/delete-campaign-image', isAdmin, async (req, res) => {
-  try {
-    const { campaignId } = req.body;
-    const campaign = await models.Campaign.findOne({ id: parseInt(campaignId) });
-    
-    if (campaign) {
-      if (campaign.image && campaign.image.startsWith('uploads/')) {
-        const imagePath = path.join(__dirname, 'public', campaign.image);
-        if (fs.existsSync(imagePath)) {
-          fs.unlinkSync(imagePath);
-        }
-      }
-      
-      campaign.image = null;
-      await campaign.save();
-      res.json({ success: true });
-    } else {
-      res.status(404).json({ success: false, error: 'Kampanya bulunamadı' });
-    }
-  } catch (error) {
-    console.error('Kampanya resim silme hatası:', error);
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
-
-// ==================== INSTAGRAM POSTS ROUTES ====================
-
-app.post('/admin/add-instagram-post', isAdmin, async (req, res) => {
-  try {
-    const { caption } = req.body;
-    
-    const maxPost = await models.InstagramPost.findOne().sort('-id');
-    const newId = maxPost ? maxPost.id + 1 : 1;
-    
-    const allPosts = await models.InstagramPost.find();
-    
-    await models.InstagramPost.create({
-      id: newId,
-      image: null,
-      caption: caption || '',
-      display_order: allPosts.length
-    });
-    
-    res.json({ success: true });
-  } catch (error) {
-    console.error('Instagram post ekleme hatası:', error);
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
 
 app.post('/admin/update-instagram-post', isAdmin, async (req, res) => {
   try {
