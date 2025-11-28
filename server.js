@@ -516,21 +516,59 @@ app.post('/admin/delete-campaign', isAdmin, async (req, res) => {
   }
 });
 
-app.post('/admin/update-campaign', isAdmin, async (req, res) => {
+app.post('/admin/upload-campaign-image', isAdmin, upload.single('image'), async (req, res) => {
   try {
-    const { id, name, old_price, new_price, description } = req.body;
-    const updateData = {};
-    
-    if (name !== undefined) updateData.title = name;
-    if (description !== undefined) updateData.description = description || '';
-    if (old_price !== undefined && new_price !== undefined) {
-      updateData.discount = `${old_price} TL -> ${new_price} TL`;
+    if (!req.file) {
+      return res.status(400).json({ success: false, error: 'Resim yüklenemedi' });
     }
     
-    await models.Campaign.findOneAndUpdate({ id: parseInt(id) }, updateData);
-    res.json({ success: true });
+    const { campaignId } = req.body;
+    const campaign = await models.Campaign.findOne({ id: parseInt(campaignId) });
+    
+    if (campaign) {
+      // Eski resmi sil
+      if (campaign.image && campaign.image.startsWith('uploads/')) {
+        const oldImagePath = path.join(__dirname, 'public', campaign.image);
+        if (fs.existsSync(oldImagePath)) {
+          fs.unlinkSync(oldImagePath);
+        }
+      }
+      
+      // Yeni resmi kaydet
+      campaign.image = 'uploads/' + req.file.filename;
+      await campaign.save();
+      
+      res.json({ success: true, image: 'uploads/' + req.file.filename });
+    } else {
+      res.status(404).json({ success: false, error: 'Kampanya bulunamadı' });
+    }
   } catch (error) {
-    console.error('Kampanya güncelleme hatası:', error);
+    console.error('Kampanya resim yükleme hatası:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+app.post('/admin/delete-campaign-image', isAdmin, async (req, res) => {
+  try {
+    const { campaignId } = req.body;
+    const campaign = await models.Campaign.findOne({ id: parseInt(campaignId) });
+    
+    if (campaign) {
+      if (campaign.image && campaign.image.startsWith('uploads/')) {
+        const imagePath = path.join(__dirname, 'public', campaign.image);
+        if (fs.existsSync(imagePath)) {
+          fs.unlinkSync(imagePath);
+        }
+      }
+      
+      campaign.image = null;
+      await campaign.save();
+      res.json({ success: true });
+    } else {
+      res.status(404).json({ success: false, error: 'Kampanya bulunamadı' });
+    }
+  } catch (error) {
+    console.error('Kampanya resim silme hatası:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 });

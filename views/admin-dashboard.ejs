@@ -957,10 +957,15 @@
 
     function updateCampaign(campaignId, field, value) {
       const data = { id: campaignId };
-      if (field) {
-        data[field] = value;
+  
+      if (field === 'name') {
+        data.name = value; // Backend'de title'a çevrilecek
+      } else if (field === 'discount') {
+        data.discount = value;
+      } else if (field === 'description') {
+        data.description = value;
       }
-
+  
       fetch('/admin/update-campaign', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -968,9 +973,14 @@
       })
       .then(res => res.json())
       .then(data => {
-        if (data.success && !field) {
-          location.reload();
+        if (data.success) {
+          showNotification('Kampanya güncellendi!', 'success');
+        } else {
+          showNotification('Hata: ' + (data.error || 'Bilinmeyen hata'), 'error');
         }
+      })
+      .catch(err => {
+        showNotification('Hata: ' + err.message, 'error');
       });
     }
 
