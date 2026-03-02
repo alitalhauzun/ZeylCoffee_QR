@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zeyl Coffee & Levent Börek - Dijital Menü</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div class="header">
+    <div class="logos-container">
+      <img src="/zeyl_cafe_logo.png" alt="Zeyl Coffee" class="logo-zeyl">
+      <!-- Levent Börek Logosu Eklendi -->
+      <img src="/levent-logo-banner.png" alt="Levent Börek" class="logo-levent">
+    </div>
+
+    <h1>Zeyl Coffee & Levent Börek</h1>
+    <p>Lezzet dolu menümüzü keşfedin</p>
+
+    <!-- Instagram Butonları Buraya Taşındı -->
+    <div class="instagram-buttons-header">
+      <a href="https://www.instagram.com/zeylcafe?igsh=cG5oZnU1ZWczZzB1" target="_blank" class="instagram-btn">
+        <svg class="instagram-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+          <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+          <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+        </svg>
+        @zeylcafe
+      </a>
+      <a href="https://www.instagram.com/leventborekafyon?igsh=MTQzYWN4MGduODZpag==" target="_blank"
+        class="instagram-btn">
+        <svg class="instagram-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+          <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+          <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+        </svg>
+        @leventborekafyon
+      </a>
+    </div>
+  </div>
+
+  <div class="instagram-section">
+    <% if (instagramPosts && instagramPosts.length> 0) { %>
+      <div class="instagram-feed-wrapper">
+        <!-- Sonsuz döngü için track -->
+        <div class="instagram-feed-track">
+          <% instagramPosts.forEach(post=> { %>
+            <div class="instagram-post">
+              <% if (post.image) { %>
+                <img src="/<%= post.image %>" alt="Instagram Post">
+                <% } else { %>
+                  <div
+                    style="width: 100%; height: 100%; background: #eee; display: flex; align-items: center; justify-content: center; color: #999;">
+                    📸</div>
+                  <% } %>
+                    <div class="instagram-post-overlay">
+                      <div class="instagram-post-caption">
+                        <%= post.caption %>
+                      </div>
+                    </div>
+            </div>
+            <% }); %>
+              <!-- Döngü pürüzsüz olsun diye öğeleri tekrarla (Double the items) -->
+              <% instagramPosts.forEach(post=> { %>
+                <div class="instagram-post">
+                  <% if (post.image) { %>
+                    <img src="/<%= post.image %>" alt="Instagram Post">
+                    <% } else { %>
+                      <div
+                        style="width: 100%; height: 100%; background: #eee; display: flex; align-items: center; justify-content: center; color: #999;">
+                        📸</div>
+                      <% } %>
+                        <div class="instagram-post-overlay">
+                          <div class="instagram-post-caption">
+                            <%= post.caption %>
+                          </div>
+                        </div>
+                </div>
+                <% }); %>
+        </div>
+      </div>
+      <% } %>
+  </div>
+
+  <% if (weeklySpecials && weeklySpecials.length> 0) { %>
+    <div class="section-title">⭐ HAFTANIN ÜRÜNLERİ</div>
+    <div class="grid-container">
+      <% weeklySpecials.forEach(special=> { %>
+        <div class="card">
+          <% if (special.image) { %>
+            <div class="card-image-wrapper">
+              <img src="/<%= special.image %>" alt="<%= special.name %>">
+            </div>
+            <% } %>
+              <div class="card-content">
+                <h3 class="card-title">
+                  <%= special.name %>
+                </h3>
+                <% if (special.price) { %>
+                  <div class="card-price">
+                    <%= special.price %> ₺
+                  </div>
+                  <% } %>
+                    <% if (special.description) { %>
+                      <p class="card-desc">
+                        <%= special.description %>
+                      </p>
+                      <% } %>
+              </div>
+        </div>
+        <% }); %>
+    </div>
+    <% } %>
+
+      <% if (campaigns && campaigns.length> 0) { %>
+        <div class="section-title">🔥 KAMPANYALAR</div>
+        <div class="grid-container">
+          <% campaigns.forEach(campaign=> { %>
+            <div class="card">
+              <% if (campaign.image) { %>
+                <div class="card-image-wrapper">
+                  <img src="/<%= campaign.image %>" alt="<%= campaign.title %>">
+                </div>
+                <% } %>
+                  <div class="card-content">
+                    <h3 class="card-title">
+                      <%= campaign.title %>
+                    </h3>
+                    <% if (campaign.discount) { %>
+                      <div class="card-price">
+                        <%= campaign.discount %>
+                      </div>
+                      <% } %>
+                        <% if (campaign.description) { %>
+                          <p class="card-desc">
+                            <%= campaign.description %>
+                          </p>
+                          <% } %>
+                  </div>
+            </div>
+            <% }); %>
+        </div>
+        <% } %>
+
+          <div class="section-title">📋 MENÜ</div>
+
+          <div class="categories-nav">
+            <% menuData.forEach((data, index)=> { %>
+              <button class="category-btn <%= index === 0 ? 'active' : '' %>"
+                onclick="scrollToCategory('cat-<%= data.category.id %>', this)">
+                <%= data.category.name %>
+              </button>
+              <% }); %>
+          </div>
+
+          <div class="menu-section">
+            <% menuData.forEach(data=> { %>
+              <div id="cat-<%= data.category.id %>" class="category-wrapper">
+                <h2 class="menu-category-title">
+                  <%= data.category.name %>
+                </h2>
+                <div class="menu-items-list">
+                  <% if (data.items.length===0) { %>
+                    <p style="color: #999; font-style: italic;">Bu kategoride henüz ürün yok.</p>
+                    <% } else { %>
+                      <% data.items.forEach(item=> { %>
+                        <div class="menu-item">
+                          <img src="<%= item.image ? '/' + item.image : '/images/placeholder.jpg' %>"
+                            alt="<%= item.name %>" class="menu-item-image"
+                            onerror="this.src='https://placehold.co/100x100?text=No+Image';">
+                          <div class="menu-item-details">
+                            <div class="menu-item-header">
+                              <h3 class="menu-item-name">
+                                <%= item.name %>
+                              </h3>
+                              <% if (item.price) { %>
+                                <div class="menu-item-price">
+                                  <%= item.price %> ₺
+                                </div>
+                                <% } %>
+                            </div>
+                            <% if (item.description) { %>
+                              <p class="menu-item-desc">
+                                <%= item.description %>
+                              </p>
+                              <% } %>
+                          </div>
+                        </div>
+                        <% }); %>
+                          <% } %>
+                </div>
+              </div>
+              <% }); %>
+          </div>
+
+          <script>
+            // Kategori tıklama istatistiği gönder
+            function trackCategoryClick(categoryId, categoryName) {
+              fetch('/api/track-click', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ categoryId, categoryName })
+              }).catch(err => console.log('İstatistik hatası:', err));
+            }
+
+            function scrollToCategory(elementId, btn) {
+              // Button state update
+              document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+              btn.classList.add('active');
+
+              // Kategori tıklama istatistiği
+              const catId = elementId.replace('cat-', '');
+              const catName = btn.textContent.trim();
+              trackCategoryClick(catId, catName);
+
+              // Smooth scroll
+              const element = document.getElementById(elementId);
+              if (element) {
+                const headerOffset = 180;
+                const elementPosition = element.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+                window.scrollTo({
+                  top: offsetPosition,
+                  behavior: "smooth"
+                });
+              }
+            }
+
+            // Instagram slider: tıklayınca dursun, başka yere tıklayınca devam etsin
+            (function () {
+              const track = document.querySelector('.instagram-feed-track');
+              if (!track) return;
+
+              let isPaused = false;
+
+              track.addEventListener('click', function (e) {
+                e.stopPropagation();
+                if (!isPaused) {
+                  track.style.animationPlayState = 'paused';
+                  isPaused = true;
+                } else {
+                  track.style.animationPlayState = 'running';
+                  isPaused = false;
+                }
+              });
+
+              document.addEventListener('click', function () {
+                if (isPaused) {
+                  track.style.animationPlayState = 'running';
+                  isPaused = false;
+                }
+              });
+            })();
+          </script>
+</body>
+
+</html>

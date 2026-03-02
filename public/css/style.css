@@ -1,0 +1,464 @@
+/* Modern Reset */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --primary: #FF8C00;
+  --primary-dark: #E67E00;
+  --bg-body: #f8f9fa;
+  --bg-card: #ffffff;
+  --text-primary: #2c3e50;
+  --text-secondary: #7f8c8d;
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 8px 16px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.12);
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --font-main: 'Poppins', sans-serif;
+  --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+body {
+  font-family: var(--font-main);
+  background-color: var(--bg-body);
+  color: var(--text-primary);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Header */
+.header {
+  text-align: center;
+  padding: 60px 20px 40px;
+  background: linear-gradient(135deg, #1a1a1a 0%, #000000 100%);
+  color: white;
+  border-bottom-left-radius: var(--radius-lg);
+  border-bottom-right-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  overflow: hidden;
+}
+
+.header::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at top right, rgba(255, 140, 0, 0.1), transparent 60%);
+  pointer-events: none;
+}
+
+.logos-container {
+  display: flex;
+  flex-direction: column;
+  /* Yan yana değil alt alta */
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 24px;
+  position: relative;
+  z-index: 1;
+}
+
+.logo-zeyl {
+  max-width: 200px;
+  height: auto;
+  height: 110px;
+  /* Zeyl logosu büyütüldü */
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+}
+
+.logo-levent {
+  height: 50px;
+  /* Levent Börek logosu küçültüldü */
+  width: auto;
+  object-fit: contain;
+  background: transparent;
+  /* Arka plan şeffaf */
+  padding: 0;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+.header h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  display: none;
+  /* Logolar olduğu için isme gerek yok gibi, ama istenirse açılabilir */
+}
+
+.header p {
+  font-size: 0.95rem;
+  opacity: 0.9;
+  margin-bottom: 1.5rem;
+}
+
+/* Instagram Butonları (Header İçinde) */
+.instagram-buttons-header {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+}
+
+.instagram-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(5px);
+  padding: 0.6rem 1.2rem;
+  border-radius: 50px;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.instagram-btn:hover {
+  background: #fff;
+  color: var(--primary-color);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Instagram Slider (Marquee Effect) */
+.instagram-section {
+  margin-top: 2rem;
+  padding: 0;
+  overflow: hidden;
+}
+
+.instagram-feed-wrapper {
+  width: 100%;
+  overflow: hidden;
+  padding: 1rem 0;
+  background: #fff;
+}
+
+.instagram-feed-track {
+  display: flex;
+  gap: 1rem;
+  width: max-content;
+  animation: scroll 30s linear infinite;
+  /* Süreyi gönderi sayısına göre ayarlayabilirsiniz */
+}
+
+
+
+
+.instagram-post {
+  width: 160px;
+  /* Kart genişliği */
+  height: 160px;
+  flex-shrink: 0;
+  border-radius: 15px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: var(--shadow-md);
+}
+
+.instagram-post img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.instagram-post:hover img {
+  transform: scale(1.1);
+}
+
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+
+  /* Öğeleri kopyaladığımız için %50 kaydırma tam tur olur */
+}
+
+/* Instagram Section - Old styles removed/adapted */
+/* .instagram-section {
+  padding: 40px 20px;
+  background: #fff;
+  text-align: center;
+  margin-top: -20px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  position: relative;
+  z-index: 2;
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+} */
+
+.instagram-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 24px;
+  color: var(--text-primary);
+}
+
+/* Old .instagram-btn styles removed as they are replaced by .instagram-buttons-header .instagram-btn */
+/* .instagram-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 28px;
+  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  border-radius: 50px;
+  transition: var(--transition);
+  box-shadow: 0 4px 12px rgba(220, 39, 67, 0.4);
+}
+
+.instagram-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(220, 39, 67, 0.5);
+} */
+
+/* Weekly Specials & Campaigns */
+.section-title {
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin: 40px 0 24px;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.section-title::before,
+.section-title::after {
+  content: '';
+  height: 2px;
+  width: 40px;
+  background: var(--primary);
+  opacity: 0.5;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 350px));
+  gap: 20px;
+  padding: 0 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  justify-content: center;
+}
+
+.card {
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+  border: 1px solid rgba(0, 0, 0, 0.03);
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.card-image-wrapper {
+  position: relative;
+  padding-top: 56%;
+  /* Aspect ratio 16:9 */
+  overflow: hidden;
+  background: #f0f0f0;
+  max-height: 200px;
+}
+
+.card-image-wrapper img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.card:hover .card-image-wrapper img {
+  transform: scale(1.05);
+}
+
+.card-content {
+  padding: 20px;
+}
+
+.card-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--text-primary);
+}
+
+.card-price {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 8px;
+}
+
+.card-desc {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+/* Categories Navigation */
+.categories-nav {
+  position: sticky;
+  top: 0;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 16px 20px;
+  z-index: 100;
+  box-shadow: var(--shadow-sm);
+  overflow-x: auto;
+  display: flex;
+  gap: 12px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.category-btn {
+  white-space: nowrap;
+  padding: 10px 20px;
+  border-radius: 20px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  background: #fff;
+  color: var(--text-primary);
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  font-size: 0.9rem;
+}
+
+.category-btn:hover,
+.category-btn.active {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+  box-shadow: 0 4px 12px rgba(255, 140, 0, 0.3);
+}
+
+/* Menu Items Section */
+.menu-section {
+  padding: 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.menu-category-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 32px 0 16px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--primary);
+  display: inline-block;
+}
+
+.menu-item {
+  display: flex;
+  gap: 16px;
+  padding: 16px;
+  background: var(--bg-card);
+  border-radius: var(--radius-sm);
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+  border: 1px solid rgba(0, 0, 0, 0.02);
+}
+
+.menu-item:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateX(4px);
+}
+
+.menu-item-image {
+  width: 70px;
+  height: 70px;
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+  flex-shrink: 0;
+  background: #f0f0f0;
+}
+
+.menu-item-details {
+  flex: 1;
+}
+
+.menu-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 4px;
+}
+
+.menu-item-name {
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--text-primary);
+}
+
+.menu-item-price {
+  font-weight: 700;
+  color: var(--primary);
+  font-size: 1.1rem;
+}
+
+.menu-item-desc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .header {
+    padding: 40px 20px 30px;
+  }
+
+  .header h1 {
+    font-size: 1.8rem;
+  }
+
+  .grid-container {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 16px;
+  }
+
+  .card-title {
+    font-size: 1rem;
+  }
+
+  .card-price {
+    font-size: 1.1rem;
+  }
+}

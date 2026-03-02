@@ -1,0 +1,108 @@
+{
+  "admins": [
+    {
+      "username": "admin",
+      "password": "zeyl2025"
+    }
+  ],
+  "statistics": [],
+  "categoryStats": [],
+  "categories": [
+    {
+      "id": 1,
+      "name": "Börekler",
+      "display_order": 0
+    },
+    {
+      "id": 2,
+      "name": "Tatlılar",
+      "display_order": 1
+    },
+    {
+      "id": 3,
+      "name": "Sıcak İçecekler",
+      "display_order": 2
+    },
+    {
+      "id": 4,
+      "name": "Soğuk İçecekler",
+      "display_order": 3
+    },
+    {
+      "id": 5,
+      "name": "Çay yanı lezzetler",
+      "display_order": 4
+    }
+  ],
+  "menuItems": [
+    {
+      "id": 1,
+      "category_id": 1,
+      "name": "Kıymalı Börek",
+      "price": "700",
+      "description": "Kıymalı\n",
+      "is_available": true,
+      "display_order": 0,
+      "image": "uploads/item-1772313381907-471095488.png"
+    },
+    {
+      "id": 2,
+      "category_id": 2,
+      "name": "Magnolya",
+      "price": "120",
+      "description": "Sütlü çilekli eşsiz lezzet",
+      "is_available": true,
+      "display_order": 0,
+      "image": "uploads/item-1772313459699-722877644.png"
+    }
+  ],
+  "weeklySpecials": [
+    {
+      "id": 1,
+      "name": "Cheesecake",
+      "price": "90",
+      "description": "Bu haftanın yıldızı\n",
+      "image": "uploads/item-1772313639720-770918848.png",
+      "is_active": true,
+      "display_order": 0
+    }
+  ],
+  "campaigns": [
+    {
+      "id": 1,
+      "title": "Öğrenci Menüsü",
+      "description": "Öğrenci kartı gösterimi zorunludur",
+      "discount": "400 TL -> 190 TL",
+      "is_active": true,
+      "start_date": "2026-02-28T21:22:26.513Z",
+      "end_date": null,
+      "image": "uploads/item-1772313753342-661912803.png"
+    }
+  ],
+  "instagramPosts": [
+    {
+      "id": 1,
+      "caption": "Tavuk + Pilav tam bir sporcu eşlikçisi..",
+      "image": "uploads/item-1772313767449-792120698.jpeg",
+      "display_order": 0
+    },
+    {
+      "id": 2,
+      "caption": "Makarnamızı denediniz mi?",
+      "image": "uploads/item-1772313779373-297936939.jpeg",
+      "display_order": 1
+    },
+    {
+      "id": 3,
+      "caption": "Günlerniz için vazgeçilmez lezzet",
+      "image": "uploads/item-1772313787432-625710386.jpeg",
+      "display_order": 2
+    },
+    {
+      "id": 4,
+      "caption": "",
+      "image": "uploads/item-1772313807492-616208129.jpeg",
+      "display_order": 3
+    }
+  ]
+}
