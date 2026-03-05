@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="tr">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -24,7 +25,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     }
 
     .navbar-title {
@@ -98,7 +99,7 @@
       background: white;
       padding: 25px;
       border-radius: 12px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
       margin-bottom: 30px;
     }
 
@@ -152,7 +153,7 @@
       background: white;
       border-radius: 8px;
       overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     }
 
     .menu-table th {
@@ -232,11 +233,11 @@
       border-radius: 50%;
     }
 
-    input:checked + .slider {
+    input:checked+.slider {
       background-color: #2ecc71;
     }
 
-    input:checked + .slider:before {
+    input:checked+.slider:before {
       transform: translateX(26px);
     }
 
@@ -248,7 +249,7 @@
       top: 0;
       width: 100%;
       height: 100%;
-      background-color: rgba(0,0,0,0.5);
+      background-color: rgba(0, 0, 0, 0.5);
     }
 
     .modal-content {
@@ -258,7 +259,7 @@
       border-radius: 12px;
       width: 90%;
       max-width: 500px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     }
 
     .modal-header {
@@ -319,8 +320,15 @@
     }
 
     @keyframes fab-pulse {
-      0%, 100% { box-shadow: 0 6px 20px rgba(0, 206, 201, 0.4); }
-      50% { box-shadow: 0 6px 30px rgba(0, 206, 201, 0.6); }
+
+      0%,
+      100% {
+        box-shadow: 0 6px 20px rgba(0, 206, 201, 0.4);
+      }
+
+      50% {
+        box-shadow: 0 6px 30px rgba(0, 206, 201, 0.6);
+      }
     }
 
     /* Toast Notification */
@@ -335,7 +343,7 @@
       border-radius: 12px;
       font-weight: 600;
       font-size: 15px;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
       transform: translateX(120%);
       transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
       display: flex;
@@ -374,11 +382,13 @@
     }
   </style>
 </head>
+
 <body>
   <div class="navbar">
     <div class="navbar-title">🎉 Zeyl Coffee Admin Panel</div>
     <div class="navbar-actions">
-      <button class="btn btn-success" onclick="refreshMenu()" style="background: linear-gradient(135deg, #00b894, #00cec9); font-size: 15px;">🔄 Menüyü Güncelle</button>
+      <button class="btn btn-success" onclick="refreshMenu()"
+        style="background: linear-gradient(135deg, #00b894, #00cec9); font-size: 15px;">🔄 Menüyü Güncelle</button>
       <button class="btn btn-warning" onclick="openPasswordModal()">🔑 Şifre Değiştir</button>
       <button class="btn btn-danger" onclick="location.href='/admin/logout'">🚪 Çıkış</button>
     </div>
@@ -387,7 +397,8 @@
   <div class="container">
     <!-- İstatistikler Section -->
     <div class="section">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+      <div
+        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
         <div class="section-title" style="margin: 0;">📊 Kategori Tıklama İstatistikleri</div>
         <div style="display: flex; gap: 10px;">
           <button class="btn btn-success" onclick="exportStatistics()">📥 Excel'e Aktar</button>
@@ -407,70 +418,87 @@
         <button class="btn btn-success" onclick="openWeeklyModal()">➕ Yeni Ürün Ekle</button>
       </div>
 
-      <% if (weeklySpecials.length === 0) { %>
+      <% if (weeklySpecials.length===0) { %>
         <p style="color: #7f8c8d; text-align: center; padding: 20px;">Henüz haftanın ürünü eklenmemiş.</p>
-      <% } else { %>
-        <div class="weekly-specials">
-          <% weeklySpecials.forEach(special => { %>
-            <div class="weekly-item">
-              <% if (special.image) { %>
-                <div style="text-align: center; margin-bottom: 10px;">
-                  <img src="/<%= special.image %>" alt="<%= special.name %>" style="max-width: 150px; max-height: 150px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                </div>
-              <% } %>
-              <input type="text" value="<%= special.name %>" onchange="updateWeeklySpecial(<%= special.id %>, 'name', this.value)">
-              <input type="number" step="0.01" placeholder="Fiyat (₺)" value="<%= special.price || '' %>" onchange="updateWeeklySpecial(<%= special.id %>, 'price', this.value)">
-              <textarea placeholder="Açıklama" onchange="updateWeeklySpecial(<%= special.id %>, 'description', this.value)"><%= special.description || '' %></textarea>
-              <div style="display: flex; gap: 5px; flex-wrap: wrap;">
-                <button class="btn btn-primary btn-small" onclick="openWeeklyImageUpload(<%= special.id %>)">📷 Resim</button>
+        <% } else { %>
+          <div class="weekly-specials">
+            <% weeklySpecials.forEach(special=> { %>
+              <div class="weekly-item">
                 <% if (special.image) { %>
-                  <button class="btn btn-warning btn-small" onclick="deleteWeeklyImage(<%= special.id %>)">🗑️ Resim Sil</button>
-                <% } %>
-                <button class="btn btn-success btn-small" onclick="updateWeeklySpecial(<%= special.id %>)">💾 Kaydet</button>
-                <button class="btn btn-danger btn-small" onclick="deleteWeeklySpecial(<%= special.id %>)">🗑️ Ürünü Sil</button>
+                  <div style="text-align: center; margin-bottom: 10px;">
+                    <img src="/<%= special.image %>" alt="<%= special.name %>"
+                      style="max-width: 150px; max-height: 150px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                  </div>
+                  <% } %>
+                    <input type="text" value="<%= special.name %>"
+                      onchange="updateWeeklySpecial(<%= special.id %>, 'name', this.value)">
+                    <input type="number" step="0.01" placeholder="Fiyat (₺)" value="<%= special.price || '' %>"
+                      onchange="updateWeeklySpecial(<%= special.id %>, 'price', this.value)">
+                    <textarea placeholder="Açıklama"
+                      onchange="updateWeeklySpecial(<%= special.id %>, 'description', this.value)"><%= special.description || '' %></textarea>
+                    <div style="display: flex; gap: 5px; flex-wrap: wrap;">
+                      <button class="btn btn-primary btn-small" onclick="openWeeklyImageUpload(<%= special.id %>)">📷
+                        Resim</button>
+                      <% if (special.image) { %>
+                        <button class="btn btn-warning btn-small" onclick="deleteWeeklyImage(<%= special.id %>)">🗑️
+                          Resim Sil</button>
+                        <% } %>
+                          <button class="btn btn-success btn-small" onclick="updateWeeklySpecial(<%= special.id %>)">💾
+                            Kaydet</button>
+                          <button class="btn btn-danger btn-small" onclick="deleteWeeklySpecial(<%= special.id %>)">🗑️
+                            Ürünü Sil</button>
+                    </div>
               </div>
-            </div>
-          <% }); %>
-        </div>
-      <% } %>
-    </div>
-
-
-    <!-- Kampanyalar Section -->
-    <!-- Kampanyalar Section -->
-<div class="section">
-  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-    <div class="section-title" style="margin: 0;">🔥 Kampanyalar</div>
-    <button class="btn btn-success" onclick="openCampaignModal()">➕ Yeni Kampanya Ekle</button>
-  </div>
-
-  <% if (campaigns.length === 0) { %>
-    <p style="color: #7f8c8d; text-align: center; padding: 20px;">Henüz kampanya eklenmemiş.</p>
-  <% } else { %>
-    <div class="weekly-specials">
-      <% campaigns.forEach(campaign => { %>
-        <div class="weekly-item">
-          <% if (campaign.image) { %>
-            <div style="text-align: center; margin-bottom: 10px;">
-              <img src="/<%= campaign.image %>" alt="<%= campaign.title %>" style="max-width: 150px; max-height: 150px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-            </div>
-          <% } %>
-          <input type="text" placeholder="Kampanya Adı" value="<%= campaign.title || '' %>" onchange="updateCampaign(<%= campaign.id %>, 'name', this.value)">
-          <input type="text" placeholder="İndirim Bilgisi (örn: 100₺ → 80₺)" value="<%= campaign.discount || '' %>" onchange="updateCampaign(<%= campaign.id %>, 'discount', this.value)">
-          <textarea placeholder="Açıklama" onchange="updateCampaign(<%= campaign.id %>, 'description', this.value)"><%= campaign.description || '' %></textarea>
-          <div style="display: flex; gap: 5px; flex-wrap: wrap;">
-            <button class="btn btn-primary btn-small" onclick="openCampaignImageUpload(<%= campaign.id %>)">📷 Resim</button>
-            <% if (campaign.image) { %>
-              <button class="btn btn-warning btn-small" onclick="deleteCampaignImage(<%= campaign.id %>)">🗑️ Resim Sil</button>
-            <% } %>
-            <button class="btn btn-success btn-small" onclick="updateCampaign(<%= campaign.id %>)">💾 Kaydet</button>
-            <button class="btn btn-danger btn-small" onclick="deleteCampaign(<%= campaign.id %>)">🗑️ Kampanyayı Sil</button>
+              <% }); %>
           </div>
-        </div>
-      <% }); %>
+          <% } %>
     </div>
-  <% } %>
-</div>
+
+
+    <!-- Kampanyalar Section -->
+    <!-- Kampanyalar Section -->
+    <div class="section">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <div class="section-title" style="margin: 0;">🔥 Kampanyalar</div>
+        <button class="btn btn-success" onclick="openCampaignModal()">➕ Yeni Kampanya Ekle</button>
+      </div>
+
+      <% if (campaigns.length===0) { %>
+        <p style="color: #7f8c8d; text-align: center; padding: 20px;">Henüz kampanya eklenmemiş.</p>
+        <% } else { %>
+          <div class="weekly-specials">
+            <% campaigns.forEach(campaign=> { %>
+              <div class="weekly-item">
+                <% if (campaign.image) { %>
+                  <div style="text-align: center; margin-bottom: 10px;">
+                    <img src="/<%= campaign.image %>" alt="<%= campaign.title %>"
+                      style="max-width: 150px; max-height: 150px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                  </div>
+                  <% } %>
+                    <input type="text" placeholder="Kampanya Adı" value="<%= campaign.title || '' %>"
+                      onchange="updateCampaign(<%= campaign.id %>, 'name', this.value)">
+                    <input type="text" placeholder="İndirim Bilgisi (örn: 100₺ → 80₺)"
+                      value="<%= campaign.discount || '' %>"
+                      onchange="updateCampaign(<%= campaign.id %>, 'discount', this.value)">
+                    <textarea placeholder="Açıklama"
+                      onchange="updateCampaign(<%= campaign.id %>, 'description', this.value)"><%= campaign.description || '' %></textarea>
+                    <div style="display: flex; gap: 5px; flex-wrap: wrap;">
+                      <button class="btn btn-primary btn-small" onclick="openCampaignImageUpload(<%= campaign.id %>)">📷
+                        Resim</button>
+                      <% if (campaign.image) { %>
+                        <button class="btn btn-warning btn-small" onclick="deleteCampaignImage(<%= campaign.id %>)">🗑️
+                          Resim Sil</button>
+                        <% } %>
+                          <button class="btn btn-success btn-small" onclick="updateCampaign(<%= campaign.id %>)">💾
+                            Kaydet</button>
+                          <button class="btn btn-danger btn-small" onclick="deleteCampaign(<%= campaign.id %>)">🗑️
+                            Kampanyayı Sil</button>
+                    </div>
+              </div>
+              <% }); %>
+          </div>
+          <% } %>
+    </div>
 
 
     <!-- Instagram Fotoğrafları Section -->
@@ -480,51 +508,69 @@
         <button class="btn btn-success" onclick="openInstagramModal()">➕ Yeni Fotoğraf Kartı</button>
       </div>
 
-      <% if (!instagramPosts || instagramPosts.length === 0) { %>
+      <% if (!instagramPosts || instagramPosts.length===0) { %>
         <p style="color: #7f8c8d; text-align: center; padding: 20px;">Henüz Instagram fotoğrafı eklenmemiş.</p>
-      <% } else { %>
-        <div class="weekly-specials">
-          <% instagramPosts.forEach(post => { %>
-            <div class="weekly-item">
-              <% if (post.image) { %>
-                <div style="text-align: center; margin-bottom: 10px;">
-                  <img src="/<%= post.image %>" alt="Instagram Fotoğrafı" style="max-width: 100%; max-height: 180px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                </div>
-              <% } %>
-              <textarea placeholder="Açıklama" onchange="updateInstagramPost(<%= post.id %>, this.value)"><%= post.caption || '' %></textarea>
-              <div style="display: flex; gap: 5px; flex-wrap: wrap; margin-top: 8px;">
-                <button class="btn btn-primary btn-small" onclick="openInstagramImageUpload(<%= post.id %>)">📷 Resim</button>
+        <% } else { %>
+          <div class="weekly-specials">
+            <% instagramPosts.forEach(post=> { %>
+              <div class="weekly-item">
                 <% if (post.image) { %>
-                  <button class="btn btn-warning btn-small" onclick="deleteInstagramImage(<%= post.id %>)">🗑️ Resim Sil</button>
-                <% } %>
-                <button class="btn btn-danger btn-small" onclick="deleteInstagramPost(<%= post.id %>)">🗑️ Kartı Sil</button>
+                  <div style="text-align: center; margin-bottom: 10px;">
+                    <img src="/<%= post.image %>" alt="Instagram Fotoğrafı"
+                      style="max-width: 100%; max-height: 180px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                  </div>
+                  <% } %>
+                    <textarea placeholder="Açıklama"
+                      onchange="updateInstagramPost(<%= post.id %>, this.value)"><%= post.caption || '' %></textarea>
+                    <div style="display: flex; gap: 5px; flex-wrap: wrap; margin-top: 8px;">
+                      <button class="btn btn-primary btn-small" onclick="openInstagramImageUpload(<%= post.id %>)">📷
+                        Resim</button>
+                      <% if (post.image) { %>
+                        <button class="btn btn-warning btn-small" onclick="deleteInstagramImage(<%= post.id %>)">🗑️
+                          Resim Sil</button>
+                        <% } %>
+                          <button class="btn btn-danger btn-small" onclick="deleteInstagramPost(<%= post.id %>)">🗑️
+                            Kartı Sil</button>
+                    </div>
               </div>
-            </div>
-          <% }); %>
-        </div>
-      <% } %>
+              <% }); %>
+          </div>
+          <% } %>
     </div>
 
-<!-- Kategoriler ve Menü Section -->
+    <!-- Kategoriler ve Menü Section -->
     <div class="section">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <div class="section-title" style="margin: 0;">📋 Menü Kategorileri</div>
         <button class="btn btn-success" onclick="openCategoryModal()">➕ Yeni Kategori</button>
       </div>
 
-      <% menuData.forEach((data, index) => { %>
+      <% menuData.forEach((data, index)=> { %>
         <div class="category-section">
           <div class="category-header">
-            <span class="category-name"><%= data.category.name %></span>
-            <div style="display: flex; gap: 10px;">
-              <% if (index > 0) { %>
-              <button class="btn btn-primary btn-small" onclick="reorderCategory(<%= data.category.id %>, 'up')">↑</button>
-              <% } %>
-              <% if (index < menuData.length - 1) { %>
-              <button class="btn btn-primary btn-small" onclick="reorderCategory(<%= data.category.id %>, 'down')">↓</button>
-              <% } %>
-              <button class="btn btn-warning btn-small" onclick="openAddItemModal(<%= data.category.id %>)">➕ Yeni Ürün Ekle</button>
-              <button class="btn btn-danger btn-small" onclick="deleteCategory(<%= data.category.id %>)">🗑️ Kategoriyi Sil</button>
+            <span class="category-name">
+              <%= data.category.name %>
+            </span>
+            <div style="display: flex; gap: 10px; align-items: center;">
+              <select onchange="updateCategoryPriceUnit(<%= data.category.id %>, this.value)"
+                style="padding: 6px 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.2); color: white; font-weight: 600; cursor: pointer;">
+                <option value="TL" <%=data.category.price_unit !=='TL/KG' ? 'selected' : '' %> style="color: #333;">TL
+                </option>
+                <option value="TL/KG" <%=data.category.price_unit==='TL/KG' ? 'selected' : '' %> style="color:
+                  #333;">TL/KG</option>
+              </select>
+              <% if (index> 0) { %>
+                <button class="btn btn-primary btn-small"
+                  onclick="reorderCategory(<%= data.category.id %>, 'up')">↑</button>
+                <% } %>
+                  <% if (index < menuData.length - 1) { %>
+                    <button class="btn btn-primary btn-small"
+                      onclick="reorderCategory(<%= data.category.id %>, 'down')">↓</button>
+                    <% } %>
+                      <button class="btn btn-warning btn-small" onclick="openAddItemModal(<%= data.category.id %>)">➕
+                        Yeni Ürün Ekle</button>
+                      <button class="btn btn-danger btn-small" onclick="deleteCategory(<%= data.category.id %>)">🗑️
+                        Kategoriyi Sil</button>
             </div>
           </div>
 
@@ -540,57 +586,63 @@
               </tr>
             </thead>
             <tbody>
-              <% if (data.items.length === 0) { %>
+              <% if (data.items.length===0) { %>
                 <tr>
                   <td colspan="6" style="text-align: center; color: #7f8c8d;">Bu kategoride ürün bulunmuyor.</td>
                 </tr>
-              <% } else { %>
-                <% data.items.forEach(item => { %>
-                  <tr id="item-<%= item.id %>">
-                    <td style="text-align: center;">
-                      <% if (item.image) { %>
-                        <img src="/<%= item.image %>" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px; display: block; margin: 0 auto;">
-                      <% } else { %>
-                        <div style="width: 60px; height: 60px; background: #f0f0f0; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin: 0 auto; color: #999; font-size: 20px;">📷</div>
-                      <% } %>
-                    </td>
-                    <td>
-                      <input type="text" value="<%= item.name %>" 
-                             onblur="updateItem(<%= item.id %>, 'name', this.value)">
-                    </td>
-                    <td>
-                      <input type="number" step="0.01" value="<%= item.price || '' %>" 
-                             id="price-<%= item.id %>" 
-                             placeholder="Fiyat">
-                    </td>
-                    <td>
-                      <textarea onblur="updateItem(<%= item.id %>, 'description', this.value)" 
-                                placeholder="Ürün açıklaması"><%= item.description || '' %></textarea>
-                    </td>
-                    <td>
-                      <label class="switch">
-                        <input type="checkbox" <%= item.is_available ? 'checked' : '' %>
-                               onchange="updateItem(<%= item.id %>, 'is_available', this.checked)">
-                        <span class="slider"></span>
-                      </label>
-                    </td>
-                    <td>
-                      <div style="display: flex; gap: 5px; flex-wrap: wrap;">
-                        <button class="btn btn-primary btn-small" onclick="openImageUpload(<%= item.id %>)">📷 Resim</button>
+                <% } else { %>
+                  <% data.items.forEach(item=> { %>
+                    <tr id="item-<%= item.id %>">
+                      <td style="text-align: center;">
                         <% if (item.image) { %>
-                          <button class="btn btn-warning btn-small" onclick="deleteItemImage(<%= item.id %>)">🗑️ Resim Sil</button>
-                        <% } %>
-                        <button class="btn btn-success btn-small" onclick="saveItemPrice(<%= item.id %>)">💾 Fiyat Kaydet</button>
-                        <button class="btn btn-danger btn-small" onclick="deleteItem(<%= item.id %>)">🗑️ Sil</button>
-                      </div>
-                    </td>
-                  </tr>
-                <% }); %>
-              <% } %>
+                          <img src="/<%= item.image %>"
+                            style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px; display: block; margin: 0 auto;">
+                          <% } else { %>
+                            <div
+                              style="width: 60px; height: 60px; background: #f0f0f0; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin: 0 auto; color: #999; font-size: 20px;">
+                              📷</div>
+                            <% } %>
+                      </td>
+                      <td>
+                        <input type="text" value="<%= item.name %>"
+                          onblur="updateItem(<%= item.id %>, 'name', this.value)">
+                      </td>
+                      <td>
+                        <input type="number" step="0.01" value="<%= item.price || '' %>" id="price-<%= item.id %>"
+                          placeholder="Fiyat">
+                      </td>
+                      <td>
+                        <textarea onblur="updateItem(<%= item.id %>, 'description', this.value)"
+                          placeholder="Ürün açıklaması"><%= item.description || '' %></textarea>
+                      </td>
+                      <td>
+                        <label class="switch">
+                          <input type="checkbox" <%=item.is_available ? 'checked' : '' %>
+                          onchange="updateItem(<%= item.id %>, 'is_available', this.checked)">
+                            <span class="slider"></span>
+                        </label>
+                      </td>
+                      <td>
+                        <div style="display: flex; gap: 5px; flex-wrap: wrap;">
+                          <button class="btn btn-primary btn-small" onclick="openImageUpload(<%= item.id %>)">📷
+                            Resim</button>
+                          <% if (item.image) { %>
+                            <button class="btn btn-warning btn-small" onclick="deleteItemImage(<%= item.id %>)">🗑️
+                              Resim Sil</button>
+                            <% } %>
+                              <button class="btn btn-success btn-small" onclick="saveItemPrice(<%= item.id %>)">💾 Fiyat
+                                Kaydet</button>
+                              <button class="btn btn-danger btn-small" onclick="deleteItem(<%= item.id %>)">🗑️
+                                Sil</button>
+                        </div>
+                      </td>
+                    </tr>
+                    <% }); %>
+                      <% } %>
             </tbody>
           </table>
         </div>
-      <% }); %>
+        <% }); %>
     </div>
   </div>
 
@@ -602,6 +654,14 @@
       <div class="form-group">
         <label>Kategori Adı</label>
         <input type="text" id="categoryName" placeholder="Örn: Tatlılar">
+      </div>
+      <div class="form-group">
+        <label>Fiyat Birimi</label>
+        <select id="categoryPriceUnit"
+          style="width: 100%; padding: 8px 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 14px;">
+          <option value="TL">TL</option>
+          <option value="TL/KG">TL/KG</option>
+        </select>
       </div>
       <button class="btn btn-success" style="width: 100%;" onclick="addCategory()">Kategori Ekle</button>
     </div>
@@ -651,16 +711,18 @@
       <input type="hidden" id="instagramImagePostId">
       <div class="form-group">
         <label>Resim Seç (Max 5MB - jpg, jpeg, png, gif, webp)</label>
-        <input type="file" id="instagramImageFile" accept="image/*" style="padding: 10px; border: 2px dashed #3498db; border-radius: 8px; background: #f8f9fa;">
+        <input type="file" id="instagramImageFile" accept="image/*"
+          style="padding: 10px; border: 2px dashed #3498db; border-radius: 8px; background: #f8f9fa;">
       </div>
       <div id="instagramImagePreview" style="margin: 15px 0; text-align: center; display: none;">
-        <img id="instagramPreviewImg" style="max-width: 100%; max-height: 300px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+        <img id="instagramPreviewImg"
+          style="max-width: 100%; max-height: 300px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
       </div>
       <button class="btn btn-success" style="width: 100%;" onclick="uploadInstagramImage()">📤 Resmi Yükle</button>
     </div>
   </div>
 
-<!-- Haftanın Ürünü Modal -->
+  <!-- Haftanın Ürünü Modal -->
   <div id="weeklyModal" class="modal">
     <div class="modal-content">
       <span class="close" onclick="closeWeeklyModal()">&times;</span>
@@ -748,10 +810,12 @@
       <input type="hidden" id="imageItemId">
       <div class="form-group">
         <label>Resim Seç (Max 5MB - jpg, jpeg, png, gif, webp)</label>
-        <input type="file" id="imageFile" accept="image/*" style="width: 100%; padding: 10px; border: 2px dashed #3498db; border-radius: 8px; background: #f8f9fa;">
+        <input type="file" id="imageFile" accept="image/*"
+          style="width: 100%; padding: 10px; border: 2px dashed #3498db; border-radius: 8px; background: #f8f9fa;">
       </div>
       <div id="imagePreview" style="margin: 15px 0; text-align: center; display: none;">
-        <img id="previewImg" style="max-width: 100%; max-height: 200px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+        <img id="previewImg"
+          style="max-width: 100%; max-height: 200px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
       </div>
       <button class="btn btn-success" style="width: 100%;" onclick="uploadImage()">📤 Resmi Yükle</button>
     </div>
@@ -765,10 +829,12 @@
       <input type="hidden" id="weeklyImageSpecialId">
       <div class="form-group">
         <label>Resim Seç (Max 5MB - jpg, jpeg, png, gif, webp)</label>
-        <input type="file" id="weeklyImageFile" accept="image/*" style="width: 100%; padding: 10px; border: 2px dashed #3498db; border-radius: 8px; background: #f8f9fa;">
+        <input type="file" id="weeklyImageFile" accept="image/*"
+          style="width: 100%; padding: 10px; border: 2px dashed #3498db; border-radius: 8px; background: #f8f9fa;">
       </div>
       <div id="weeklyImagePreview" style="margin: 15px 0; text-align: center; display: none;">
-        <img id="weeklyPreviewImg" style="max-width: 100%; max-height: 200px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+        <img id="weeklyPreviewImg"
+          style="max-width: 100%; max-height: 200px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
       </div>
       <button class="btn btn-success" style="width: 100%;" onclick="uploadWeeklyImage()">📤 Resmi Yükle</button>
     </div>
@@ -810,12 +876,12 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
       })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          console.log('Güncellendi');
-        }
-      });
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            console.log('Güncellendi');
+          }
+        });
     }
 
 
@@ -841,12 +907,12 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: itemId })
       })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          location.reload();
-        }
-      });
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            location.reload();
+          }
+        });
     }
 
     function openAddItemModal(categoryId) {
@@ -877,13 +943,13 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ category_id: categoryId, name, price, description })
       })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          closeItemModal();
-          location.reload();
-        }
-      });
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            closeItemModal();
+            location.reload();
+          }
+        });
     }
 
     function openCategoryModal() {
@@ -906,22 +972,36 @@
       fetch('/admin/add-category', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name })
+        body: JSON.stringify({ name, price_unit: document.getElementById('categoryPriceUnit').value })
       })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          alert('Kategori başarıyla eklendi!');
-          closeCategoryModal();
-          location.reload();
-        } else {
-          alert('Kategori eklenemedi: ' + (data.error || 'Bilinmeyen hata'));
-        }
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            alert('Kategori başarıyla eklendi!');
+            closeCategoryModal();
+            location.reload();
+          } else {
+            alert('Kategori eklenemedi: ' + (data.error || 'Bilinmeyen hata'));
+          }
+        })
+        .catch(err => {
+          console.error('Hata:', err);
+          alert('Bir hata oluştu: ' + err.message);
+        });
+    }
+
+    function updateCategoryPriceUnit(categoryId, priceUnit) {
+      fetch('/admin/update-category', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: categoryId, price_unit: priceUnit })
       })
-      .catch(err => {
-        console.error('Hata:', err);
-        alert('Bir hata oluştu: ' + err.message);
-      });
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            showToast('✅ Fiyat birimi güncellendi!');
+          }
+        });
     }
 
     function deleteCategory(categoryId) {
@@ -932,12 +1012,12 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: categoryId })
       })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          location.reload();
-        }
-      });
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            location.reload();
+          }
+        });
     }
 
     function openWeeklyModal() {
@@ -966,13 +1046,13 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, price, description })
       })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          closeWeeklyModal();
-          location.reload();
-        }
-      });
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            closeWeeklyModal();
+            location.reload();
+          }
+        });
     }
 
     function updateWeeklySpecial(specialId, field, value) {
@@ -986,12 +1066,12 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
       })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          console.log('Güncellendi');
-        }
-      });
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            console.log('Güncellendi');
+          }
+        });
     }
 
     function deleteWeeklySpecial(specialId) {
@@ -1002,12 +1082,12 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: specialId })
       })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          location.reload();
-        }
-      });
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            location.reload();
+          }
+        });
     }
 
     // ============= KAMPANYA FONKSİYONLARI =============
@@ -1040,18 +1120,18 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, old_price, new_price, description })
       })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          closeCampaignModal();
-          location.reload();
-        }
-      });
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            closeCampaignModal();
+            location.reload();
+          }
+        });
     }
 
     function updateCampaign(campaignId, field, value) {
       const data = { id: campaignId };
-  
+
       if (field === 'name') {
         data.name = value; // Backend'de title'a çevrilecek
       } else if (field === 'discount') {
@@ -1059,23 +1139,23 @@
       } else if (field === 'description') {
         data.description = value;
       }
-  
+
       fetch('/admin/update-campaign', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
       })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          showNotification('Kampanya güncellendi!', 'success');
-        } else {
-          showNotification('Hata: ' + (data.error || 'Bilinmeyen hata'), 'error');
-        }
-      })
-      .catch(err => {
-        showNotification('Hata: ' + err.message, 'error');
-      });
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            showNotification('Kampanya güncellendi!', 'success');
+          } else {
+            showNotification('Hata: ' + (data.error || 'Bilinmeyen hata'), 'error');
+          }
+        })
+        .catch(err => {
+          showNotification('Hata: ' + err.message, 'error');
+        });
     }
 
     function deleteCampaign(campaignId) {
@@ -1086,12 +1166,12 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: campaignId })
       })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          location.reload();
-        }
-      });
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            location.reload();
+          }
+        });
     }
 
     function openCampaignImageUpload(campaignId) {
@@ -1106,14 +1186,14 @@
     }
 
     // Kampanya resim önizleme
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
       const campaignImageFile = document.getElementById('campaignImageFile');
       if (campaignImageFile) {
-        campaignImageFile.addEventListener('change', function(e) {
+        campaignImageFile.addEventListener('change', function (e) {
           const file = e.target.files[0];
           if (file) {
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = function (e) {
               document.getElementById('campaignPreviewImg').src = e.target.result;
               document.getElementById('campaignImagePreview').style.display = 'block';
             }
@@ -1141,20 +1221,20 @@
         method: 'POST',
         body: formData
       })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          alert('✅ Resim başarıyla yüklendi!');
-          closeCampaignImageModal();
-          location.reload();
-        } else {
-          alert(data.error || 'Resim yüklenemedi!');
-        }
-      })
-      .catch(err => {
-        console.error('Hata:', err);
-        alert('Bir hata oluştu!');
-      });
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            alert('✅ Resim başarıyla yüklendi!');
+            closeCampaignImageModal();
+            location.reload();
+          } else {
+            alert(data.error || 'Resim yüklenemedi!');
+          }
+        })
+        .catch(err => {
+          console.error('Hata:', err);
+          alert('Bir hata oluştu!');
+        });
     }
 
     function deleteCampaignImage(campaignId) {
@@ -1165,19 +1245,19 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ campaignId })
       })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          alert('✅ Resim silindi!');
-          location.reload();
-        } else {
-          alert(data.error || 'Resim silinemedi!');
-        }
-      })
-      .catch(err => {
-        console.error('Hata:', err);
-        alert('Bir hata oluştu!');
-      });
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            alert('✅ Resim silindi!');
+            location.reload();
+          } else {
+            alert(data.error || 'Resim silinemedi!');
+          }
+        })
+        .catch(err => {
+          console.error('Hata:', err);
+          alert('Bir hata oluştu!');
+        });
     }
 
     function openPasswordModal() {
@@ -1204,15 +1284,15 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ currentPassword, newPassword })
       })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          alert('Şifre başarıyla değiştirildi!');
-          closePasswordModal();
-        } else {
-          alert(data.error || 'Şifre değiştirilemedi!');
-        }
-      });
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            alert('Şifre başarıyla değiştirildi!');
+            closePasswordModal();
+          } else {
+            alert(data.error || 'Şifre değiştirilemedi!');
+          }
+        });
     }
 
     function reorderCategory(categoryId, direction) {
@@ -1221,18 +1301,18 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ categoryId, direction })
       })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          location.reload();
-        } else {
-          alert(data.error || 'Sıralama güncellenemedi!');
-        }
-      })
-      .catch(err => {
-        console.error('Hata:', err);
-        alert('Bir hata oluştu!');
-      });
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            location.reload();
+          } else {
+            alert(data.error || 'Sıralama güncellenemedi!');
+          }
+        })
+        .catch(err => {
+          console.error('Hata:', err);
+          alert('Bir hata oluştu!');
+        });
     }
 
     function openImageUpload(itemId) {
@@ -1247,11 +1327,11 @@
     }
 
     // Resim önizleme
-    document.getElementById('imageFile').addEventListener('change', function(e) {
+    document.getElementById('imageFile').addEventListener('change', function (e) {
       const file = e.target.files[0];
       if (file) {
         const reader = new FileReader();
-        reader.onload = function(e) {
+        reader.onload = function (e) {
           document.getElementById('previewImg').src = e.target.result;
           document.getElementById('imagePreview').style.display = 'block';
         }
@@ -1277,20 +1357,20 @@
         method: 'POST',
         body: formData
       })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          alert('Resim başarıyla yüklendi!');
-          closeImageModal();
-          location.reload();
-        } else {
-          alert(data.error || 'Resim yüklenemedi!');
-        }
-      })
-      .catch(err => {
-        console.error('Hata:', err);
-        alert('Bir hata oluştu!');
-      });
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            alert('Resim başarıyla yüklendi!');
+            closeImageModal();
+            location.reload();
+          } else {
+            alert(data.error || 'Resim yüklenemedi!');
+          }
+        })
+        .catch(err => {
+          console.error('Hata:', err);
+          alert('Bir hata oluştu!');
+        });
     }
 
     function deleteItemImage(itemId) {
@@ -1301,18 +1381,18 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ itemId })
       })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          location.reload();
-        } else {
-          alert(data.error || 'Resim silinemedi!');
-        }
-      })
-      .catch(err => {
-        console.error('Hata:', err);
-        alert('Bir hata oluştu!');
-      });
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            location.reload();
+          } else {
+            alert(data.error || 'Resim silinemedi!');
+          }
+        })
+        .catch(err => {
+          console.error('Hata:', err);
+          alert('Bir hata oluştu!');
+        });
     }
 
     // Haftanın ürünü için resim yükleme modal'ı aç
@@ -1328,14 +1408,14 @@
     }
 
     // Haftanın ürünü resim önizleme
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
       const weeklyImageFile = document.getElementById('weeklyImageFile');
       if (weeklyImageFile) {
-        weeklyImageFile.addEventListener('change', function(e) {
+        weeklyImageFile.addEventListener('change', function (e) {
           const file = e.target.files[0];
           if (file) {
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = function (e) {
               document.getElementById('weeklyPreviewImg').src = e.target.result;
               document.getElementById('weeklyImagePreview').style.display = 'block';
             }
@@ -1363,20 +1443,20 @@
         method: 'POST',
         body: formData
       })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          alert('✅ Resim başarıyla yüklendi!');
-          closeWeeklyImageModal();
-          location.reload();
-        } else {
-          alert(data.error || 'Resim yüklenemedi!');
-        }
-      })
-      .catch(err => {
-        console.error('Hata:', err);
-        alert('Bir hata oluştu!');
-      });
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            alert('✅ Resim başarıyla yüklendi!');
+            closeWeeklyImageModal();
+            location.reload();
+          } else {
+            alert(data.error || 'Resim yüklenemedi!');
+          }
+        })
+        .catch(err => {
+          console.error('Hata:', err);
+          alert('Bir hata oluştu!');
+        });
     }
 
     function deleteWeeklyImage(specialId) {
@@ -1387,23 +1467,23 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ specialId })
       })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          alert('✅ Resim silindi!');
-          location.reload();
-        } else {
-          alert(data.error || 'Resim silinemedi!');
-        }
-      })
-      .catch(err => {
-        console.error('Hata:', err);
-        alert('Bir hata oluştu!');
-      });
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            alert('✅ Resim silindi!');
+            location.reload();
+          } else {
+            alert(data.error || 'Resim silinemedi!');
+          }
+        })
+        .catch(err => {
+          console.error('Hata:', err);
+          alert('Bir hata oluştu!');
+        });
     }
 
     // Modal dışına tıklanınca kapat
-    window.onclick = function(event) {
+    window.onclick = function (event) {
       if (event.target.classList.contains('modal')) {
         event.target.style.display = 'none';
       }
@@ -1450,7 +1530,7 @@
           `;
 
           sortedCategories.forEach(([categoryId, data], index) => {
-            const lastClicked = data.lastClicked 
+            const lastClicked = data.lastClicked
               ? new Date(data.lastClicked).toLocaleString('tr-TR')
               : 'Hiç tıklanmadı';
 
@@ -1481,7 +1561,7 @@
         })
         .catch(err => {
           console.error('İstatistik yüklenemedi:', err);
-          document.getElementById('statisticsContainer').innerHTML = 
+          document.getElementById('statisticsContainer').innerHTML =
             `<p style="text-align: center; color: #e74c3c;">
               İstatistikler yüklenirken hata oluştu: ${err.message}<br>
               <small>Console'u (F12) kontrol edin veya sayfayı yenileyin.</small>
@@ -1499,19 +1579,19 @@
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
       })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          alert('✅ İstatistikler başarıyla sıfırlandı!');
-          loadStatistics(); // İstatistikleri yeniden yükle
-        } else {
-          alert('❌ İstatistikler sıfırlanırken hata oluştu!');
-        }
-      })
-      .catch(err => {
-        console.error('Hata:', err);
-        alert('❌ Bir hata oluştu: ' + err.message);
-      });
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            alert('✅ İstatistikler başarıyla sıfırlandı!');
+            loadStatistics(); // İstatistikleri yeniden yükle
+          } else {
+            alert('❌ İstatistikler sıfırlanırken hata oluştu!');
+          }
+        })
+        .catch(err => {
+          console.error('Hata:', err);
+          alert('❌ Bir hata oluştu: ' + err.message);
+        });
     }
 
 
@@ -1543,19 +1623,19 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ caption })
       })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          closeInstagramModal();
-          location.reload();
-        } else {
-          alert(data.error || 'Instagram kartı eklenemedi!');
-        }
-      })
-      .catch(err => {
-        console.error('Hata:', err);
-        alert('Bir hata oluştu!');
-      });
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            closeInstagramModal();
+            location.reload();
+          } else {
+            alert(data.error || 'Instagram kartı eklenemedi!');
+          }
+        })
+        .catch(err => {
+          console.error('Hata:', err);
+          alert('Bir hata oluştu!');
+        });
     }
 
     function updateInstagramPost(postId, caption) {
@@ -1564,16 +1644,16 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: postId, caption: caption })
       })
-      .then(res => res.json())
-      .then(data => {
-        if (!data.success) {
-          alert(data.error || 'Instagram kartı güncellenemedi!');
-        }
-      })
-      .catch(err => {
-        console.error('Hata:', err);
-        alert('Bir hata oluştu!');
-      });
+        .then(res => res.json())
+        .then(data => {
+          if (!data.success) {
+            alert(data.error || 'Instagram kartı güncellenemedi!');
+          }
+        })
+        .catch(err => {
+          console.error('Hata:', err);
+          alert('Bir hata oluştu!');
+        });
     }
 
     function deleteInstagramPost(postId) {
@@ -1584,18 +1664,18 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: postId })
       })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          location.reload();
-        } else {
-          alert(data.error || 'Kart silinemedi!');
-        }
-      })
-      .catch(err => {
-        console.error('Hata:', err);
-        alert('Bir hata oluştu!');
-      });
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            location.reload();
+          } else {
+            alert(data.error || 'Kart silinemedi!');
+          }
+        })
+        .catch(err => {
+          console.error('Hata:', err);
+          alert('Bir hata oluştu!');
+        });
     }
 
     function openInstagramImageUpload(postId) {
@@ -1650,19 +1730,19 @@
         method: 'POST',
         body: formData
       })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          closeInstagramImageModal();
-          location.reload();
-        } else {
-          alert(data.error || 'Resim yüklenemedi!');
-        }
-      })
-      .catch(err => {
-        console.error('Hata:', err);
-        alert('Bir hata oluştu!');
-      });
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            closeInstagramImageModal();
+            location.reload();
+          } else {
+            alert(data.error || 'Resim yüklenemedi!');
+          }
+        })
+        .catch(err => {
+          console.error('Hata:', err);
+          alert('Bir hata oluştu!');
+        });
     }
 
     function deleteInstagramImage(postId) {
@@ -1673,30 +1753,31 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: postId })
       })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          location.reload();
-        } else {
-          alert(data.error || 'Resim silinemedi!');
-        }
-      })
-      .catch(err => {
-        console.error('Hata:', err);
-        alert('Bir hata oluştu!');
-      });
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            location.reload();
+          } else {
+            alert(data.error || 'Resim silinemedi!');
+          }
+        })
+        .catch(err => {
+          console.error('Hata:', err);
+          alert('Bir hata oluştu!');
+        });
     }
 
-// Excel'e aktar
+    // Excel'e aktar
     function exportStatistics() {
       // Yeni sekmede Excel dosyasını indir
       window.open('/admin/export-statistics', '_blank');
     }
 
     // Sayfa yüklendiğinde istatistikleri yükle
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
       loadStatistics();
     });
   </script>
 </body>
+
 </html>

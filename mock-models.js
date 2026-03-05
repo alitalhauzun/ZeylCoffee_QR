@@ -7,9 +7,9 @@ const DB_FILE = path.join(__dirname, 'database.json');
 // Varsayılan veriler (Eğer dosya yoksa)
 const defaultData = {
   categories: [
-    { id: 1, name: 'Sıcak Kahveler', display_order: 1 },
-    { id: 2, name: 'Soğuk Kahveler', display_order: 2 },
-    { id: 3, name: 'Tatlılar', display_order: 3 }
+    { id: 1, name: 'Sıcak Kahveler', display_order: 1, price_unit: 'TL' },
+    { id: 2, name: 'Soğuk Kahveler', display_order: 2, price_unit: 'TL' },
+    { id: 3, name: 'Tatlılar', display_order: 3, price_unit: 'TL' }
   ],
   menuItems: [
     { id: 1, category_id: 1, name: 'Espresso', price: 40, description: 'Tek shot espresso', is_available: true, image: null },

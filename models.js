@@ -10,7 +10,8 @@ const adminSchema = new mongoose.Schema({
 const categorySchema = new mongoose.Schema({
   id: { type: Number, required: true, unique: true },
   name: { type: String, required: true },
-  display_order: { type: Number, required: true }
+  display_order: { type: Number, required: true },
+  price_unit: { type: String, default: 'TL', enum: ['TL', 'TL/KG'] }
 }, { timestamps: true });
 
 // MenuItem Schema
@@ -42,7 +43,9 @@ const campaignSchema = new mongoose.Schema({
   title: { type: String, required: true },
   description: { type: String },
   discount: { type: String },
-  image: { type: String },  // ← BU SATIR YENİ EKLENDİ
+  old_price: { type: Number, default: null },
+  new_price: { type: Number, default: null },
+  image: { type: String },
   is_active: { type: Boolean, default: true },
   start_date: { type: Date },
   end_date: { type: Date }

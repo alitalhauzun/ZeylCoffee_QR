@@ -8,25 +8,19 @@ const path = require('path');
 const multer = require('multer');
 const xlsx = require('xlsx');
 const mongoose = require('mongoose');
+const cloudinary = require('cloudinary').v2;
 const app = express();
 
-// Multer configuration for file uploads
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const uploadDir = path.join(__dirname, 'public/uploads');
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
-    cb(null, uploadDir);
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, 'item-' + uniqueSuffix + path.extname(file.originalname));
-  }
+// Cloudinary Configuration
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME || 'dwqrugkkn',
+  api_key: process.env.CLOUDINARY_API_KEY || '311124884946796',
+  api_secret: process.env.CLOUDINARY_API_SECRET || '7mUjnTCBqAYIc6YlHKYMu1z_dOY'
 });
 
+// Multer configuration - memory storage for Cloudinary upload
 const upload = multer({
-  storage: storage,
+  storage: multer.memoryStorage(),
   limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     const allowedTypes = /jpeg|jpg|png|gif|webp/;
@@ -40,6 +34,32 @@ const upload = multer({
     }
   }
 });
+
+// Cloudinary'ye resim yükleme yardımcı fonksiyonu
+function uploadToCloudinary(fileBuffer, folder) {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      { folder: 'zeylcoffee/' + folder, resource_type: 'image' },
+      (error, result) => {
+        if (error) reject(error);
+        else resolve(result);
+      }
+    );
+    stream.end(fileBuffer);
+  });
+}
+
+// Cloudinary'den resim silme yardımcı fonksiyonu
+function deleteFromCloudinary(imageUrl) {
+  if (!imageUrl || !imageUrl.includes('cloudinary')) return Promise.resolve();
+  // URL'den public_id çıkar
+  const parts = imageUrl.split('/');
+  const uploadIndex = parts.indexOf('upload');
+  if (uploadIndex === -1) return Promise.resolve();
+  const publicIdParts = parts.slice(uploadIndex + 2); // version'u atla
+  const publicId = publicIdParts.join('/').replace(/\.[^/.]+$/, ''); // uzantıyı kaldır
+  return cloudinary.uploader.destroy(publicId).catch(err => console.error('Cloudinary silme hatası:', err));
+}
 
 // MongoDB Bağlantısı
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/zeyl-menu';
@@ -221,17 +241,15 @@ app.post('/admin/upload-image', isAdmin, upload.single('image'), async (req, res
     const item = await models.MenuItem.findOne({ id: parseInt(itemId) });
 
     if (item) {
-      if (item.image && item.image.startsWith('uploads/')) {
-        const oldImagePath = path.join(__dirname, 'public', item.image);
-        if (fs.existsSync(oldImagePath)) {
-          fs.unlinkSync(oldImagePath);
-        }
-      }
+      // Eski resmi Cloudinary'den sil
+      if (item.image) await deleteFromCloudinary(item.image);
 
-      item.image = 'uploads/' + req.file.filename;
+      // Yeni resmi Cloudinary'ye yükle
+      const result = await uploadToCloudinary(req.file.buffer, 'menu-items');
+      item.image = result.secure_url;
       await item.save();
 
-      res.json({ success: true, imagePath: 'uploads/' + req.file.filename });
+      res.json({ success: true, imagePath: result.secure_url });
     } else {
       res.status(404).json({ success: false, error: 'Ürün bulunamadı' });
     }
@@ -247,13 +265,7 @@ app.post('/admin/delete-image', isAdmin, async (req, res) => {
     const item = await models.MenuItem.findOne({ id: parseInt(itemId) });
 
     if (item) {
-      if (item.image && item.image.startsWith('uploads/')) {
-        const imagePath = path.join(__dirname, 'public', item.image);
-        if (fs.existsSync(imagePath)) {
-          fs.unlinkSync(imagePath);
-        }
-      }
-
+      if (item.image) await deleteFromCloudinary(item.image);
       item.image = null;
       await item.save();
       res.json({ success: true });
@@ -308,7 +320,7 @@ app.post('/admin/add-item', isAdmin, async (req, res) => {
 
 app.post('/admin/add-category', isAdmin, async (req, res) => {
   try {
-    const { name } = req.body;
+    const { name, price_unit } = req.body;
 
     const maxCategory = await models.Category.findOne().sort('-id');
     const newId = maxCategory ? maxCategory.id + 1 : 1;
@@ -319,12 +331,24 @@ app.post('/admin/add-category', isAdmin, async (req, res) => {
     await models.Category.create({
       id: newId,
       name: name,
-      display_order: maxOrder + 1
+      display_order: maxOrder + 1,
+      price_unit: price_unit || 'TL'
     });
 
     res.json({ success: true });
   } catch (error) {
     console.error('Kategori ekleme hatası:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+app.post('/admin/update-category', isAdmin, async (req, res) => {
+  try {
+    const { id, price_unit } = req.body;
+    await models.Category.findOneAndUpdate({ id: parseInt(id) }, { price_unit });
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Kategori güncelleme hatası:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 });
@@ -454,17 +478,13 @@ app.post('/admin/upload-weekly-image', isAdmin, upload.single('image'), async (r
     const special = await models.WeeklySpecial.findOne({ id: parseInt(specialId) });
 
     if (special) {
-      if (special.image && special.image.startsWith('uploads/')) {
-        const oldImagePath = path.join(__dirname, 'public', special.image);
-        if (fs.existsSync(oldImagePath)) {
-          fs.unlinkSync(oldImagePath);
-        }
-      }
+      if (special.image) await deleteFromCloudinary(special.image);
 
-      special.image = 'uploads/' + req.file.filename;
+      const result = await uploadToCloudinary(req.file.buffer, 'weekly-specials');
+      special.image = result.secure_url;
       await special.save();
 
-      res.json({ success: true, imagePath: 'uploads/' + req.file.filename });
+      res.json({ success: true, imagePath: result.secure_url });
     } else {
       res.status(404).json({ success: false, error: 'Ürün bulunamadı' });
     }
@@ -480,13 +500,7 @@ app.post('/admin/delete-weekly-image', isAdmin, async (req, res) => {
     const special = await models.WeeklySpecial.findOne({ id: parseInt(specialId) });
 
     if (special) {
-      if (special.image && special.image.startsWith('uploads/')) {
-        const imagePath = path.join(__dirname, 'public', special.image);
-        if (fs.existsSync(imagePath)) {
-          fs.unlinkSync(imagePath);
-        }
-      }
-
+      if (special.image) await deleteFromCloudinary(special.image);
       special.image = null;
       await special.save();
       res.json({ success: true });
@@ -508,13 +522,13 @@ app.post('/admin/add-campaign', isAdmin, async (req, res) => {
     const maxCampaign = await models.Campaign.findOne().sort('-id');
     const newId = maxCampaign ? maxCampaign.id + 1 : 1;
 
-    const allCampaigns = await models.Campaign.find();
-
     await models.Campaign.create({
       id: newId,
       title: name,
       description: description || '',
       discount: old_price && new_price ? `${old_price} TL -> ${new_price} TL` : null,
+      old_price: old_price ? parseFloat(old_price) : null,
+      new_price: new_price ? parseFloat(new_price) : null,
       is_active: true,
       start_date: new Date(),
       end_date: null
@@ -548,19 +562,13 @@ app.post('/admin/upload-campaign-image', isAdmin, upload.single('image'), async 
     const campaign = await models.Campaign.findOne({ id: parseInt(campaignId) });
 
     if (campaign) {
-      // Eski resmi sil
-      if (campaign.image && campaign.image.startsWith('uploads/')) {
-        const oldImagePath = path.join(__dirname, 'public', campaign.image);
-        if (fs.existsSync(oldImagePath)) {
-          fs.unlinkSync(oldImagePath);
-        }
-      }
+      if (campaign.image) await deleteFromCloudinary(campaign.image);
 
-      // Yeni resmi kaydet
-      campaign.image = 'uploads/' + req.file.filename;
+      const result = await uploadToCloudinary(req.file.buffer, 'campaigns');
+      campaign.image = result.secure_url;
       await campaign.save();
 
-      res.json({ success: true, image: 'uploads/' + req.file.filename });
+      res.json({ success: true, image: result.secure_url });
     } else {
       res.status(404).json({ success: false, error: 'Kampanya bulunamadı' });
     }
@@ -576,13 +584,7 @@ app.post('/admin/delete-campaign-image', isAdmin, async (req, res) => {
     const campaign = await models.Campaign.findOne({ id: parseInt(campaignId) });
 
     if (campaign) {
-      if (campaign.image && campaign.image.startsWith('uploads/')) {
-        const imagePath = path.join(__dirname, 'public', campaign.image);
-        if (fs.existsSync(imagePath)) {
-          fs.unlinkSync(imagePath);
-        }
-      }
-
+      if (campaign.image) await deleteFromCloudinary(campaign.image);
       campaign.image = null;
       await campaign.save();
       res.json({ success: true });
@@ -654,17 +656,13 @@ app.post('/admin/upload-instagram-image', isAdmin, upload.single('image'), async
     const post = await models.InstagramPost.findOne({ id: parseInt(postId) });
 
     if (post) {
-      if (post.image && post.image.startsWith('uploads/')) {
-        const oldImagePath = path.join(__dirname, 'public', post.image);
-        if (fs.existsSync(oldImagePath)) {
-          fs.unlinkSync(oldImagePath);
-        }
-      }
+      if (post.image) await deleteFromCloudinary(post.image);
 
-      post.image = 'uploads/' + req.file.filename;
+      const result = await uploadToCloudinary(req.file.buffer, 'instagram');
+      post.image = result.secure_url;
       await post.save();
 
-      res.json({ success: true, imagePath: 'uploads/' + req.file.filename });
+      res.json({ success: true, imagePath: result.secure_url });
     } else {
       res.status(404).json({ success: false, error: 'Post bulunamadı' });
     }
@@ -680,13 +678,7 @@ app.post('/admin/delete-instagram-image', isAdmin, async (req, res) => {
     const post = await models.InstagramPost.findOne({ id: parseInt(postId) });
 
     if (post) {
-      if (post.image && post.image.startsWith('uploads/')) {
-        const imagePath = path.join(__dirname, 'public', post.image);
-        if (fs.existsSync(imagePath)) {
-          fs.unlinkSync(imagePath);
-        }
-      }
-
+      if (post.image) await deleteFromCloudinary(post.image);
       post.image = null;
       await post.save();
       res.json({ success: true });

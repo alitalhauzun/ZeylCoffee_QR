@@ -55,7 +55,7 @@
           <% instagramPosts.forEach(post=> { %>
             <div class="instagram-post">
               <% if (post.image) { %>
-                <img src="/<%= post.image %>" alt="Instagram Post">
+                <img src="<%= post.image.startsWith('http') ? post.image : '/' + post.image %>" alt="Instagram Post">
                 <% } else { %>
                   <div
                     style="width: 100%; height: 100%; background: #eee; display: flex; align-items: center; justify-content: center; color: #999;">
@@ -72,7 +72,7 @@
               <% instagramPosts.forEach(post=> { %>
                 <div class="instagram-post">
                   <% if (post.image) { %>
-                    <img src="/<%= post.image %>" alt="Instagram Post">
+                    <img src="<%= post.image.startsWith('http') ? post.image : '/' + post.image %>" alt="Instagram Post">
                     <% } else { %>
                       <div
                         style="width: 100%; height: 100%; background: #eee; display: flex; align-items: center; justify-content: center; color: #999;">
@@ -97,7 +97,7 @@
         <div class="card">
           <% if (special.image) { %>
             <div class="card-image-wrapper">
-              <img src="/<%= special.image %>" alt="<%= special.name %>">
+              <img src="<%= special.image.startsWith('http') ? special.image : '/' + special.image %>" alt="<%= special.name %>">
             </div>
             <% } %>
               <div class="card-content">
@@ -127,18 +127,24 @@
             <div class="card">
               <% if (campaign.image) { %>
                 <div class="card-image-wrapper">
-                  <img src="/<%= campaign.image %>" alt="<%= campaign.title %>">
+                  <img src="<%= campaign.image.startsWith('http') ? campaign.image : '/' + campaign.image %>" alt="<%= campaign.title %>">
                 </div>
                 <% } %>
                   <div class="card-content">
                     <h3 class="card-title">
                       <%= campaign.title %>
                     </h3>
-                    <% if (campaign.discount) { %>
+                    <% if (campaign.old_price && campaign.new_price) { %>
+                      <div class="card-price campaign-price">
+                        <span class="price-old"><%= campaign.old_price %> ₺</span>
+                        <span class="price-arrow">→</span>
+                        <span class="price-new"><%= campaign.new_price %> ₺</span>
+                      </div>
+                    <% } else if (campaign.discount) { %>
                       <div class="card-price">
                         <%= campaign.discount %>
                       </div>
-                      <% } %>
+                    <% } %>
                         <% if (campaign.description) { %>
                           <p class="card-desc">
                             <%= campaign.description %>
@@ -173,7 +179,7 @@
                     <% } else { %>
                       <% data.items.forEach(item=> { %>
                         <div class="menu-item">
-                          <img src="<%= item.image ? '/' + item.image : '/images/placeholder.jpg' %>"
+                          <img src="<%= item.image ? (item.image.startsWith('http') ? item.image : '/' + item.image) : '/images/placeholder.jpg' %>"
                             alt="<%= item.name %>" class="menu-item-image"
                             onerror="this.src='https://placehold.co/100x100?text=No+Image';">
                           <div class="menu-item-details">
@@ -183,7 +189,7 @@
                               </h3>
                               <% if (item.price) { %>
                                 <div class="menu-item-price">
-                                  <%= item.price %> ₺
+                                  <%= item.price %> <%= data.category.price_unit === 'TL/KG' ? '₺/KG' : '₺' %>
                                 </div>
                                 <% } %>
                             </div>
@@ -260,6 +266,31 @@
                 }
               });
             })();
+          </script>
+
+          <!-- Scroll to Top Button -->
+          <button id="scrollTopBtn" class="scroll-top-btn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" title="Yukarı Git">
+            ↑
+          </button>
+
+          <script>
+            // Scroll to top button visibility
+            window.addEventListener('scroll', function() {
+              const btn = document.getElementById('scrollTopBtn');
+              if (window.pageYOffset > 300) {
+                btn.classList.add('visible');
+              } else {
+                btn.classList.remove('visible');
+              }
+            });
+
+            // Instagram geri dönüş beyaz ekran düzeltmesi
+            window.addEventListener('pageshow', function(event) {
+              if (event.persisted) {
+                // bfcache'den yüklendiğinde sayfayı yenile
+                window.location.reload();
+              }
+            });
           </script>
 </body>
 
