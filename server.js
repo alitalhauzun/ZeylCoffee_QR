@@ -71,11 +71,19 @@ let models = require('./mock-models');
 console.log('🔄 Veritabanı bağlantısı deneniyor...');
 
 mongoose.connect(MONGODB_URI, { serverSelectionTimeoutMS: 5000 }) // 5 saniye bekle
-  .then(() => {
+  .then(async () => {
     console.log('✅ MongoDB bağlantısı başarılı! Gerçek veritabanına geçiliyor.');
     try {
       // Mongoose modellerini yükle ve aktif et
       models = require('./models');
+
+      // Admin kullanıcısı yoksa oluştur
+      const adminCount = await models.Admin.countDocuments();
+      if (adminCount === 0) {
+        const hashedPassword = bcrypt.hashSync('zeyl2025', 10);
+        await models.Admin.create({ username: 'admin', password: hashedPassword });
+        console.log('👤 Admin kullanıcısı oluşturuldu (admin/zeyl2025)');
+      }
     } catch (e) {
       console.error('Model yükleme hatası:', e);
       // Hata olursa mock'ta kal
