@@ -1,3 +1,4 @@
+// Deploy Test - Veri kalıcılığı testi (v2)
 require('dotenv').config();
 const express = require('express');
 const session = require('express-session');
