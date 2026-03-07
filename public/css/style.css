@@ -418,6 +418,8 @@ html {
 
 .menu-item-details {
   flex: 1;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .menu-item-header {
@@ -443,6 +445,9 @@ html {
   font-size: 0.85rem;
   color: var(--text-secondary);
   line-height: 1.4;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
 }
 
 /* Responsive */
