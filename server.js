@@ -933,4 +933,21 @@ app.listen(PORT, HOST, () => {
 ║  💡 MongoDB bağlantısı aktif!                                 ║
 ╚════════════════════════════════════════════════════════════════╝
   `);
+
+  // Keep-alive: Render Free Tier uyku modunu engelle
+  // Her 14 dakikada bir kendine ping atar (Render 15 dk'da uyutuyor)
+  if (process.env.RENDER) {
+    const KEEP_ALIVE_URL = process.env.RENDER_EXTERNAL_URL || 'https://zeylcoffee.com';
+    setInterval(() => {
+      const https = require('https');
+      const http = require('http');
+      const mod = KEEP_ALIVE_URL.startsWith('https') ? https : http;
+      mod.get(KEEP_ALIVE_URL, (res) => {
+        console.log(`🏓 Keep-alive ping: ${res.statusCode}`);
+      }).on('error', (err) => {
+        console.log('🏓 Keep-alive ping hatası:', err.message);
+      });
+    }, 14 * 60 * 1000); // 14 dakika
+    console.log('🏓 Keep-alive aktif: 14 dk\'da bir ping atılacak');
+  }
 });
