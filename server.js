@@ -1,5 +1,17 @@
-// Deploy Test - Veri kalıcılığı testi (v2)
+// ZeylCoffee QR Menü — Stabilite v3
 require('dotenv').config();
+
+// ==================== PROCESS CRASH KORUMALARI ====================
+// Bu handler'lar process'in beklenmedik hatalarla ölmesini önler
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('⚠️ Unhandled Promise Rejection:', reason);
+  // Process'i öldürME — sadece logla
+});
+
+process.on('uncaughtException', (err) => {
+  console.error('🔴 Uncaught Exception:', err);
+  // Kritik hatada bile process'i ayakta tut (Render restart etsin gerekirse)
+});
 const express = require('express');
 const session = require('express-session');
 const bodyParser = require('body-parser');
@@ -67,34 +79,83 @@ const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/zeyl-m
 
 // GÜVENLİ BAŞLANGIÇ: Varsayılan olarak MOCK veritabanı ile başla.
 // Böylece bağlantı başarısız olsa bile site çalışır.
-let models = require('./mock-models');
+const mockModels = require('./mock-models');
+let realModels = null;
+let models = mockModels; // Başlangıçta mock kullan
+let dbConnected = false;
+
+// Models'e güvenli erişim fonksiyonu
+function getModels() {
+  if (dbConnected && realModels) {
+    return realModels;
+  }
+  return mockModels;
+}
 
 console.log('🔄 Veritabanı bağlantısı deneniyor...');
 
-mongoose.connect(MONGODB_URI, { serverSelectionTimeoutMS: 5000 }) // 5 saniye bekle
+// ==================== MONGODB EVENT LISTENERS ====================
+mongoose.connection.on('connected', () => {
+  console.log('✅ MongoDB bağlantısı kuruldu.');
+  dbConnected = true;
+});
+
+mongoose.connection.on('disconnected', () => {
+  console.warn('⚠️ MongoDB bağlantısı koptu! Mock veritabanına geçiliyor...');
+  dbConnected = false;
+  models = mockModels;
+});
+
+mongoose.connection.on('reconnected', () => {
+  console.log('🔄 MongoDB yeniden bağlandı! Gerçek veritabanına geçiliyor.');
+  dbConnected = true;
+  if (realModels) {
+    models = realModels;
+  }
+});
+
+mongoose.connection.on('error', (err) => {
+  console.error('❌ MongoDB bağlantı hatası:', err.message);
+  // Bağlantı hatası olduğunda mock'a düş
+  dbConnected = false;
+  models = mockModels;
+});
+
+// ==================== MONGODB BAĞLANTISI ====================
+mongoose.connect(MONGODB_URI, {
+  serverSelectionTimeoutMS: 10000,    // 10 saniye bekle
+  heartbeatFrequencyMS: 30000,        // 30 saniyede bir kalp atışı
+  socketTimeoutMS: 45000,             // Socket timeout
+  maxPoolSize: 5,                     // Free tier için yeterli
+  retryWrites: true,
+  retryReads: true,
+})
   .then(async () => {
     console.log('✅ MongoDB bağlantısı başarılı! Gerçek veritabanına geçiliyor.');
     try {
       // Mongoose modellerini yükle ve aktif et
-      models = require('./models');
+      realModels = require('./models');
+      models = realModels;
+      dbConnected = true;
 
       // Admin kullanıcısı yoksa oluştur
-      const adminCount = await models.Admin.countDocuments();
+      const adminCount = await realModels.Admin.countDocuments();
       if (adminCount === 0) {
         const hashedPassword = bcrypt.hashSync('zeyl2025', 10);
-        await models.Admin.create({ username: 'admin', password: hashedPassword });
+        await realModels.Admin.create({ username: 'admin', password: hashedPassword });
         console.log('👤 Admin kullanıcısı oluşturuldu (admin/zeyl2025)');
       }
     } catch (e) {
       console.error('Model yükleme hatası:', e);
-      // Hata olursa mock'ta kal
+      dbConnected = false;
+      models = mockModels;
     }
   })
   .catch((err) => {
     console.error('❌ MongoDB bağlantı hatası:', err.message);
     console.log('⚠️  YEREL MOD (MOCK VERITABANI) KULLANILIYOR.');
-    console.log('⚠️  Bu modda veriler "database.json" dosyasına kaydedilir.');
-    // Zaten mock-models yüklü, bir şey yapmaya gerek yok.
+    dbConnected = false;
+    models = mockModels;
   });
 
 // Middleware
@@ -124,27 +185,59 @@ function isAdmin(req, res, next) {
   }
 }
 
+// ==================== HEALTH CHECK ====================
+
+app.get('/health', (req, res) => {
+  const status = {
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    db: dbConnected ? 'connected' : 'disconnected',
+    uptime: Math.floor(process.uptime()) + 's'
+  };
+  res.status(200).json(status);
+});
+
 // ==================== PUBLIC ROUTES ====================
 
 // Ana sayfa - Müşteri Menüsü
 app.get('/', async (req, res) => {
   try {
-    const categories = await models.Category.find().sort('display_order');
-    const allItems = await models.MenuItem.find({ is_available: true }).sort('display_order');
+    // Her istekte güncel models referansını kullan
+    const currentModels = getModels();
+    
+    const categories = await currentModels.Category.find().sort('display_order');
+    const allItems = await currentModels.MenuItem.find({ is_available: true }).sort('display_order');
 
     const menuData = categories.map(cat => {
       const items = allItems.filter(item => item.category_id === cat.id);
       return { category: cat, items: items };
     });
 
-    const weeklySpecials = await models.WeeklySpecial.find({ is_active: true });
-    const campaigns = await models.Campaign.find({ is_active: true });
-    const instagramPosts = await models.InstagramPost.find().sort('display_order');
+    const weeklySpecials = await currentModels.WeeklySpecial.find({ is_active: true });
+    const campaigns = await currentModels.Campaign.find({ is_active: true });
+    const instagramPosts = await currentModels.InstagramPost.find().sort('display_order');
 
     res.render('menu-premium', { menuData, weeklySpecials, campaigns, instagramPosts });
   } catch (error) {
     console.error('Menü yükleme hatası:', error);
-    res.status(500).send('Bir hata oluştu');
+    // MongoDB hatası ise mock'a düşüp tekrar dene
+    try {
+      console.log('🔄 Mock veritabanı ile yeniden deneniyor...');
+      const fallback = mockModels;
+      const categories = await fallback.Category.find().sort('display_order');
+      const allItems = await fallback.MenuItem.find({ is_available: true }).sort('display_order');
+      const menuData = categories.map(cat => {
+        const items = allItems.filter(item => item.category_id === cat.id);
+        return { category: cat, items: items };
+      });
+      const weeklySpecials = await fallback.WeeklySpecial.find({ is_active: true });
+      const campaigns = await fallback.Campaign.find({ is_active: true });
+      const instagramPosts = await fallback.InstagramPost.find().sort('display_order');
+      res.render('menu-premium', { menuData, weeklySpecials, campaigns, instagramPosts });
+    } catch (fallbackError) {
+      console.error('Fallback de başarısız:', fallbackError);
+      res.status(500).render('error');
+    }
   }
 });
 
@@ -190,22 +283,23 @@ app.get('/admin/logout', (req, res) => {
 
 app.get('/admin/dashboard', isAdmin, async (req, res) => {
   try {
-    const categories = await models.Category.find().sort('display_order');
-    const allItems = await models.MenuItem.find().sort('display_order');
+    const currentModels = getModels();
+    const categories = await currentModels.Category.find().sort('display_order');
+    const allItems = await currentModels.MenuItem.find().sort('display_order');
 
     const menuData = categories.map(cat => {
       const items = allItems.filter(item => item.category_id === cat.id);
       return { category: cat, items: items };
     });
 
-    const weeklySpecials = await models.WeeklySpecial.find();
-    const campaigns = await models.Campaign.find();
-    const instagramPosts = await models.InstagramPost.find().sort('display_order');
+    const weeklySpecials = await currentModels.WeeklySpecial.find();
+    const campaigns = await currentModels.Campaign.find();
+    const instagramPosts = await currentModels.InstagramPost.find().sort('display_order');
 
     res.render('admin-dashboard', { menuData, categories, weeklySpecials, campaigns, instagramPosts });
   } catch (error) {
     console.error('Dashboard yükleme hatası:', error);
-    res.status(500).send('Bir hata oluştu');
+    res.status(500).render('error');
   }
 });
 
@@ -895,6 +989,21 @@ app.get('/admin/export-statistics', isAdmin, async (req, res) => {
   }
 });
 
+// ==================== GLOBAL ERROR HANDLER ====================
+// Tüm yakalanmayan Express hatalarını yakala
+app.use((err, req, res, next) => {
+  console.error('🔴 Express Hata:', err.message);
+  if (res.headersSent) {
+    return next(err);
+  }
+  res.status(500).render('error');
+});
+
+// 404 Handler
+app.use((req, res) => {
+  res.status(404).render('error');
+});
+
 // ==================== SERVER START ====================
 
 const PORT = process.env.PORT || 3000;
@@ -930,24 +1039,24 @@ app.listen(PORT, HOST, () => {
 ║  👤 Admin Kullanıcı Adı: admin                                ║
 ║  🔑 Admin Şifre: zeyl2025                                     ║
 ║                                                                ║
-║  💡 MongoDB bağlantısı aktif!                                 ║
+║  💡 Stabilite v3 — Otomatik fallback aktif                    ║
 ╚════════════════════════════════════════════════════════════════╝
   `);
 
   // Keep-alive: Render Free Tier uyku modunu engelle
-  // Her 14 dakikada bir kendine ping atar (Render 15 dk'da uyutuyor)
+  // Her 14 dakikada bir /health endpoint'ine ping atar (hafif, hızlı)
   if (process.env.RENDER) {
-    const KEEP_ALIVE_URL = process.env.RENDER_EXTERNAL_URL || 'https://zeylcoffee.com';
+    const KEEP_ALIVE_URL = (process.env.RENDER_EXTERNAL_URL || 'https://zeylcoffee.com') + '/health';
     setInterval(() => {
       const https = require('https');
       const http = require('http');
       const mod = KEEP_ALIVE_URL.startsWith('https') ? https : http;
       mod.get(KEEP_ALIVE_URL, (res) => {
-        console.log(`🏓 Keep-alive ping: ${res.statusCode}`);
+        console.log(`🏓 Keep-alive ping: ${res.statusCode} (DB: ${dbConnected ? 'connected' : 'disconnected'})`);
       }).on('error', (err) => {
         console.log('🏓 Keep-alive ping hatası:', err.message);
       });
     }, 14 * 60 * 1000); // 14 dakika
-    console.log('🏓 Keep-alive aktif: 14 dk\'da bir ping atılacak');
+    console.log('🏓 Keep-alive aktif: 14 dk\'da bir /health ping atılacak');
   }
 });

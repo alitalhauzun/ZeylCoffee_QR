@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zeyl Coffee — Bakım</title>
+  <meta http-equiv="refresh" content="30">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      overflow: hidden;
+    }
+
+    .container {
+      text-align: center;
+      padding: 40px 30px;
+      max-width: 480px;
+      animation: fadeInUp 0.8s ease-out;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .coffee-icon {
+      font-size: 64px;
+      margin-bottom: 20px;
+      animation: steam 2s ease-in-out infinite;
+    }
+
+    @keyframes steam {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, #e2b04a, #f0d68a);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .message {
+      font-size: 16px;
+      color: rgba(255, 255, 255, 0.75);
+      line-height: 1.7;
+      margin-bottom: 30px;
+    }
+
+    .retry-btn {
+      display: inline-block;
+      padding: 14px 36px;
+      background: linear-gradient(135deg, #e2b04a, #c5963a);
+      color: #1a1a2e;
+      text-decoration: none;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 15px;
+      font-family: 'Poppins', sans-serif;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 20px rgba(226, 176, 74, 0.3);
+    }
+
+    .retry-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(226, 176, 74, 0.4);
+    }
+
+    .timer {
+      margin-top: 24px;
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.4);
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-top-color: rgba(255, 255, 255, 0.5);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Arka plan dekorasyon */
+    .bg-circle {
+      position: fixed;
+      border-radius: 50%;
+      background: rgba(226, 176, 74, 0.04);
+      pointer-events: none;
+    }
+
+    .bg-circle-1 {
+      width: 400px;
+      height: 400px;
+      top: -100px;
+      right: -100px;
+    }
+
+    .bg-circle-2 {
+      width: 300px;
+      height: 300px;
+      bottom: -80px;
+      left: -80px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="bg-circle bg-circle-1"></div>
+  <div class="bg-circle bg-circle-2"></div>
+
+  <div class="container">
+    <div class="coffee-icon">☕</div>
+    <h1>Zeyl Coffee</h1>
+    <p class="message">
+      Şu anda menümüze erişilemiyor.<br>
+      Kısa bir süre sonra tekrar hizmetinizdeyiz.
+    </p>
+    <button class="retry-btn" onclick="window.location.reload()">
+      Tekrar Dene
+    </button>
+    <div class="timer">
+      <span class="spinner"></span>
+      Sayfa <span id="countdown">30</span> saniye içinde otomatik yenilenecek
+    </div>
+  </div>
+
+  <script>
+    let seconds = 30;
+    const countdownEl = document.getElementById('countdown');
+    setInterval(() => {
+      seconds--;
+      if (seconds <= 0) seconds = 30;
+      countdownEl.textContent = seconds;
+    }, 1000);
+  </script>
+</body>
+
+</html>
