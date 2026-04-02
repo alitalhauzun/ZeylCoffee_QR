@@ -56,29 +56,8 @@
       "image": "uploads/item-1772313459699-722877644.png"
     }
   ],
-  "weeklySpecials": [
-    {
-      "id": 1,
-      "name": "Cheesecake",
-      "price": "90",
-      "description": "Bu haftanın yıldızı\n",
-      "image": "uploads/item-1772313639720-770918848.png",
-      "is_active": true,
-      "display_order": 0
-    }
-  ],
-  "campaigns": [
-    {
-      "id": 1,
-      "title": "Öğrenci Menüsü",
-      "description": "Öğrenci kartı gösterimi zorunludur",
-      "discount": "400 TL -> 190 TL",
-      "is_active": true,
-      "start_date": "2026-02-28T21:22:26.513Z",
-      "end_date": null,
-      "image": "uploads/item-1772313753342-661912803.png"
-    }
-  ],
+  "weeklySpecials": [],
+  "campaigns": [],
   "instagramPosts": [
     {
       "id": 1,
