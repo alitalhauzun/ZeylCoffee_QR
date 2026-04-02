@@ -1,37 +1,44 @@
 {
-  "admins": [
-    {
-      "username": "admin",
-      "password": "zeyl2025"
-    }
-  ],
-  "statistics": [],
-  "categoryStats": [],
   "categories": [
     {
       "id": 1,
       "name": "Börekler",
-      "display_order": 0
+      "display_order": 0,
+      "price_unit": "TL",
+      "createdAt": "2026-04-02T11:20:49.100Z",
+      "updatedAt": "2026-04-02T11:20:49.100Z"
     },
     {
       "id": 2,
       "name": "Tatlılar",
-      "display_order": 1
+      "display_order": 1,
+      "price_unit": "TL",
+      "createdAt": "2026-04-02T11:20:49.101Z",
+      "updatedAt": "2026-04-02T11:20:49.101Z"
     },
     {
       "id": 3,
       "name": "Sıcak İçecekler",
-      "display_order": 2
+      "display_order": 2,
+      "price_unit": "TL",
+      "createdAt": "2026-04-02T11:20:49.101Z",
+      "updatedAt": "2026-04-02T11:20:49.101Z"
     },
     {
       "id": 4,
       "name": "Soğuk İçecekler",
-      "display_order": 3
+      "display_order": 3,
+      "price_unit": "TL",
+      "createdAt": "2026-04-02T11:20:49.101Z",
+      "updatedAt": "2026-04-02T11:20:49.101Z"
     },
     {
       "id": 5,
       "name": "Çay yanı lezzetler",
-      "display_order": 4
+      "display_order": 4,
+      "price_unit": "TL",
+      "createdAt": "2026-04-02T11:20:49.101Z",
+      "updatedAt": "2026-04-02T11:20:49.101Z"
     }
   ],
   "menuItems": [
@@ -39,49 +46,116 @@
       "id": 1,
       "category_id": 1,
       "name": "Kıymalı Börek",
-      "price": "700",
       "description": "Kıymalı\n",
+      "price": 700,
+      "image": "uploads/item-1772313381907-471095488.png",
       "is_available": true,
       "display_order": 0,
-      "image": "uploads/item-1772313381907-471095488.png"
+      "createdAt": "2026-04-02T11:20:49.427Z",
+      "updatedAt": "2026-04-02T11:20:49.427Z"
     },
     {
       "id": 2,
       "category_id": 2,
       "name": "Magnolya",
-      "price": "120",
       "description": "Sütlü çilekli eşsiz lezzet",
+      "price": 120,
+      "image": "uploads/item-1772313459699-722877644.png",
       "is_available": true,
       "display_order": 0,
-      "image": "uploads/item-1772313459699-722877644.png"
-    }
-  ],
-  "weeklySpecials": [],
-  "campaigns": [],
-  "instagramPosts": [
-    {
-      "id": 1,
-      "caption": "Tavuk + Pilav tam bir sporcu eşlikçisi..",
-      "image": "uploads/item-1772313767449-792120698.jpeg",
-      "display_order": 0
-    },
-    {
-      "id": 2,
-      "caption": "Makarnamızı denediniz mi?",
-      "image": "uploads/item-1772313779373-297936939.jpeg",
-      "display_order": 1
+      "createdAt": "2026-04-02T11:20:49.427Z",
+      "updatedAt": "2026-04-02T11:20:49.427Z"
     },
     {
       "id": 3,
-      "caption": "Günlerniz için vazgeçilmez lezzet",
+      "category_id": 3,
+      "name": "deneme",
+      "description": "",
+      "price": 1,
+      "is_available": true,
+      "display_order": 0,
+      "createdAt": "2026-04-02T12:55:05.558Z",
+      "updatedAt": "2026-04-02T12:55:05.558Z"
+    }
+  ],
+  "weeklySpecials": [
+    {
+      "id": 1,
+      "name": "deneme",
+      "description": "",
+      "price": 2,
+      "image": null,
+      "is_active": true,
+      "createdAt": "2026-04-02T12:55:33.064Z",
+      "updatedAt": "2026-04-02T12:55:33.064Z"
+    },
+    {
+      "id": 2,
+      "name": "deneme",
+      "description": "",
+      "price": 3,
+      "image": null,
+      "is_active": true,
+      "createdAt": "2026-04-02T12:55:46.957Z",
+      "updatedAt": "2026-04-02T12:55:46.957Z"
+    }
+  ],
+  "campaigns": [
+    {
+      "id": 1,
+      "title": "Öğrenci Menüsü",
+      "description": "Öğrenci kartı gösterimi zorunludur",
+      "discount": "400 TL -> 190 TL",
+      "old_price": null,
+      "new_price": null,
+      "image": null,
+      "is_active": true,
+      "start_date": "2026-02-28T21:22:26.513Z",
+      "end_date": null,
+      "createdAt": "2026-04-02T11:20:50.075Z",
+      "updatedAt": "2026-04-02T12:48:41.884Z"
+    }
+  ],
+  "instagramPosts": [
+    {
+      "id": 1,
+      "image": "uploads/item-1772313767449-792120698.jpeg",
+      "caption": "Tavuk + Pilav tam bir sporcu eşlikçisi..",
+      "display_order": 0,
+      "createdAt": "2026-04-02T11:20:50.942Z",
+      "updatedAt": "2026-04-02T11:20:50.942Z"
+    },
+    {
+      "id": 2,
+      "image": "uploads/item-1772313779373-297936939.jpeg",
+      "caption": "Makarnamızı denediniz mi?",
+      "display_order": 1,
+      "createdAt": "2026-04-02T11:20:50.942Z",
+      "updatedAt": "2026-04-02T11:20:50.942Z"
+    },
+    {
+      "id": 3,
       "image": "uploads/item-1772313787432-625710386.jpeg",
-      "display_order": 2
+      "caption": "Günlerniz için vazgeçilmez lezzet",
+      "display_order": 2,
+      "createdAt": "2026-04-02T11:20:50.942Z",
+      "updatedAt": "2026-04-02T11:20:50.942Z"
     },
     {
       "id": 4,
-      "caption": "",
       "image": "uploads/item-1772313807492-616208129.jpeg",
-      "display_order": 3
+      "caption": "",
+      "display_order": 3,
+      "createdAt": "2026-04-02T11:20:50.942Z",
+      "updatedAt": "2026-04-02T11:20:50.942Z"
+    }
+  ],
+  "admins": [
+    {
+      "username": "admin",
+      "password": "$2a$10$nLsrl3W3suj9yrE1g6J9hOOYkjxUFe07jK5BLCjKb4sAirDP3BTzu",
+      "createdAt": "2026-04-02T11:20:51.340Z",
+      "updatedAt": "2026-04-02T11:20:51.340Z"
     }
   ]
 }
