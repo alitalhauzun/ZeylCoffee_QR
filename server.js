@@ -176,6 +176,45 @@ app.use(session({
   }
 }));
 
+// ==================== DUAL-WRITE YEDEKLEME ====================
+async function backupToJson() {
+  if (!dbConnected || !realModels) return;
+  try {
+    const data = {
+      categories: await realModels.Category.find().lean().sort('display_order'),
+      menuItems: await realModels.MenuItem.find().lean().sort('display_order'),
+      weeklySpecials: await realModels.WeeklySpecial.find().lean(),
+      campaigns: await realModels.Campaign.find().lean(),
+      instagramPosts: await realModels.InstagramPost.find().lean().sort('display_order'),
+      admins: await realModels.Admin.find().lean()
+    };
+    // _id ve __v alanlarını temizle (daha temiz bir json için)
+    const cleanData = JSON.parse(JSON.stringify(data, (key, value) => {
+      if (key === '_id' || key === '__v') return undefined;
+      return value;
+    }));
+    fs.writeFileSync(path.join(__dirname, 'database.json'), JSON.stringify(cleanData, null, 2));
+    console.log('📝 Dual-Write: Veriler database.json dosyasına yedeklendi.');
+  } catch (err) {
+    console.error('Dual-Write Hatası:', err);
+  }
+}
+
+// Dual-Write Middleware: Tüm başarılı admin POST isteklerinde JSON'u güncelle
+app.use('/admin', (req, res, next) => {
+  if (req.method === 'POST' && req.path !== '/login') {
+    const originalJson = res.json;
+    res.json = function(body) {
+      if (body && body.success) {
+         // Başarılı yazma işlemlerinden sonra asenkron yedek al
+         setTimeout(() => backupToJson(), 500);
+      }
+      return originalJson.call(this, body);
+    };
+  }
+  next();
+});
+
 // Middleware: Admin kontrolü
 function isAdmin(req, res, next) {
   if (req.session.isAdmin) {
@@ -810,6 +849,63 @@ app.post('/admin/change-password', isAdmin, async (req, res) => {
     }
   } catch (error) {
     console.error('Şifre değiştirme hatası:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// ==================== GITHUB YEDEKLEME ====================
+app.post('/admin/backup-to-github', isAdmin, async (req, res) => {
+  try {
+    const token = process.env.GITHUB_TOKEN;
+    if (!token) return res.status(400).json({ success: false, error: "GitHub Token (.env dosyasında GITHUB_TOKEN) bulunamadı." });
+    
+    // Önce güncel veriyi kaydet
+    await backupToJson();
+    
+    const repo = process.env.GITHUB_REPO || 'alitalhauzun/ZeylCoffee_QR';
+    const filePathAPI = 'database.json';
+    
+    const filePath = path.join(__dirname, 'database.json');
+    const content = fs.readFileSync(filePath, 'utf8');
+    const contentEncoded = Buffer.from(content).toString('base64');
+    
+    // fetch ile GitHub API isteği
+    const getUrl = `https://api.github.com/repos/${repo}/contents/${filePathAPI}`;
+    let sha = null;
+    try {
+      const getResponse = await fetch(getUrl, {
+        headers: { 'Authorization': `token ${token}`, 'User-Agent': 'ZeylCoffee-App' }
+      });
+      if (getResponse.ok) {
+        const fileData = await getResponse.json();
+        sha = fileData.sha;
+      }
+    } catch(e) {}
+    
+    const body = {
+      message: `Otomatik Veritabanı Yedeği: ${new Date().toLocaleString('tr-TR')}`,
+      content: contentEncoded,
+      branch: 'main'
+    };
+    if (sha) body.sha = sha;
+    
+    const putResponse = await fetch(getUrl, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `token ${token}`,
+        'Content-Type': 'application/json',
+        'User-Agent': 'ZeylCoffee-App'
+      },
+      body: JSON.stringify(body)
+    });
+    
+    if (!putResponse.ok) {
+      throw new Error(`GitHub API Hatası: ${putResponse.status}`);
+    }
+    
+    res.json({ success: true, message: 'Veriler başarıyla GitHub deposuna yedeklendi!' });
+  } catch (error) {
+    console.error('GitHub Yedekleme hatası:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 });

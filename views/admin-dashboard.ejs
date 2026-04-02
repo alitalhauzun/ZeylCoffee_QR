@@ -387,6 +387,7 @@
   <div class="navbar">
     <div class="navbar-title">🎉 Zeyl Coffee Admin Panel</div>
     <div class="navbar-actions">
+      <button class="btn btn-primary" onclick="backupToGitHub()" style="background: linear-gradient(135deg, #8e44ad, #9b59b6); font-size: 15px;">💾 GitHub'a Yedekle</button>
       <button class="btn btn-success" onclick="refreshMenu()"
         style="background: linear-gradient(135deg, #00b894, #00cec9); font-size: 15px;">🔄 Menüyü Güncelle</button>
       <button class="btn btn-warning" onclick="openPasswordModal()">🔑 Şifre Değiştir</button>
@@ -1788,6 +1789,30 @@
     document.addEventListener('DOMContentLoaded', function () {
       loadStatistics();
     });
+
+    async function backupToGitHub() {
+      if (!confirm('Emin misiniz? Mevcut tüm veriler GitHub deponuza yedeklenecek (database.json güncellenecek). Bu işlem 5-10 saniye sürebilir.')) return;
+      
+      const btn = event.currentTarget;
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '⏳ Yedekleniyor...';
+      btn.disabled = true;
+
+      try {
+        const response = await fetch('/admin/backup-to-github', { method: 'POST' });
+        const result = await response.json();
+        if (result.success) {
+          showToast(result.message);
+        } else {
+          showToast(result.error || 'Yedekleme başarısız!', true);
+        }
+      } catch (err) {
+        showToast('Bağlantı hatası: ' + err.message, true);
+      } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+      }
+    }
   </script>
 </body>
 
