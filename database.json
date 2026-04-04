@@ -25,35 +25,39 @@
       "updatedAt": "2026-04-02T11:20:49.101Z"
     },
     {
-      "id": 4,
-      "name": "Soğuk İçecekler",
-      "display_order": 3,
+      "id": 7,
+      "name": "SOĞUK İÇECEKLER",
+      "display_order": 6,
       "price_unit": "TL",
-      "createdAt": "2026-04-02T11:20:49.101Z",
-      "updatedAt": "2026-04-02T11:20:49.101Z"
+      "createdAt": "2026-04-04T11:55:55.373Z",
+      "updatedAt": "2026-04-04T11:55:55.373Z"
     },
     {
-      "id": 5,
-      "name": "Çay yanı lezzetler",
-      "display_order": 4,
+      "id": 8,
+      "name": "YAZ SERİNLİĞİ",
+      "display_order": 7,
       "price_unit": "TL",
-      "createdAt": "2026-04-02T11:20:49.101Z",
-      "updatedAt": "2026-04-02T11:20:49.101Z"
+      "createdAt": "2026-04-04T11:59:42.731Z",
+      "updatedAt": "2026-04-04T11:59:42.731Z"
+    },
+    {
+      "id": 9,
+      "name": "GÖZLEME-TOST",
+      "display_order": 8,
+      "price_unit": "TL",
+      "createdAt": "2026-04-04T12:31:07.626Z",
+      "updatedAt": "2026-04-04T12:31:07.626Z"
+    },
+    {
+      "id": 10,
+      "name": "KAHVALTI",
+      "display_order": 9,
+      "price_unit": "TL",
+      "createdAt": "2026-04-04T12:34:43.771Z",
+      "updatedAt": "2026-04-04T12:34:43.771Z"
     }
   ],
   "menuItems": [
-    {
-      "id": 1,
-      "category_id": 1,
-      "name": "Kıymalı Börek",
-      "description": "Kıymalı\n",
-      "price": 700,
-      "image": "uploads/item-1772313381907-471095488.png",
-      "is_available": true,
-      "display_order": 0,
-      "createdAt": "2026-04-02T11:20:49.427Z",
-      "updatedAt": "2026-04-02T11:20:49.427Z"
-    },
     {
       "id": 2,
       "category_id": 2,
@@ -67,89 +71,439 @@
       "updatedAt": "2026-04-02T11:20:49.427Z"
     },
     {
-      "id": 3,
-      "category_id": 3,
-      "name": "deneme",
-      "description": "",
-      "price": 1,
+      "id": 1,
+      "category_id": 1,
+      "name": "Kıymalı Börek",
+      "description": "kg fiyatı\n",
+      "price": 800,
+      "image": "uploads/item-1772313381907-471095488.png",
       "is_available": true,
       "display_order": 0,
-      "createdAt": "2026-04-02T12:55:05.558Z",
-      "updatedAt": "2026-04-02T12:55:05.558Z"
-    }
-  ],
-  "weeklySpecials": [
-    {
-      "id": 1,
-      "name": "deneme",
-      "description": "",
-      "price": 2,
-      "image": null,
-      "is_active": true,
-      "createdAt": "2026-04-02T12:55:33.064Z",
-      "updatedAt": "2026-04-02T12:55:33.064Z"
+      "createdAt": "2026-04-02T11:20:49.427Z",
+      "updatedAt": "2026-04-04T11:51:24.077Z"
     },
     {
-      "id": 2,
-      "name": "deneme",
+      "id": 39,
+      "category_id": 10,
+      "name": "Hızlı Kahvaltı",
       "description": "",
-      "price": 3,
-      "image": null,
-      "is_active": true,
-      "createdAt": "2026-04-02T12:55:46.957Z",
-      "updatedAt": "2026-04-02T12:55:46.957Z"
-    }
-  ],
-  "campaigns": [
-    {
-      "id": 1,
-      "title": "Öğrenci Menüsü",
-      "description": "Öğrenci kartı gösterimi zorunludur",
-      "discount": "400 TL -> 190 TL",
-      "old_price": null,
-      "new_price": null,
-      "image": null,
-      "is_active": true,
-      "start_date": "2026-02-28T21:22:26.513Z",
-      "end_date": null,
-      "createdAt": "2026-04-02T11:20:50.075Z",
-      "updatedAt": "2026-04-02T12:48:41.884Z"
-    }
-  ],
-  "instagramPosts": [
-    {
-      "id": 1,
-      "image": "uploads/item-1772313767449-792120698.jpeg",
-      "caption": "Tavuk + Pilav tam bir sporcu eşlikçisi..",
+      "price": 400,
+      "is_available": true,
       "display_order": 0,
-      "createdAt": "2026-04-02T11:20:50.942Z",
-      "updatedAt": "2026-04-02T11:20:50.942Z"
+      "createdAt": "2026-04-04T12:35:23.025Z",
+      "updatedAt": "2026-04-04T12:35:23.025Z"
     },
     {
-      "id": 2,
-      "image": "uploads/item-1772313779373-297936939.jpeg",
-      "caption": "Makarnamızı denediniz mi?",
+      "id": 6,
+      "category_id": 3,
+      "name": "Çay",
+      "description": "",
+      "price": 35,
+      "is_available": true,
+      "display_order": 0,
+      "createdAt": "2026-04-04T11:51:58.215Z",
+      "updatedAt": "2026-04-04T11:51:58.215Z"
+    },
+    {
+      "id": 32,
+      "category_id": 9,
+      "name": "Peynirli Gözleme",
+      "description": "",
+      "price": 185,
+      "is_available": true,
+      "display_order": 0,
+      "createdAt": "2026-04-04T12:31:42.316Z",
+      "updatedAt": "2026-04-04T12:31:42.316Z"
+    },
+    {
+      "id": 20,
+      "category_id": 8,
+      "name": "Milkshake",
+      "description": "çikolata,çilek,vanilya,orman meyveli,karamel",
+      "price": 150,
+      "is_available": true,
+      "display_order": 0,
+      "createdAt": "2026-04-04T12:00:49.424Z",
+      "updatedAt": "2026-04-04T12:00:49.424Z"
+    },
+    {
+      "id": 14,
+      "category_id": 7,
+      "name": "Meşrubatlar",
+      "description": "Cocacola,fanta,sprite,cappy,ıcetea",
+      "price": 80,
+      "is_available": true,
+      "display_order": 0,
+      "createdAt": "2026-04-04T11:57:29.004Z",
+      "updatedAt": "2026-04-04T11:57:29.004Z"
+    },
+    {
+      "id": 40,
+      "category_id": 10,
+      "name": "Serpme Kahvaltı",
+      "description": "",
+      "price": 900,
+      "is_available": true,
       "display_order": 1,
-      "createdAt": "2026-04-02T11:20:50.942Z",
-      "updatedAt": "2026-04-02T11:20:50.942Z"
+      "createdAt": "2026-04-04T12:35:54.204Z",
+      "updatedAt": "2026-04-04T12:35:54.204Z"
+    },
+    {
+      "id": 33,
+      "category_id": 9,
+      "name": "Ispanak Peynirli Gözleme",
+      "description": "",
+      "price": 185,
+      "is_available": true,
+      "display_order": 1,
+      "createdAt": "2026-04-04T12:32:02.261Z",
+      "updatedAt": "2026-04-04T12:32:54.469Z"
+    },
+    {
+      "id": 30,
+      "category_id": 2,
+      "name": "Chescake",
+      "description": "frambuaz,limon ",
+      "price": 150,
+      "is_available": true,
+      "display_order": 1,
+      "createdAt": "2026-04-04T12:13:34.118Z",
+      "updatedAt": "2026-04-04T12:13:34.118Z"
+    },
+    {
+      "id": 21,
+      "category_id": 8,
+      "name": "Smoothie",
+      "description": "çilek,orman meyveli,",
+      "price": 150,
+      "is_available": true,
+      "display_order": 1,
+      "createdAt": "2026-04-04T12:01:37.207Z",
+      "updatedAt": "2026-04-04T12:01:37.207Z"
+    },
+    {
+      "id": 15,
+      "category_id": 7,
+      "name": "Soda",
+      "description": "",
+      "price": 35,
+      "is_available": true,
+      "display_order": 1,
+      "createdAt": "2026-04-04T11:57:52.859Z",
+      "updatedAt": "2026-04-04T11:57:52.859Z"
     },
     {
       "id": 3,
-      "image": "uploads/item-1772313787432-625710386.jpeg",
-      "caption": "Günlerniz için vazgeçilmez lezzet",
+      "category_id": 1,
+      "name": "Peynirli Börek",
+      "description": "kg fiyatı",
+      "price": 800,
+      "is_available": true,
+      "display_order": 1,
+      "createdAt": "2026-04-04T11:49:45.154Z",
+      "updatedAt": "2026-04-04T11:50:02.841Z"
+    },
+    {
+      "id": 7,
+      "category_id": 3,
+      "name": "Türk Kahvesi",
+      "description": "",
+      "price": 95,
+      "is_available": true,
+      "display_order": 1,
+      "createdAt": "2026-04-04T11:52:29.885Z",
+      "updatedAt": "2026-04-04T11:52:29.885Z"
+    },
+    {
+      "id": 34,
+      "category_id": 9,
+      "name": "Patatesli Gözleme",
+      "description": "",
+      "price": 185,
+      "is_available": true,
       "display_order": 2,
-      "createdAt": "2026-04-02T11:20:50.942Z",
-      "updatedAt": "2026-04-02T11:20:50.942Z"
+      "createdAt": "2026-04-04T12:32:18.682Z",
+      "updatedAt": "2026-04-04T12:32:45.388Z"
+    },
+    {
+      "id": 16,
+      "category_id": 7,
+      "name": "Meyveli Soda",
+      "description": "",
+      "price": 45,
+      "is_available": true,
+      "display_order": 2,
+      "createdAt": "2026-04-04T11:58:08.545Z",
+      "updatedAt": "2026-04-04T11:58:08.545Z"
+    },
+    {
+      "id": 31,
+      "category_id": 2,
+      "name": "Sufle",
+      "description": "",
+      "price": 150,
+      "is_available": true,
+      "display_order": 2,
+      "createdAt": "2026-04-04T12:13:52.517Z",
+      "updatedAt": "2026-04-04T12:13:52.517Z"
+    },
+    {
+      "id": 8,
+      "category_id": 3,
+      "name": "Americano",
+      "description": "",
+      "price": 120,
+      "is_available": true,
+      "display_order": 2,
+      "createdAt": "2026-04-04T11:53:19.003Z",
+      "updatedAt": "2026-04-04T11:53:19.003Z"
     },
     {
       "id": 4,
-      "image": "uploads/item-1772313807492-616208129.jpeg",
-      "caption": "",
+      "category_id": 1,
+      "name": "Ispanaklı Kaşarlı Börek",
+      "description": "kg fiyatı",
+      "price": 800,
+      "is_available": true,
+      "display_order": 2,
+      "createdAt": "2026-04-04T11:50:37.680Z",
+      "updatedAt": "2026-04-04T11:50:37.680Z"
+    },
+    {
+      "id": 22,
+      "category_id": 8,
+      "name": "Ice Americano",
+      "description": "",
+      "price": 150,
+      "is_available": true,
+      "display_order": 2,
+      "createdAt": "2026-04-04T12:02:20.221Z",
+      "updatedAt": "2026-04-04T12:02:20.221Z"
+    },
+    {
+      "id": 35,
+      "category_id": 9,
+      "name": "Kıymalı Gözleme",
+      "description": "",
+      "price": 190,
+      "is_available": true,
       "display_order": 3,
-      "createdAt": "2026-04-02T11:20:50.942Z",
-      "updatedAt": "2026-04-02T11:20:50.942Z"
+      "createdAt": "2026-04-04T12:32:37.334Z",
+      "updatedAt": "2026-04-04T12:32:37.334Z"
+    },
+    {
+      "id": 5,
+      "category_id": 1,
+      "name": "Pastırma Kaşarlı Börek",
+      "description": "kg fiyatı [haftasonu mevcutur]",
+      "price": 1300,
+      "is_available": true,
+      "display_order": 3,
+      "createdAt": "2026-04-04T11:51:17.947Z",
+      "updatedAt": "2026-04-04T11:51:17.947Z"
+    },
+    {
+      "id": 23,
+      "category_id": 8,
+      "name": "Ice Latte",
+      "description": "",
+      "price": 150,
+      "is_available": true,
+      "display_order": 3,
+      "createdAt": "2026-04-04T12:02:39.241Z",
+      "updatedAt": "2026-04-04T12:02:39.241Z"
+    },
+    {
+      "id": 9,
+      "category_id": 3,
+      "name": "Cappucino",
+      "description": "",
+      "price": 150,
+      "is_available": true,
+      "display_order": 3,
+      "createdAt": "2026-04-04T11:53:35.346Z",
+      "updatedAt": "2026-04-04T11:53:35.346Z"
+    },
+    {
+      "id": 17,
+      "category_id": 7,
+      "name": "Ayran",
+      "description": "",
+      "price": 30,
+      "is_available": true,
+      "display_order": 3,
+      "createdAt": "2026-04-04T11:58:26.064Z",
+      "updatedAt": "2026-04-04T11:58:26.064Z"
+    },
+    {
+      "id": 24,
+      "category_id": 8,
+      "name": "Ice Caramel Latte",
+      "description": "",
+      "price": 165,
+      "is_available": true,
+      "display_order": 4,
+      "createdAt": "2026-04-04T12:04:10.842Z",
+      "updatedAt": "2026-04-04T12:04:10.842Z"
+    },
+    {
+      "id": 36,
+      "category_id": 9,
+      "name": "Bazlama Kaşarlı Tost",
+      "description": "",
+      "price": 180,
+      "is_available": true,
+      "display_order": 4,
+      "createdAt": "2026-04-04T12:33:23.576Z",
+      "updatedAt": "2026-04-04T12:34:15.424Z"
+    },
+    {
+      "id": 10,
+      "category_id": 3,
+      "name": "Latte",
+      "description": "",
+      "price": 150,
+      "is_available": true,
+      "display_order": 4,
+      "createdAt": "2026-04-04T11:53:48.852Z",
+      "updatedAt": "2026-04-04T11:53:48.852Z"
+    },
+    {
+      "id": 18,
+      "category_id": 7,
+      "name": "Churchill",
+      "description": "",
+      "price": 75,
+      "is_available": true,
+      "display_order": 4,
+      "createdAt": "2026-04-04T11:58:48.974Z",
+      "updatedAt": "2026-04-04T11:58:48.974Z"
+    },
+    {
+      "id": 25,
+      "category_id": 8,
+      "name": "Frappe",
+      "description": "karamel,vanilya",
+      "price": 180,
+      "is_available": true,
+      "display_order": 5,
+      "createdAt": "2026-04-04T12:04:56.663Z",
+      "updatedAt": "2026-04-04T12:04:56.663Z"
+    },
+    {
+      "id": 37,
+      "category_id": 9,
+      "name": "Bazlama Sucuklu Tost",
+      "description": "",
+      "price": 180,
+      "is_available": true,
+      "display_order": 5,
+      "createdAt": "2026-04-04T12:33:42.407Z",
+      "updatedAt": "2026-04-04T12:33:42.407Z"
+    },
+    {
+      "id": 19,
+      "category_id": 7,
+      "name": "Su",
+      "description": "",
+      "price": 15,
+      "is_available": true,
+      "display_order": 5,
+      "createdAt": "2026-04-04T11:59:04.162Z",
+      "updatedAt": "2026-04-04T11:59:04.162Z"
+    },
+    {
+      "id": 11,
+      "category_id": 3,
+      "name": "Filtre Kahve",
+      "description": "",
+      "price": 150,
+      "is_available": true,
+      "display_order": 5,
+      "createdAt": "2026-04-04T11:54:24.113Z",
+      "updatedAt": "2026-04-04T11:54:24.113Z"
+    },
+    {
+      "id": 38,
+      "category_id": 9,
+      "name": "Bazlama Karışık Tost",
+      "description": "",
+      "price": 180,
+      "is_available": true,
+      "display_order": 6,
+      "createdAt": "2026-04-04T12:34:04.516Z",
+      "updatedAt": "2026-04-04T12:34:04.516Z"
+    },
+    {
+      "id": 12,
+      "category_id": 3,
+      "name": "Oralet",
+      "description": "",
+      "price": 35,
+      "is_available": true,
+      "display_order": 6,
+      "createdAt": "2026-04-04T11:54:43.108Z",
+      "updatedAt": "2026-04-04T11:54:43.108Z"
+    },
+    {
+      "id": 26,
+      "category_id": 8,
+      "name": "Limonata",
+      "description": "",
+      "price": 150,
+      "is_available": true,
+      "display_order": 6,
+      "createdAt": "2026-04-04T12:05:24.066Z",
+      "updatedAt": "2026-04-04T12:05:24.066Z"
+    },
+    {
+      "id": 13,
+      "category_id": 3,
+      "name": "Double Türk Kahvesi",
+      "description": "",
+      "price": 150,
+      "is_available": true,
+      "display_order": 7,
+      "createdAt": "2026-04-04T11:55:17.732Z",
+      "updatedAt": "2026-04-04T11:55:17.732Z"
+    },
+    {
+      "id": 27,
+      "category_id": 3,
+      "name": "Sahlep",
+      "description": "",
+      "price": 150,
+      "is_available": true,
+      "display_order": 8,
+      "createdAt": "2026-04-04T12:06:47.433Z",
+      "updatedAt": "2026-04-04T12:06:47.433Z"
+    },
+    {
+      "id": 28,
+      "category_id": 3,
+      "name": "Sıcak Çikolata",
+      "description": "",
+      "price": 150,
+      "is_available": true,
+      "display_order": 9,
+      "createdAt": "2026-04-04T12:07:02.380Z",
+      "updatedAt": "2026-04-04T12:07:02.380Z"
+    },
+    {
+      "id": 29,
+      "category_id": 3,
+      "name": "Bitki Çayı",
+      "description": "papatya,yeşilçay,kışçayı,ıhlamur,adaçayı",
+      "price": 150,
+      "is_available": true,
+      "display_order": 10,
+      "createdAt": "2026-04-04T12:07:54.395Z",
+      "updatedAt": "2026-04-04T12:07:54.395Z"
     }
   ],
+  "weeklySpecials": [],
+  "campaigns": [],
+  "instagramPosts": [],
   "admins": [
     {
       "username": "admin",
